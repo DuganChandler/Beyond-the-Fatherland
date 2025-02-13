@@ -8,13 +8,12 @@ public class PlayerController : MonoBehaviour {
 
     Vector2 moveInput;
     Rigidbody rb;
-    // Start is called before the first frame update
+
     void Start() {
         rb = GetComponent<Rigidbody>();
         
     }
 
-    // Update is called once per frame
     void Update() {
         
     }
@@ -28,6 +27,7 @@ public class PlayerController : MonoBehaviour {
         rb.velocity = transform.TransformDirection(velocity);
     }
 
+    // Invoked by unity event via the Unity Input System
     public void onMove(InputAction.CallbackContext context) {
         moveInput = context.ReadValue<Vector2>();
     }
