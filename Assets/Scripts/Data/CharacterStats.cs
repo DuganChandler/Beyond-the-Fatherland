@@ -12,4 +12,6 @@ public struct CharacterStat{
 [CreateAssetMenu(fileName = "CharacterStats", menuName = "ScriptableObjects/Characters/CharacterStatsSO", order = 2)]
 public class CharacterStats : ScriptableObject {
     public CharacterStat[] levelStats;
+    [SerializeField] int mpGrowth; 
+    [SerializeField] int hpGrowth;
 }

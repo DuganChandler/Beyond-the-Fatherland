@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4b4dc85a27b0e314ca6790da0424e564, type: 3}
-  m_Name: Renivar
+  m_Name: Norbert
   m_EditorClassIdentifier: 
-  name: Renivar
-  description: Renivar Character SO
+  name: Norbert
+  description: I mean bro, it's norbert!
   characterPrefab: {fileID: 0}
   currentLevel: 1
-  baseHP: 80
-  baseMP: 25
-  characterStats: {fileID: 11400000, guid: 4374d435dfdcf42439d214326b71bdbf, type: 2}
+  baseHP: 90
+  baseMP: 65
+  characterStats: {fileID: 11400000, guid: 8849d72589329174f8e098cd82a232f1, type: 2}

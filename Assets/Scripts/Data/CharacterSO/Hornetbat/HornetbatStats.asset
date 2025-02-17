@@ -10,38 +10,38 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3ee8aa42fd541874d9be9b1bc741952f, type: 3}
-  m_Name: RenivarStats
+  m_Name: HornetbatStats
   m_EditorClassIdentifier: 
   levelStats:
-  - Strength: 5
-    Magic: 2
-    Defense: 3
-  - Strength: 7
-    Magic: 2
-    Defense: 4
-  - Strength: 9
-    Magic: 2
-    Defense: 5
-  - Strength: 10
-    Magic: 3
-    Defense: 5
-  - Strength: 11
-    Magic: 3
-    Defense: 6
-  - Strength: 13
+  - Strength: 2
     Magic: 4
-    Defense: 8
-  - Strength: 15
-    Magic: 4
-    Defense: 8
-  - Strength: 16
-    Magic: 4
-    Defense: 9
-  - Strength: 18
+    Defense: 2
+  - Strength: 2
     Magic: 5
-    Defense: 11
-  - Strength: 20
+    Defense: 3
+  - Strength: 3
     Magic: 6
-    Defense: 12
-  mpGrowth: 2
+    Defense: 3
+  - Strength: 3
+    Magic: 8
+    Defense: 4
+  - Strength: 3
+    Magic: 10
+    Defense: 4
+  - Strength: 3
+    Magic: 12
+    Defense: 5
+  - Strength: 3
+    Magic: 14
+    Defense: 5
+  - Strength: 4
+    Magic: 16
+    Defense: 5
+  - Strength: 5
+    Magic: 18
+    Defense: 6
+  - Strength: 5
+    Magic: 20
+    Defense: 7
+  mpGrowth: 5
   hpGrowth: 10
