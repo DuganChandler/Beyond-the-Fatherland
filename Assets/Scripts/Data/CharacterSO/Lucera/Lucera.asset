@@ -14,7 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Lucera
   description: Lucera's character stuff
-  characterPrefab: {fileID: 0}
+  characterPrefab: {fileID: 8433471612051760144, guid: 16fd21545a14e2a46a6d3c206723fe19,
+    type: 3}
+  characerType: 0
   currentLevel: 1
   baseHP: 65
   baseMP: 40

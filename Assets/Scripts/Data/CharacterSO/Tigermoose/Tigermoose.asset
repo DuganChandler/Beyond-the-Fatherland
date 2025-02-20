@@ -15,6 +15,7 @@ MonoBehaviour:
   name: Tigermoose
   description: A tiger + moose = fuck that shit
   characterPrefab: {fileID: 0}
+  characerType: 1
   currentLevel: 1
   baseHP: 60
   baseMP: 10

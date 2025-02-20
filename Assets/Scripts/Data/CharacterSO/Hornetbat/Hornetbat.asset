@@ -15,8 +15,8 @@ MonoBehaviour:
   name: Hornetbat
   description: Hornet + Bat = WHY DOES THIS EXIST!!??!?!?!?!?!?!?
   characterPrefab: {fileID: 0}
-  characerType: 0
-  currentLevel: 0
+  characerType: 1
+  currentLevel: 1
   baseHP: 0
   baseMP: 0
-  characterStats: {fileID: 0}
+  characterStats: {fileID: 11400000, guid: 38bd93cec72115a4db657fc5a503ef5f, type: 2}

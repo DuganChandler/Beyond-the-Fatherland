@@ -1,7 +1,7 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/Characters/CharacterSO", order = 1)]
-public class CharacterSO : ScriptableObject {
+[CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/Characters/CharacterData", order = 1)]
+public class CharacterData : ScriptableObject {
     [Header("Character Name")]
     [SerializeField] new string name;
 
@@ -21,7 +21,7 @@ public class CharacterSO : ScriptableObject {
     [SerializeField] CharacterStats characterStats;
 
     // Make sure to check if the character type is BOSS
-    public CharacterStat GetStatsAtLevel(int level) {
+    public Stats GetStatsAtLevel(int level) {
         if (level < 1 || level > characterStats.levelStats.Length) {
             return characterStats.levelStats[characterStats.levelStats.Length - 1];
         }
@@ -29,10 +29,17 @@ public class CharacterSO : ScriptableObject {
         return characterStats.levelStats[level - 1];
     }
 
-    public CharacterStat GetStatsForBoss() {
+    public Stats GetStatsForBoss() {
         return characterStats.levelStats[0];
     }
 
+    public int GetHpAtLevel(int level) {
+        return baseHP + (characterStats.HpGrowth * level - 1);
+    }
+
+    public int GetMpAtLevel(int level) {
+        return baseMP + (characterStats.MpGrowth * level - 1);
+    }
 
     // [Header("Abilities")]
     // Create List of Abilities
