@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b4dc85a27b0e314ca6790da0424e564, type: 3}
+  m_Name: Hornetbat
+  m_EditorClassIdentifier: 
+  name: Hornetbat
+  description: Hornet + Bat = WHY DOES THIS EXIST!!??!?!?!?!?!?!?
+  characterPrefab: {fileID: 0}
+  characerType: 1
+  currentLevel: 1
+  baseHP: 0
+  baseMP: 0
+  characterStats: {fileID: 11400000, guid: 38bd93cec72115a4db657fc5a503ef5f, type: 2}

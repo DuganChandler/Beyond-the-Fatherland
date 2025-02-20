@@ -29,21 +29,8 @@ public class PlayerController : MonoBehaviour {
     }
 
     void Update() {
-        Vector3 currentPos = transform.position;
-        float distanceMoved = Vector3.Distance(currentPos, lastPosition);
-        distanceAccumulated += distanceMoved;
-        lastPosition = currentPos;
-
-        if (IsEncounterLayer()) {
-            if (distanceAccumulated >= distanceThreshhold) {
-                if (Random.value <= encounterChance) {
-                    Debug.Log("RANDOM ENCOUNTER");
-                }
-                distanceAccumulated = 0f;
-            }
-        } else {
-            distanceAccumulated = 0f;
-        } 
+        CalculateDistanceTraveled();
+        CheckRandomEncounter();
     }
 
     void FixedUpdate() {
@@ -60,11 +47,25 @@ public class PlayerController : MonoBehaviour {
         return false;
     }
 
+    private void CalculateDistanceTraveled() {
+        Vector3 currentPos = transform.position;
+        float distanceMoved = Vector3.Distance(currentPos, lastPosition);
+        distanceAccumulated += distanceMoved;
+        lastPosition = currentPos;
+    }
+
     private void CheckRandomEncounter() {
         if (!IsEncounterLayer()) {
+            distanceAccumulated = 0f;
             return;
         }
 
+        if (distanceAccumulated >= distanceThreshhold) {
+            if (Random.value <= encounterChance) {
+                Debug.Log("RANDOM ENCOUNTER");
+            }
+            distanceAccumulated = 0f;
+        }
     }
 
     void Run() {
@@ -76,10 +77,4 @@ public class PlayerController : MonoBehaviour {
     public void onMove(InputAction.CallbackContext context) {
         moveInput = context.ReadValue<Vector2>();
     }
-
-    void OGizmosSelected() {
-        Gizmos.color = Color.red;
-        Gizmos.DrawRay(transform.position, Vector3.down * 0.1f);
-    }
-
 }
