@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private LayerMask encounterLayer;
     [SerializeField] private float encounterChance = 0.3f;
     [SerializeField] private float distanceThreshhold = 10f;
+    [SerializeField] private GameObject sceneObjects;
 
     private Vector3 lastPosition;
     private float distanceAccumulated = 0f;
@@ -62,7 +63,7 @@ public class PlayerController : MonoBehaviour {
 
         if (distanceAccumulated >= distanceThreshhold) {
             if (Random.value <= encounterChance) {
-                Debug.Log("RANDOM ENCOUNTER");
+                BattleManager.Instance.StartBattle();
             }
             distanceAccumulated = 0f;
         }
