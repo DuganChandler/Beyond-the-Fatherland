@@ -10,9 +10,6 @@ public class Character  {
     [Header("Character Level")]
     [SerializeField] int level;
 
-    public delegate void OnHPChangeHandler(int amount);
-    public event OnHPChangeHandler OnHPChange; 
-
     public Character(CharacterData character, int cLevel) {
         characterData = character;
         level = cLevel;
@@ -33,11 +30,5 @@ public class Character  {
         // This does not take into account if the party memeber is damaged
         HP = characterData.GetHpAtLevel(level);
         MP = characterData.GetMpAtLevel(level);
-    }
-
-    public void Damage(int amount) {
-        // take damage
-        HP -= amount;
-        OnHPChange?.Invoke(amount);
     }
 }
