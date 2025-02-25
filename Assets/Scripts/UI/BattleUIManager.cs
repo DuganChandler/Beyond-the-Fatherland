@@ -14,11 +14,11 @@ public class BattleUIManager : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
-        elapsedTime += Time.deltaTime;
-        if (elapsedTime > 5f && !battleEnded) {
-            battleEnded = true;
-            BattleManager.Instance.EndBattle();
-        }
+        // elapsedTime += Time.deltaTime;
+        // if (elapsedTime > 5f && !battleEnded) {
+        //     battleEnded = true;
+        //     BattleManager.Instance.EndBattle();
+        // }
     }
 
     public void EndBattle() {

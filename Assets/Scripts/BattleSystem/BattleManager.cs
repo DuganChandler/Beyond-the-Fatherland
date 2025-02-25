@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -26,6 +27,9 @@ public class BattleManager : MonoBehaviour
             return _ForestObjects;
         }
     }
+
+    public PartyList PlayerPartyList { get; set; }
+    public BattleState battleState { get; set; }
 
     public void StartBattle() {
         ForestObjects.SetActive(false);

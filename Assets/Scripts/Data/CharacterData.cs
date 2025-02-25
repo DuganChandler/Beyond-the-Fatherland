@@ -41,6 +41,12 @@ public class CharacterData : ScriptableObject {
         return baseMP + (characterStats.MpGrowth * level - 1);
     }
 
+    public GameObject CharacterPrefab {
+        get {
+            return characterPrefab;
+        }
+    }
+
     // [Header("Abilities")]
     // Create List of Abilities
 }

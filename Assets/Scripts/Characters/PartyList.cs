@@ -8,8 +8,10 @@ public class PartyList : MonoBehaviour
     [SerializeField] List<Character> characterList;
 
     private void Awake() {
-       foreach (var character in characterList) {
-        character.Init();
-       } 
+        foreach (var character in characterList) {
+            character.Init();
+        }
+
+        BattleManager.Instance.PlayerPartyList = this;
     }
 }

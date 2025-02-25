@@ -21,6 +21,11 @@ public class Character  {
     public int HP { get; set; }
     public int MP { get; set; }
     public Stats Stats { get; set; }
+    public CharacterData CharacterData {
+        get {
+            return characterData;
+        }
+    }
     // need abilities list here
 
     public void Init() {
