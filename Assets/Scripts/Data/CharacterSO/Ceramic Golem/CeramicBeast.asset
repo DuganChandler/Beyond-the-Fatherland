@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b4dc85a27b0e314ca6790da0424e564, type: 3}
+  m_Name: CeramicBeast
+  m_EditorClassIdentifier: 
+  name: CeramicBeast
+  description: A golem who lives in the forests of Arboryn...
+  characterPrefab: {fileID: 0}
+  characerType: 2
+  currentLevel: 8
+  baseHP: 320
+  baseMP: 60
+  characterStats: {fileID: 11400000, guid: 5ce8fce237dd50444809e7df799d1807, type: 2}

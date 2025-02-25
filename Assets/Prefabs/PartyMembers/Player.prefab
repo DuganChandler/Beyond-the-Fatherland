@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 155499727139640679}
   - component: {fileID: 2747730401583686661}
   - component: {fileID: 4438113466771180887}
+  - component: {fileID: 3549203755052469560}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -65,7 +66,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 3048f1e952079ac43ac947e3e52ab33a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -202,3 +203,22 @@ MonoBehaviour:
     m_Bits: 128
   encounterChance: 0.3
   distanceThreshhold: 10
+--- !u!114 &3549203755052469560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3694242726226765400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25482f061369d2645b3b10fa7f2508dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterList:
+  - characterData: {fileID: 11400000, guid: 341e814a113598f4e8f8e4b3231ec5f0, type: 2}
+    level: 1
+  - characterData: {fileID: 11400000, guid: 51c8cdbe884df004b9c80107929657c7, type: 2}
+    level: 1
+  - characterData: {fileID: 11400000, guid: ca4b6cfd7fa7aa54180ce5c974d079af, type: 2}
+    level: 1

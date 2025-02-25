@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private LayerMask encounterLayer;
     [SerializeField] private float encounterChance = 0.3f;
     [SerializeField] private float distanceThreshhold = 10f;
+    [SerializeField] private GameObject sceneObjects;
 
     private Vector3 lastPosition;
     private float distanceAccumulated = 0f;
@@ -29,21 +30,8 @@ public class PlayerController : MonoBehaviour {
     }
 
     void Update() {
-        Vector3 currentPos = transform.position;
-        float distanceMoved = Vector3.Distance(currentPos, lastPosition);
-        distanceAccumulated += distanceMoved;
-        lastPosition = currentPos;
-
-        if (IsEncounterLayer()) {
-            if (distanceAccumulated >= distanceThreshhold) {
-                if (Random.value <= encounterChance) {
-                    Debug.Log("RANDOM ENCOUNTER");
-                }
-                distanceAccumulated = 0f;
-            }
-        } else {
-            distanceAccumulated = 0f;
-        } 
+        CalculateDistanceTraveled();
+        CheckRandomEncounter();
     }
 
     void FixedUpdate() {
@@ -60,11 +48,25 @@ public class PlayerController : MonoBehaviour {
         return false;
     }
 
+    private void CalculateDistanceTraveled() {
+        Vector3 currentPos = transform.position;
+        float distanceMoved = Vector3.Distance(currentPos, lastPosition);
+        distanceAccumulated += distanceMoved;
+        lastPosition = currentPos;
+    }
+
     private void CheckRandomEncounter() {
         if (!IsEncounterLayer()) {
+            distanceAccumulated = 0f;
             return;
         }
 
+        if (distanceAccumulated >= distanceThreshhold) {
+            if (Random.value <= encounterChance) {
+                BattleManager.Instance.StartBattle();
+            }
+            distanceAccumulated = 0f;
+        }
     }
 
     void Run() {
@@ -76,10 +78,4 @@ public class PlayerController : MonoBehaviour {
     public void onMove(InputAction.CallbackContext context) {
         moveInput = context.ReadValue<Vector2>();
     }
-
-    void OGizmosSelected() {
-        Gizmos.color = Color.red;
-        Gizmos.DrawRay(transform.position, Vector3.down * 0.1f);
-    }
-
 }
