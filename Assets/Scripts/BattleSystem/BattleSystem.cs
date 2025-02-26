@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum BattleState {
     Start,
@@ -17,12 +18,17 @@ public enum BattleState {
 public class BattleSystem : MonoBehaviour {
     [Header("Battle Setup")]
     [SerializeField] private List<GameObject> partyPositions;
-    [SerializeField] private List<GameObject> enemyPositions;
+    [SerializeField] private List<GameObject> encounterPositions;
 
-    // [Header("BattleUI")]
-    // [SerializeField] CharacterBattleHud BattleHud;
-    // Need ItemSelectionUI, AbilitySelectionUI, DialogueBox 
-    BattleState state;
+    [Header("Battle UI")]
+    [SerializeField] List<Button> playerPortraits; 
+    [SerializeField] List<Button> actionSlots; 
+
+    private List<Character> playerParty;
+    private List<Character> encounterParty; 
+
+    private BattleState state;
+    private BattleState prevState;
 
     private void HandleUpdate() {
         switch (state) {
@@ -56,11 +62,47 @@ public class BattleSystem : MonoBehaviour {
         }
     }
 
-    void Start() {
-        
+    void OnEnable() {
+        StartBattle(); 
+    }
+
+    public void StartBattle() {
+        // initalize party and enemies stats
+        playerParty = BattleManager.Instance.PlayerPartyList; 
+        encounterParty = BattleManager.Instance.EncounterPartyList;
+        Debug.Log(playerParty);
+        Debug.Log(encounterParty);
+
+        // Play battle music;
+        CallAfterDelay.Create(1.0f, () => {
+            StartCoroutine(SetupBattle());
+        });
+    }
+
+    public IEnumerator SetupBattle() {
+        // initalize party and enemy prefabs in given positions
+        // set hud data
+        for (int i = 0; i < playerParty.Count; i++) {
+            GameObject playerCharacterPrefab = playerParty[i].CharacterData.CharacterPrefab;
+            Transform playerCharacterPosition = partyPositions[i].transform;
+
+            Instantiate(playerCharacterPrefab, playerCharacterPosition);
+        }
+
+        for (int i = 0; i < encounterParty.Count; i++) {
+            GameObject encounterCharacterPrefab = encounterParty[i].CharacterData.CharacterPrefab;
+            Transform encounterCharacterPosition = encounterPositions[i].transform;
+
+            Instantiate(encounterCharacterPrefab, encounterCharacterPosition);
+            encounterParty[i].Init();
+        }
+
+        yield return null;
     }
 
     void Update() {
-        
+        if (GameManager.Instance.GameState == GameState.Battle) {
+            HandleUpdate();
+        } 
     }
 }

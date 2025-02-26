@@ -458,7 +458,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &533792559
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -739,6 +739,7 @@ GameObject:
   - component: {fileID: 1277419155}
   - component: {fileID: 1277419154}
   - component: {fileID: 1277419153}
+  - component: {fileID: 1277419157}
   m_Layer: 7
   m_Name: Plane
   m_TagString: Untagged
@@ -832,6 +833,29 @@ Transform:
   m_Children: []
   m_Father: {fileID: 483458544}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1277419157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1277419152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1c1533b9d9dc3046b394f227172b9de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  encounterList:
+  - characterList:
+    - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
+      level: 2
+    - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
+      level: 3
+  - characterList:
+    - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
+      level: 3
+    - characterData: {fileID: 11400000, guid: bb3c8660bb1d4f947b0929db07ac8008, type: 2}
+      level: 2
 --- !u!1001 &212158794254202936
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -848,12 +872,12 @@ PrefabInstance:
     - target: {fileID: 1441889670554675250, guid: d4c2a35fd9367874e8c41d61051eabd4,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1441889670554675250, guid: d4c2a35fd9367874e8c41d61051eabd4,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5757994940536770265, guid: d4c2a35fd9367874e8c41d61051eabd4,
         type: 3}
@@ -968,6 +992,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 483458544}
     m_Modifications:
+    - target: {fileID: 3549203755052469560, guid: e9ac71a7aa85a724091de1967e7c02e3,
+        type: 3}
+      propertyPath: characterList.Array.data[1].characterData
+      value: 
+      objectReference: {fileID: 11400000, guid: ca4b6cfd7fa7aa54180ce5c974d079af,
+        type: 2}
+    - target: {fileID: 3549203755052469560, guid: e9ac71a7aa85a724091de1967e7c02e3,
+        type: 3}
+      propertyPath: characterList.Array.data[2].characterData
+      value: 
+      objectReference: {fileID: 11400000, guid: 51c8cdbe884df004b9c80107929657c7,
+        type: 2}
     - target: {fileID: 3694242726226765400, guid: e9ac71a7aa85a724091de1967e7c02e3,
         type: 3}
       propertyPath: m_Name
@@ -1144,12 +1180,12 @@ PrefabInstance:
     - target: {fileID: 4506812528103524335, guid: cd476857d8c25904a8a68fb20bba9674,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4506812528103524335, guid: cd476857d8c25904a8a68fb20bba9674,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6040772490221038964, guid: cd476857d8c25904a8a68fb20bba9674,
         type: 3}

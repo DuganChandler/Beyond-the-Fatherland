@@ -28,8 +28,9 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    public PartyList PlayerPartyList { get; set; }
-    public BattleState battleState { get; set; }
+    public List<Character> PlayerPartyList { get; set; }
+    public List<Character> EncounterPartyList {get; set; }
+    public BattleState BattleState { get; set; }
 
     public void StartBattle() {
         ForestObjects.SetActive(false);

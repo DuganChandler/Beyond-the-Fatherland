@@ -1,3 +1,4 @@
+using Microsoft.Unity.VisualStudio.Editor;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/Characters/CharacterData", order = 1)]
@@ -10,6 +11,9 @@ public class CharacterData : ScriptableObject {
 
     [Header("Character Model")]
     [SerializeField] GameObject characterPrefab;
+
+    [Header("Character Portrait")]
+    [SerializeField] Image characterPortrait;
 
     [Header("Character Type")]
     [SerializeField] CharacerType characerType;
@@ -44,6 +48,12 @@ public class CharacterData : ScriptableObject {
     public GameObject CharacterPrefab {
         get {
             return characterPrefab;
+        }
+    }
+
+    public Image CharacterPortrait {
+        get {
+            return characterPortrait;
         }
     }
 
