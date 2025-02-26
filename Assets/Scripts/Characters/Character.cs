@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 [System.Serializable]
@@ -20,6 +21,8 @@ public class Character  {
     public int EXP { get; set; }
     public int HP { get; set; }
     public int MP { get; set; }
+    public int MaxHP {get; set; }
+    public int MaxMP {get; set; }
     public Stats Stats { get; set; }
     public CharacterData CharacterData {
         get {
@@ -28,12 +31,38 @@ public class Character  {
     }
     // need abilities list here
 
+    public event System.Action OnHpChange;
+    public event System.Action OnMpChange;
+
     public void Init() {
         // Set exp to level from characterSO
         Stats = characterData.GetStatsAtLevel(level);
 
         // This does not take into account if the party memeber is damaged
-        HP = characterData.GetHpAtLevel(level);
-        MP = characterData.GetMpAtLevel(level);
+        MaxHP = characterData.GetHpAtLevel(level);
+        MaxMP = characterData.GetMpAtLevel(level);
+
+        HP = MaxHP;
+        MP = MaxMP;
+    }
+
+    public void DecreaseHP(int damage) {
+        HP = Mathf.Clamp(HP - damage, 0 , MaxHP);
+        OnHpChange?.Invoke();
+    }
+
+    public void IncreaseHP(int amount) {
+        HP = Mathf.Clamp(HP + amount, 0 , MaxHP);
+        OnHpChange?.Invoke();
+    }
+
+    public void DecreaseMP(int amount) {
+        MP = Mathf.Clamp(MP - amount, 0, MaxMP);
+        OnMpChange?.Invoke(); 
+    }
+
+    public void IncraseMP(int amount) {
+        MP = Mathf.Clamp(MP + amount, 0, MaxMP);
+        OnMpChange?.Invoke(); 
     }
 }

@@ -23,6 +23,7 @@ public class BattleSystem : MonoBehaviour {
     [Header("Battle UI")]
     [SerializeField] List<Button> playerPortraits; 
     [SerializeField] List<Button> actionSlots; 
+    [SerializeField] List<CharacterHud> characterHudList;
 
     private List<Character> playerParty;
     private List<Character> encounterParty; 
@@ -86,6 +87,8 @@ public class BattleSystem : MonoBehaviour {
             GameObject playerCharacterPrefab = playerParty[i].CharacterData.CharacterPrefab;
             Transform playerCharacterPosition = partyPositions[i].transform;
 
+            characterHudList[i].SetData(playerParty[i]);
+
             Instantiate(playerCharacterPrefab, playerCharacterPosition);
         }
 
@@ -97,6 +100,8 @@ public class BattleSystem : MonoBehaviour {
             encounterParty[i].Init();
         }
 
+
+
         yield return null;
     }
 
@@ -104,5 +109,9 @@ public class BattleSystem : MonoBehaviour {
         if (GameManager.Instance.GameState == GameState.Battle) {
             HandleUpdate();
         } 
+
+        if (Input.GetKeyDown(KeyCode.K)) {
+            playerParty[1].DecreaseHP(20);
+        }
     }
 }
