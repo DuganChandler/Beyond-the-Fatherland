@@ -1632,10 +1632,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ec2fde72a754ac4face0c9d5937d22d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renivarActionMenu: {fileID: 1637798706}
-  lucerActionMenu: {fileID: 1044691645}
-  norbertActionMenu: {fileID: 925154064}
-  initialButton: {fileID: 1864360738}
 --- !u!1 &866703506
 GameObject:
   m_ObjectHideFlags: 0
@@ -1768,12 +1764,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &925154064 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1522809971874451101, guid: 3fe6d4020caef9242a601e5904d9ef56,
-    type: 3}
-  m_PrefabInstance: {fileID: 1109068856}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &947460456
 GameObject:
   m_ObjectHideFlags: 0
@@ -1892,12 +1882,6 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
---- !u!1 &1044691645 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1522809971874451101, guid: 3fe6d4020caef9242a601e5904d9ef56,
-    type: 3}
-  m_PrefabInstance: {fileID: 292237305}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1057324836
 GameObject:
   m_ObjectHideFlags: 0
@@ -3489,12 +3473,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1573946312}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1637798706 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1522809971874451101, guid: 3fe6d4020caef9242a601e5904d9ef56,
-    type: 3}
-  m_PrefabInstance: {fileID: 1084437129424240760}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1639200133
 GameObject:
   m_ObjectHideFlags: 0

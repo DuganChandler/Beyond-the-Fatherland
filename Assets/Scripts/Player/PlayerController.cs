@@ -21,8 +21,6 @@ public class PlayerController : MonoBehaviour {
     private Rigidbody rb;
     private CapsuleCollider capsuleCollider;
 
-
-
     void Start() {
         rb = GetComponent<Rigidbody>();
         capsuleCollider = GetComponent<CapsuleCollider>(); 
