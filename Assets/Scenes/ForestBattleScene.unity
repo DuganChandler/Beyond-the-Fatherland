@@ -3880,6 +3880,7 @@ MonoBehaviour:
   - {fileID: 1573946312}
   - {fileID: 558221356}
   - {fileID: 1319281045}
+  actionPoints: 0
   playerPortraits:
   - {fileID: 1864360738}
   - {fileID: 604578736}
@@ -3901,12 +3902,6 @@ MonoBehaviour:
   - {fileID: 1109068867}
   partyOutline: {fileID: 2100000, guid: 7d5ee2fa5e7c6bb49a48cd05f9fb05a7, type: 2}
   enemyOutline: {fileID: 2100000, guid: fc3b8ebd2f64c354ca2bd081b70a2e0a, type: 2}
-  enemySelectionsUI: {fileID: 568299080}
-  enemySelectionsButtons:
-  - {fileID: 1377625644}
-  - {fileID: 1965818982}
-  - {fileID: 1084521960}
-  - {fileID: 1191426274}
 --- !u!114 &1218607546
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3965,6 +3960,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 7ba10dd5-690c-43d2-8aa9-f9cb983198ce
     m_ActionName: Player/Accept[/Keyboard/enter]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1218607545}
+        m_TargetAssemblyTypeName: BattleSystem, Assembly-CSharp
+        m_MethodName: OnRoundRunSelected
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 82561cd5-ed02-41b9-ac11-a8e5190638e9
+    m_ActionName: Player/Execute[/XInputControllerWindows/buttonWest]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

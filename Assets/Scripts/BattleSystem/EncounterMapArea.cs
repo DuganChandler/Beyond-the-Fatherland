@@ -2,13 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EncounterMapArea : MonoBehaviour
-{
+public class EncounterMapArea : MonoBehaviour {
     [SerializeField] List<EncounterList> encounterList;
 
     public List<Character> GetRandomEncounter() {
         List<Character> encounter = encounterList[Random.Range(0, encounterList.Count)].CharacterList;
-        return encounter;
+        return new List<Character>(encounter);
     }
 }
 

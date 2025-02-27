@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
@@ -23,6 +24,7 @@ public class Character  {
     public int MP { get; set; }
     public int MaxHP {get; set; }
     public int MaxMP {get; set; }
+    public Stat PrimaryStat { get; set; }
     public Stats Stats { get; set; }
     public CharacterData CharacterData {
         get {
@@ -37,6 +39,7 @@ public class Character  {
     public void Init() {
         // Set exp to level from characterSO
         Stats = characterData.GetStatsAtLevel(level);
+        PrimaryStat = characterData.PrimaryStat;
 
         // This does not take into account if the party memeber is damaged
         MaxHP = characterData.GetHpAtLevel(level);
@@ -44,6 +47,19 @@ public class Character  {
 
         HP = MaxHP;
         MP = MaxMP;
+    }
+
+    public int CalculateBasicAttackDamage() {
+        if (PrimaryStat == Stat.Strength) {
+            return 10 * Stats.Strength;
+        } else if (PrimaryStat == Stat.Magic) {
+            return 10 * Stats.Magic;
+        } 
+        return 0;
+    }
+
+    public int CalculateDefense() {
+        return (int)Math.Round(Stats.Defense * 4f);
     }
 
     public void DecreaseHP(int damage) {

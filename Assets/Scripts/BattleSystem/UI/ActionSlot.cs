@@ -23,12 +23,23 @@ public class ActionSlot : MonoBehaviour {
         }
     }
 
+    private GameObject characterInstance;
+    public GameObject CharacterInstance {
+        get {
+            return characterInstance;
+        } set {
+            characterInstance = value;
+        }
+    }
+
     public bool IsOccupied { get; set; }
 
     public void ResetData() {
         battleAction.User = null;
         battleAction.Target = null;
         battleAction.Type = ActionType.None;
+        characterInstance = null;
+        IsOccupied = false;
 
         characterPortrait.SetActive(false);
     }

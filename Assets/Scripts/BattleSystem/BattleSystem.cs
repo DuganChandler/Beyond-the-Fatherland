@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
+using System;
+using Unity.VisualScripting;
+using System.Resources;
 
 public enum BattleState {
     Start,
@@ -64,12 +67,13 @@ public class BattleSystem : MonoBehaviour {
     private BattleAction currentAction;
     private GameObject currentSelectedCharacter;
 
-
+    private GameObject currentTargetInstance;
     private bool isSelectingEnemy = true;
     private int currentTargetIndex = 0;
     private GameObject lastSelectedTarget = null;
 
     private bool canNavigate = true;
+    private bool canRunRound = false;
 
     void OnEnable() {
         StartBattle(); 
@@ -265,10 +269,12 @@ public class BattleSystem : MonoBehaviour {
     public void OnTargetSelected(InputAction.CallbackContext  context) {
         if (context.started && state == BattleState.TargetSelection) {
             List<Character> currentList = isSelectingEnemy ? encounterParty : playerParty;
+            List<GameObject> currentInstanceList = isSelectingEnemy ? encounterIntances : partyInstances;
 
             if (currentList.Count == 0) return;
             if (currentAction.Type == ActionType.Attack && !isSelectingEnemy) return;
 
+            currentTargetInstance = currentInstanceList[currentTargetIndex];
             Character selectedCharacter = currentList[currentTargetIndex];
             currentAction.Target = selectedCharacter;
             ActionSlotSelection(currentAction);
@@ -327,11 +333,141 @@ public class BattleSystem : MonoBehaviour {
         actionSlot.CharacterPortrait.SetActive(true);
         actionSlot.BattleAction = currentAction;
         actionSlot.IsOccupied = true;
+        actionSlot.CharacterInstance = currentTargetInstance;
 
         foreach (var slot in actionSlots) {
             slot.GetComponent<ActionSlot>().EnableLeftRightNav();
         }
-
+        canRunRound = true;
         CharacterSelection();
+    }
+
+    public void OnRoundRunSelected(InputAction.CallbackContext context) {
+        if (context.started) {
+            if (!canRunRound && state == BattleState.CharacterSelect) {
+                Debug.Log("no actions in the action bar");
+                return;
+            }
+            StartCoroutine(RunRound());
+        }
+
+    }
+
+    IEnumerator OnCharacterDeath(ActionSlot actionSlot) {
+        // get XP;
+        // death animation
+        // remove model from instanceList or mark as dead and skip over;
+        Debug.Log(actionSlot.BattleAction.Target);
+        Character dyingCharacter = actionSlot.BattleAction.Target;
+        GameObject dyingCharacterInstance = actionSlot.CharacterInstance;
+        if (dyingCharacter.CharacterData.CharacerType == CharacerType.Enemy) {
+            foreach(var encounter in encounterParty) {
+                if(encounter == dyingCharacter) {
+                    encounterParty.Remove(encounter);
+                    break;
+                }
+            }
+
+            foreach(var encounterInstance in encounterIntances) {
+                if(encounterInstance == dyingCharacterInstance) {
+                    encounterIntances.Remove(encounterInstance);
+                    break;
+                }
+            }
+        } else {
+            foreach(var partyCharacter in playerParty) {
+                if(partyCharacter == dyingCharacter) {
+                    encounterParty.Remove(partyCharacter);
+                    break;
+                }
+            }
+
+            foreach(var partyInstance in partyInstances) {
+                if(partyInstance == dyingCharacterInstance) {
+                    encounterIntances.Remove(partyInstance);
+                    break;
+                }
+            }
+        }
+
+        dyingCharacterInstance.GetComponent<MeshRenderer>().materials[0].color = Color.red;
+
+        if (encounterIntances.Count <= 0 || partyInstances.Count <= 0) {
+            BattleOver(true);
+        }
+
+        yield return new WaitForEndOfFrame();
+
+    }
+
+    IEnumerator RunRound() {
+        prevState = state;
+        state = BattleState.RunningRound;
+
+        foreach (var slot in actionSlots) {
+            ActionSlot actionSlot = slot.GetComponent<ActionSlot>();
+            if (!actionSlot.IsOccupied) {
+                continue;
+            }
+
+            if (actionSlot.BattleAction.Type == ActionType.Attack) {
+                //attack
+                yield return StartCoroutine(RunAttack(actionSlot));
+            } else if (actionSlot.BattleAction.Type == ActionType.Run) {
+                //run
+            }
+        }
+
+        if (state != BattleState.BattleOver) {
+            foreach (var slot in actionSlots) {
+                ActionSlot actionSlot = slot.GetComponent<ActionSlot>();
+                if (!actionSlot.IsOccupied) {
+                    continue;
+                }
+                actionSlot.ResetData();
+            }
+            canRunRound = false;
+            CharacterSelection();
+        }
+        yield return null;
+    }
+
+    IEnumerator RunAttack(ActionSlot actionSlot) {
+        Character user = actionSlot.BattleAction.User;
+        Character target = actionSlot.BattleAction.Target;
+        int totalDamage = CalculateAttackDamage(user, target); 
+        target.DecreaseHP(totalDamage);
+        GameObject damageTextObject = actionSlot.CharacterInstance.transform.GetChild(0).gameObject;
+        damageTextObject.SetActive(true);
+        damageTextObject.GetComponent<DamageText>().text.text = $"{totalDamage}";
+
+        yield return new WaitForSeconds(1f);
+
+        damageTextObject.SetActive(false);
+
+        if (target.HP <= 0) {
+            Debug.Log(actionSlot.CharacterInstance);
+            yield return StartCoroutine(OnCharacterDeath(actionSlot));
+        }
+
+        yield return new WaitForEndOfFrame();
+    }
+
+    int CalculateAttackDamage(Character user, Character target) {
+        int userDamage = user.CalculateBasicAttackDamage();
+        int targetDefense = target.CalculateDefense();
+        Debug.Log($"User Damage: {userDamage} Target Defense: {targetDefense}");
+        return userDamage - targetDefense;
+    }
+
+    void BattleOver(bool won) {
+        prevState = state;
+        state = BattleState.BattleOver;
+
+        foreach(var partyInstance in partyInstances) {
+            Destroy(partyInstance);
+        }
+
+        BattleManager.Instance.EndBattle();
     }
 }

@@ -22,6 +22,7 @@ public class CharacterData : ScriptableObject {
     [SerializeField] int baseHP;
     [SerializeField] int baseMP;
     [SerializeField] CharacterStats characterStats;
+    [SerializeField] Stat primaryStat;
 
     // Make sure to check if the character type is BOSS
     public Stats GetStatsAtLevel(int level) {
@@ -55,6 +56,18 @@ public class CharacterData : ScriptableObject {
             return characterPortrait;
         }
     }
+
+    public Stat PrimaryStat {
+        get {
+            return primaryStat;
+        }
+    }
+
+    public CharacerType CharacerType {
+        get {
+            return characerType;
+        }
+    } 
 
     // [Header("Abilities")]
     // Create List of Abilities
