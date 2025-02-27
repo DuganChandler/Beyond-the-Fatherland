@@ -16,16 +16,16 @@ public class AbilityBase: ScriptableObject
 
     [Header("Stats")]
     [SerializeField] int power;
-    [SerializeField] Modifier modifier;
-    [SerializeField] int accuracy;
+    
     [SerializeField] int actionCost;
 
     [Header("Attributes")]
     
     [SerializeField] AbilityTarget target;
+    [SerializeField] bool isAOE;
     [SerializeField] AbilityCategory category;
     [SerializeField] AbilityEffects effects;
-    [SerializeField] List<Secondaries> secondaries;
+    //[SerializeField] List<Secondaries> secondaries;
 
     [Header("Audio")]
     [SerializeField] AudioClip sound;
@@ -46,9 +46,6 @@ public class AbilityBase: ScriptableObject
         get { return actionCost; }
     }
 
-    public int Accuracy {
-        get { return accuracy; }
-    }
 
 
 
@@ -64,9 +61,9 @@ public class AbilityBase: ScriptableObject
         get { return target; }
     }
 
-    public List<Secondaries> Secondaries {
+    /*public List<Secondaries> Secondaries {
         get { return secondaries; }
-    }
+    }*/
 
     public AudioClip Sound => sound;
 }
@@ -110,25 +107,20 @@ public enum Element { //again for later
 }
 
 public enum AbilityCategory {
-    Physical,
-    Special,
+    Strength,
+    Magic,
     Status
 }
 
 public enum AbilityTarget {
-    Foe,
-    Self
+    Enemy,
+    Party
 }
 
-[System.Serializable]
-public class Modifier {
-    public Stat stat;
-}
 
 public enum AbilityProperty{
     None,
     Impede,
-    Cancel,
     Stun,
     Heal
 }
