@@ -4,9 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
-using System;
 using Unity.VisualScripting;
-using System.Resources;
 
 public enum BattleState {
     Start,
@@ -72,6 +70,8 @@ public class BattleSystem : MonoBehaviour {
     private int currentTargetIndex = 0;
     private GameObject lastSelectedTarget = null;
 
+    private bool hasRoundPassed = false;
+
     private bool canNavigate = true;
     private bool canRunRound = false;
 
@@ -114,6 +114,7 @@ public class BattleSystem : MonoBehaviour {
             encounterIntances.Add(encounterInstance);
             encounterParty[i].Init();
         }
+        LoadEnemyActionSlots();
         CharacterSelection();
         yield return null;
     }
@@ -160,16 +161,80 @@ public class BattleSystem : MonoBehaviour {
         }
     }
 
+    void LoadEnemyActionSlots() {
+        List<int> availableIndecies = new();
+        for (int i = 0; i < actionSlots.Count; i++) {
+            ActionSlot actionSlot = actionSlots[i].GetComponent<ActionSlot>();
+            if (!actionSlot.IsOccupied) {
+                availableIndecies.Add(i);
+            }
+        }
+
+        foreach (var enemy in encounterParty) {
+            List<(Character, GameObject)> validTargets = new();
+            for (int i = 0; i < playerParty.Count; i++) {
+                var partyCharacter = playerParty[i];
+                var partyInstance = partyInstances[i];
+                if (partyCharacter.IsAlive) {
+                    validTargets.Add((partyCharacter, partyInstance));
+                }
+            }
+
+            if (validTargets.Count <= 0) {
+                Debug.Log("WHERE THEM VALID BOYS AT");
+                break;
+            }
+
+            if (availableIndecies.Count > 0) {
+                int randomListIndex = Random.Range(0, availableIndecies.Count);
+                int slotIndex = availableIndecies[randomListIndex];
+
+                int playerPartyIndex = Random.Range(0, validTargets.Count);
+
+                BattleAction action = new() {
+                    Type = ActionType.Attack,
+                    User = enemy,
+                    Target = validTargets[playerPartyIndex].Item1,
+                };
+
+                ActionSlot actionSlot = actionSlots[slotIndex].GetComponent<ActionSlot>();
+
+                actionSlot.CharacterPortrait.GetComponent<Image>().sprite = enemy.CharacterData.CharacterPortrait;
+                actionSlot.CharacterPortrait.SetActive(true);
+                actionSlot.BattleAction = action;
+                actionSlot.IsOccupied = true;
+                actionSlot.CharacterInstance = validTargets[playerPartyIndex].Item2;
+
+                availableIndecies.RemoveAt(randomListIndex);
+            } else {
+                Debug.Log("WHERE BE THE ACITON SLOTS BRUV");
+                break;
+            }
+        }
+        canRunRound = true;
+    }
+
     void CharacterSelection() {
         prevState = state;
         state = BattleState.CharacterSelect;
         playerPortraits[0].Select();
+
+        if (hasRoundPassed) {
+            LoadEnemyActionSlots();
+            hasRoundPassed = false;
+        }
     }
 
     public void OnCharacterSelect(GameObject characterHud) {
         currentSelectedCharacter = characterHud;
-        if (actionPoints <= 1) {
+        if (actionPoints <= 0) {
             currentSelectedCharacter = null;
+            Debug.Log(actionPoints);
+            return;
+        }
+
+        if (!currentSelectedCharacter.GetComponent<CharacterHud>().Character.IsAlive) {
+            Debug.Log("bro is dead...");
             return;
         }
 
@@ -339,6 +404,7 @@ public class BattleSystem : MonoBehaviour {
             slot.GetComponent<ActionSlot>().EnableLeftRightNav();
         }
         canRunRound = true;
+        actionPoints--;
         CharacterSelection();
     }
 
@@ -392,12 +458,24 @@ public class BattleSystem : MonoBehaviour {
 
         dyingCharacterInstance.GetComponent<MeshRenderer>().materials[0].color = Color.red;
 
-        if (encounterIntances.Count <= 0 || partyInstances.Count <= 0) {
+        if (encounterIntances.Count <= 0 || CheckIfPartyDead()) {
+            Debug.Log(partyInstances);
             BattleOver(true);
         }
 
         yield return new WaitForEndOfFrame();
 
+    }
+
+    bool CheckIfPartyDead() {
+        int numDead = 0;
+        foreach(var partyMember in playerParty) {
+            if (!partyMember.IsAlive) {
+                numDead++;
+            }
+        }
+
+        return numDead == 3 ? true : false;
     }
 
     IEnumerator RunRound() {
@@ -407,6 +485,10 @@ public class BattleSystem : MonoBehaviour {
         foreach (var slot in actionSlots) {
             ActionSlot actionSlot = slot.GetComponent<ActionSlot>();
             if (!actionSlot.IsOccupied) {
+                continue;
+            }
+
+            if (!actionSlot.BattleAction.User.IsAlive) {
                 continue;
             }
 
@@ -427,6 +509,8 @@ public class BattleSystem : MonoBehaviour {
                 actionSlot.ResetData();
             }
             canRunRound = false;
+            actionPoints = 3;
+            hasRoundPassed = true;
             CharacterSelection();
         }
         yield return null;

@@ -31,6 +31,7 @@ public class Character  {
             return characterData;
         }
     }
+    public bool IsAlive { get; set; }
     // need abilities list here
 
     public event System.Action OnHpChange;
@@ -47,6 +48,8 @@ public class Character  {
 
         HP = MaxHP;
         MP = MaxMP;
+
+        IsAlive = true;
     }
 
     public int CalculateBasicAttackDamage() {
@@ -64,6 +67,9 @@ public class Character  {
 
     public void DecreaseHP(int damage) {
         HP = Mathf.Clamp(HP - damage, 0 , MaxHP);
+        if (HP <= 0) {
+            IsAlive = false;
+        }
         OnHpChange?.Invoke();
     }
 
