@@ -9,6 +9,11 @@ public class CharacterHud : MonoBehaviour {
     [SerializeField] InfoBar mpBar;
 
     private Character _character;
+    public Character Character {
+        get {
+            return _character;
+        }
+    }
 
     public void SetData(Character character) {
         if (_character != null) {

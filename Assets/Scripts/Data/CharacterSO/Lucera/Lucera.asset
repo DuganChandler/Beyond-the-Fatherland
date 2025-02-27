@@ -16,6 +16,7 @@ MonoBehaviour:
   description: Lucera's character stuff
   characterPrefab: {fileID: 8433471612051760144, guid: 16fd21545a14e2a46a6d3c206723fe19,
     type: 3}
+  characterPortrait: {fileID: 21300000, guid: d521e37728983b942a007b70c49b0088, type: 3}
   characerType: 0
   currentLevel: 1
   baseHP: 65

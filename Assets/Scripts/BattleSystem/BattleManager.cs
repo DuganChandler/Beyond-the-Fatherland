@@ -1,8 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class BattleManager : MonoBehaviour
 {
@@ -29,7 +26,7 @@ public class BattleManager : MonoBehaviour
     }
 
     public List<Character> PlayerPartyList { get; set; }
-    public List<Character> EncounterPartyList {get; set; }
+    public List<Character> EncounterPartyList { get; set; }
     public BattleState BattleState { get; set; }
 
     public void StartBattle() {

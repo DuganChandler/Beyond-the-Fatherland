@@ -16,6 +16,7 @@ MonoBehaviour:
   description: Hornet + Bat = WHY DOES THIS EXIST!!??!?!?!?!?!?!?
   characterPrefab: {fileID: 7204402707724524382, guid: 17d8458ed04d0b343ab02a6900353279,
     type: 3}
+  characterPortrait: {fileID: 21300000, guid: b68442e1c63ae0640bbffd901e1ac399, type: 3}
   characerType: 1
   currentLevel: 1
   baseHP: 0
