@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using Unity.VisualScripting;
+using TMPro;
 
 public enum BattleState {
     Start,
@@ -52,6 +53,7 @@ public class BattleSystem : MonoBehaviour {
     [SerializeField] List<CharacterHud> characterHudList;
     [SerializeField] Material partyOutline;
     [SerializeField] Material enemyOutline;
+    [SerializeField] TextMeshProUGUI actionPointText;
 
     private List<Character> playerParty;
     private List<Character> encounterParty; 
@@ -75,6 +77,8 @@ public class BattleSystem : MonoBehaviour {
     private bool canNavigate = true;
     private bool canRunRound = false;
 
+    private int numEscapeAttempts;
+
     void OnEnable() {
         StartBattle(); 
     }
@@ -84,6 +88,8 @@ public class BattleSystem : MonoBehaviour {
         playerParty = BattleManager.Instance.PlayerPartyList; 
         encounterParty = BattleManager.Instance.EncounterPartyList;
         actionPoints = 3;
+        actionPointText.text = $"{actionPoints}";
+        numEscapeAttempts = 0;
 
         encounterIntances = new();
         partyInstances = new();
@@ -123,10 +129,6 @@ public class BattleSystem : MonoBehaviour {
         if (GameManager.Instance.GameState == GameState.Battle) {
             HandleUpdate();
         } 
-
-        // if (Input.GetKeyDown(KeyCode.K)) {
-        //     playerParty[1].DecreaseHP(20);
-        // }
     }
 
     private void HandleUpdate() {
@@ -238,6 +240,7 @@ public class BattleSystem : MonoBehaviour {
             return;
         }
 
+        MusicManager.Instance.PlaySound("MenuConfirm");
         switch (state) {
             case BattleState.CharacterSelect:
                 ActionSelection();                
@@ -281,19 +284,19 @@ public class BattleSystem : MonoBehaviour {
         Vector2 input = context.ReadValue<Vector2>();
 
         if (canNavigate && (Mathf.Abs(input.x) > 0.5f || Mathf.Abs(input.y) > 0.5f)) {
-            if (input.y > 0.5f) {
-                if (!isSelectingEnemy && encounterIntances.Count > 0) {
-                    isSelectingEnemy = true;
-                    currentTargetIndex = Mathf.Min(currentTargetIndex, encounterIntances.Count - 1);
-                    UpdateTargetIndicator();
-                }
-            } else if (input.y < -0.5f) {
-                if (isSelectingEnemy && partyInstances.Count > 0) {
-                    isSelectingEnemy = false;
-                    currentTargetIndex = Mathf.Min(currentTargetIndex, partyInstances.Count - 1);
-                    UpdateTargetIndicator();
-                }
-            }
+            // if (input.y > 0.5f) {
+            //     if (!isSelectingEnemy && encounterIntances.Count > 0) {
+            //         isSelectingEnemy = true;
+            //         currentTargetIndex = Mathf.Min(currentTargetIndex, encounterIntances.Count - 1);
+            //         UpdateTargetIndicator();
+            //     }
+            // } else if (input.y < -0.5f) {
+            //     if (isSelectingEnemy && partyInstances.Count > 0) {
+            //         isSelectingEnemy = false;
+            //         currentTargetIndex = Mathf.Min(currentTargetIndex, partyInstances.Count - 1);
+            //         UpdateTargetIndicator();
+            //     }
+            // }
 
             if (input.x > 0.5f) {
                 List<GameObject> currentList = isSelectingEnemy ? encounterIntances : partyInstances;
@@ -339,6 +342,7 @@ public class BattleSystem : MonoBehaviour {
             if (currentList.Count == 0) return;
             if (currentAction.Type == ActionType.Attack && !isSelectingEnemy) return;
 
+            MusicManager.Instance.PlaySound("MenuConfirm");
             currentTargetInstance = currentInstanceList[currentTargetIndex];
             Character selectedCharacter = currentList[currentTargetIndex];
             currentAction.Target = selectedCharacter;
@@ -348,6 +352,7 @@ public class BattleSystem : MonoBehaviour {
 
     public void OnActionSelection(string actionType) {
         BattleAction battleAction = new();
+        MusicManager.Instance.PlaySound("MenuConfirm");
         switch (actionType) {
             case "attack":
                 battleAction.Type = ActionType.Attack;
@@ -393,6 +398,7 @@ public class BattleSystem : MonoBehaviour {
             return;
         }
 
+        MusicManager.Instance.PlaySound("MenuConfirm");
         // Move this code into the ActionSlot class
         actionSlot.CharacterPortrait.GetComponent<Image>().sprite = currentSelectedCharacter.GetComponent<CharacterHud>().Character.CharacterData.CharacterPortrait;
         actionSlot.CharacterPortrait.SetActive(true);
@@ -405,6 +411,7 @@ public class BattleSystem : MonoBehaviour {
         }
         canRunRound = true;
         actionPoints--;
+        actionPointText.text = $"{actionPoints}";
         CharacterSelection();
     }
 
@@ -414,6 +421,12 @@ public class BattleSystem : MonoBehaviour {
                 Debug.Log("no actions in the action bar");
                 return;
             }
+
+            if (state != BattleState.CharacterSelect) {
+                Debug.Log("Currently cannot activate a round");
+                return;
+            }
+            MusicManager.Instance.PlaySound("MenuConfirm");
             StartCoroutine(RunRound());
         }
 
@@ -456,7 +469,12 @@ public class BattleSystem : MonoBehaviour {
             }
         }
 
-        dyingCharacterInstance.GetComponent<MeshRenderer>().materials[0].color = Color.red;
+        if (dyingCharacter.CharacterData.CharacerType == CharacerType.PartyMember) {
+            dyingCharacterInstance.transform.GetChild(2).GetComponent<SkinnedMeshRenderer>().materials[0].color = Color.red;
+        } else {
+            dyingCharacterInstance.GetComponent<MeshRenderer>().materials[0].color = Color.red;
+        }
+
 
         if (encounterIntances.Count <= 0 || CheckIfPartyDead()) {
             Debug.Log(partyInstances);
@@ -475,7 +493,19 @@ public class BattleSystem : MonoBehaviour {
             }
         }
 
-        return numDead == 3 ? true : false;
+        return numDead == 3;
+    }
+
+    IEnumerator TryToEscape() {
+        numEscapeAttempts++;
+        float f = 5 * 128 / 7 + 30 * numEscapeAttempts;
+        f %= 256;
+
+        if (Random.Range(0, 256) < f) {
+            BattleOver(true);
+        }
+
+        yield return null;
     }
 
     IEnumerator RunRound() {
@@ -496,7 +526,7 @@ public class BattleSystem : MonoBehaviour {
                 //attack
                 yield return StartCoroutine(RunAttack(actionSlot));
             } else if (actionSlot.BattleAction.Type == ActionType.Run) {
-                //run
+                yield return StartCoroutine(TryToEscape());
             }
         }
 
@@ -510,7 +540,9 @@ public class BattleSystem : MonoBehaviour {
             }
             canRunRound = false;
             actionPoints = 3;
+            actionPointText.text = $"{actionPoints}";
             hasRoundPassed = true;
+            numEscapeAttempts = 0;
             CharacterSelection();
         }
         yield return null;
@@ -551,7 +583,7 @@ public class BattleSystem : MonoBehaviour {
         foreach(var partyInstance in partyInstances) {
             Destroy(partyInstance);
         }
-
+        GameManager.Instance.GameState = GameState.FreeRoam;
         BattleManager.Instance.EndBattle();
     }
 }

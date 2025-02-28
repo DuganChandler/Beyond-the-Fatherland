@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Renivar
   description: Renivar Character SO
-  characterPrefab: {fileID: 8433471612051760144, guid: 2420a345956b3554aa396b03c6d8694d,
+  characterPrefab: {fileID: 8368075523850562389, guid: 023efce19db3c55489fba4f44602d85d,
     type: 3}
   characterPortrait: {fileID: 21300000, guid: 93e58564d67c24546b0d9f43f5acc6a3, type: 3}
   characerType: 0
@@ -22,3 +22,4 @@ MonoBehaviour:
   baseHP: 80
   baseMP: 25
   characterStats: {fileID: 11400000, guid: 4374d435dfdcf42439d214326b71bdbf, type: 2}
+  primaryStat: 0

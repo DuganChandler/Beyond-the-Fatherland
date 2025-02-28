@@ -125,6 +125,17 @@
                 {
                     "name": "",
                     "id": "16a20a2f-6839-4345-b19a-67fcafc16882",
+                    "path": "<Keyboard>/k",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Execute",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d4d288b4-64b8-4aa3-b11f-9d4e77a804fe",
                     "path": "<Gamepad>/buttonWest",
                     "interactions": "",
                     "processors": "",
