@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -20,8 +17,6 @@ public class PlayerController : MonoBehaviour {
     private Rigidbody rb;
     private CapsuleCollider capsuleCollider;
 
-
-
     void Start() {
         rb = GetComponent<Rigidbody>();
         capsuleCollider = GetComponent<CapsuleCollider>(); 
@@ -38,14 +33,14 @@ public class PlayerController : MonoBehaviour {
        Run(); 
     }
 
-    private bool IsEncounterLayer() {
+    private (bool, GameObject) IsEncounterLayer() {
         RaycastHit hit;
 
         Debug.DrawRay(capsuleCollider.bounds.center, Vector3.down * 1f, Color.red);
         if (Physics.Raycast(capsuleCollider.bounds.center, Vector3.down, out hit, 1f, encounterLayer)) {
-            return true;
+            return (true, hit.collider.gameObject);
         }
-        return false;
+        return (false, null);
     }
 
     private void CalculateDistanceTraveled() {
@@ -56,13 +51,17 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void CheckRandomEncounter() {
-        if (!IsEncounterLayer()) {
+        var encounterLayer = IsEncounterLayer();
+        if (!encounterLayer.Item1) {
             distanceAccumulated = 0f;
             return;
         }
 
         if (distanceAccumulated >= distanceThreshhold) {
             if (Random.value <= encounterChance) {
+                BattleManager.Instance.EncounterPartyList = encounterLayer.Item2.GetComponent<EncounterMapArea>().GetRandomEncounter();
+                BattleManager.Instance.PlayerPartyList = GetComponent<PartyList>().CharacterList;
+                Debug.Log(GetComponent<PartyList>().CharacterList);
                 BattleManager.Instance.StartBattle();
             }
             distanceAccumulated = 0f;

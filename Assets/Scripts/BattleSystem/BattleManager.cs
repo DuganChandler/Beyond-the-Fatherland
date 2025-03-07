@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class BattleManager : MonoBehaviour
 {
@@ -27,12 +25,23 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    public List<Character> PlayerPartyList { get; set; }
+    public List<Character> EncounterPartyList { get; set; }
+    public BattleState BattleState { get; set; }
+
     public void StartBattle() {
+        foreach (var character in PlayerPartyList) {
+            character.IncreaseHP(1000);
+            character.IsAlive = true;
+        }
+
+        MusicManager.Instance.PlayMusic("BattleTheme", 0.25f);
         ForestObjects.SetActive(false);
         SceneHelper.LoadScene("ForestBattleScene", true, true);
     }
 
     public void EndBattle() {
+        MusicManager.Instance.StopMusic();
         SceneHelper.UnloadScene("ForestBattleScene");
         CallAfterDelay.Create(1.0f, () => {
             ForestObjects.SetActive(true);

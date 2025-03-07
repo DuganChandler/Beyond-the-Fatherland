@@ -11,6 +11,9 @@ public class CharacterData : ScriptableObject {
     [Header("Character Model")]
     [SerializeField] GameObject characterPrefab;
 
+    [Header("Character Portrait")]
+    [SerializeField] Sprite characterPortrait;
+
     [Header("Character Type")]
     [SerializeField] CharacerType characerType;
 
@@ -19,6 +22,7 @@ public class CharacterData : ScriptableObject {
     [SerializeField] int baseHP;
     [SerializeField] int baseMP;
     [SerializeField] CharacterStats characterStats;
+    [SerializeField] Stat primaryStat;
 
     // Make sure to check if the character type is BOSS
     public Stats GetStatsAtLevel(int level) {
@@ -40,6 +44,30 @@ public class CharacterData : ScriptableObject {
     public int GetMpAtLevel(int level) {
         return baseMP + (characterStats.MpGrowth * level - 1);
     }
+
+    public GameObject CharacterPrefab {
+        get {
+            return characterPrefab;
+        }
+    }
+
+    public Sprite CharacterPortrait {
+        get {
+            return characterPortrait;
+        }
+    }
+
+    public Stat PrimaryStat {
+        get {
+            return primaryStat;
+        }
+    }
+
+    public CharacerType CharacerType {
+        get {
+            return characerType;
+        }
+    } 
 
     // [Header("Abilities")]
     // Create List of Abilities
