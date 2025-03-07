@@ -23,14 +23,14 @@ public class ActionSlot : MonoBehaviour {
         }
     }
 
-    private GameObject characterInstance;
-    public GameObject CharacterInstance {
-        get {
-            return characterInstance;
-        } set {
-            characterInstance = value;
-        }
-    }
+    // private BattleUnit _targetBattleUnit;
+    // public BattleUnit TargetBattleUnit{
+    //     get {
+    //         return _targetBattleUnit;
+    //     } set {
+    //         _targetBattleUnit= value;
+    //     }
+    // }
 
     public bool IsOccupied { get; set; }
 
@@ -38,7 +38,7 @@ public class ActionSlot : MonoBehaviour {
         battleAction.User = null;
         battleAction.Target = null;
         battleAction.Type = ActionType.None;
-        characterInstance = null;
+        // _targetBattleUnit = null;
         IsOccupied = false;
 
         characterPortrait.SetActive(false);

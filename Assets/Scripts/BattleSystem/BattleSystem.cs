@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
-using Unity.VisualScripting;
 using TMPro;
 
 public enum BattleState {
@@ -28,17 +27,9 @@ public enum ActionType {
 } 
 
 public struct BattleAction {
-    // public BattleAction(ActionType type, Character user, Character enemy) {
-    //     Type = type;
-    //     User = user;
-    //     Enemy = enemy;
-    // }
-
     public ActionType Type;
-    public Character User;
-    public Character Target;
-
-    // ability
+    public BattleUnit User;
+    public BattleUnit Target;
 }
 
 public class BattleSystem : MonoBehaviour {
@@ -55,19 +46,18 @@ public class BattleSystem : MonoBehaviour {
     [SerializeField] Material enemyOutline;
     [SerializeField] TextMeshProUGUI actionPointText;
 
-    private List<Character> playerParty;
-    private List<Character> encounterParty; 
+    private List<BattleUnit> playerUnits;
+    private List<BattleUnit> enemyUnits;
 
-    private List<GameObject> encounterIntances;
-    private List<GameObject> partyInstances;
+    private List<Character> playerCharacters;
+    private List<Character> enemyCharacters;
 
     private BattleState state;
     private BattleState prevState;
 
     private BattleAction currentAction;
-    private GameObject currentSelectedCharacter;
+    private BattleUnit currentSelectedPlayerUnit;
 
-    private GameObject currentTargetInstance;
     private bool isSelectingEnemy = true;
     private int currentTargetIndex = 0;
     private GameObject lastSelectedTarget = null;
@@ -84,41 +74,42 @@ public class BattleSystem : MonoBehaviour {
     }
 
     public void StartBattle() {
-        // initalize party and enemies stats
-        playerParty = BattleManager.Instance.PlayerPartyList; 
-        encounterParty = BattleManager.Instance.EncounterPartyList;
-        actionPoints = 3;
-        actionPointText.text = $"{actionPoints}";
-        numEscapeAttempts = 0;
+        SetBattleData();
 
-        encounterIntances = new();
-        partyInstances = new();
-        // Play battle music;
         CallAfterDelay.Create(1.0f, () => {
             StartCoroutine(SetupBattle());
         });
     }
 
+    private void SetBattleData() {
+        playerCharacters = BattleManager.Instance.PlayerPartyList;
+        enemyCharacters = BattleManager.Instance.EncounterPartyList;
+
+        playerUnits = new();
+        enemyUnits = new();
+
+        actionPoints = 3;
+        actionPointText.text = $"{actionPoints}";
+
+        numEscapeAttempts = 0;
+    }
+
     public IEnumerator SetupBattle() {
         // initalize party and enemy prefabs in given positions
         // set hud data
-        for (int i = 0; i < playerParty.Count; i++) {
-            GameObject playerCharacterPrefab = playerParty[i].CharacterData.CharacterPrefab;
-            Transform playerCharacterPosition = partyPositions[i].transform;
-
-            characterHudList[i].SetData(playerParty[i]);
-
-            var partyInstance = Instantiate(playerCharacterPrefab, playerCharacterPosition);
-            partyInstances.Add(partyInstance);
+        for (int i = 0; i < playerCharacters.Count; i++) {
+            BattleUnit unit = new(playerCharacters[i], characterHudList[i]); 
+            unit.Setup();
+            unit.CurrentModelInstance = Instantiate(unit.Character.CharacterData.CharacterPrefab, partyPositions[i].transform);
+            playerUnits.Add(unit);
         }
 
-        for (int i = 0; i < encounterParty.Count; i++) {
-            GameObject encounterCharacterPrefab = encounterParty[i].CharacterData.CharacterPrefab;
-            Transform encounterCharacterPosition = encounterPositions[i].transform;
-
-            var encounterInstance = Instantiate(encounterCharacterPrefab, encounterCharacterPosition);
-            encounterIntances.Add(encounterInstance);
-            encounterParty[i].Init();
+        for (int i = 0; i < enemyCharacters.Count; i++) {
+            enemyCharacters[i].Init();
+            BattleUnit unit = new(enemyCharacters[i]); 
+            unit.Setup();
+            unit.CurrentModelInstance = Instantiate(unit.Character.CharacterData.CharacterPrefab, encounterPositions[i].transform);
+            enemyUnits.Add(unit);
         }
         LoadEnemyActionSlots();
         CharacterSelection();
@@ -172,13 +163,11 @@ public class BattleSystem : MonoBehaviour {
             }
         }
 
-        foreach (var enemy in encounterParty) {
-            List<(Character, GameObject)> validTargets = new();
-            for (int i = 0; i < playerParty.Count; i++) {
-                var partyCharacter = playerParty[i];
-                var partyInstance = partyInstances[i];
-                if (partyCharacter.IsAlive) {
-                    validTargets.Add((partyCharacter, partyInstance));
+        foreach (var enemyUnit in enemyUnits) {
+            List<BattleUnit> validTargets = new();
+            foreach (var playerUnit in playerUnits) {
+                if (playerUnit.Character.IsAlive) {
+                    validTargets.Add(playerUnit);
                 }
             }
 
@@ -191,21 +180,23 @@ public class BattleSystem : MonoBehaviour {
                 int randomListIndex = Random.Range(0, availableIndecies.Count);
                 int slotIndex = availableIndecies[randomListIndex];
 
-                int playerPartyIndex = Random.Range(0, validTargets.Count);
+                int playerCharacterIndex= Random.Range(0, validTargets.Count);
+
+                BattleUnit playerUnit = validTargets[playerCharacterIndex];
 
                 BattleAction action = new() {
                     Type = ActionType.Attack,
-                    User = enemy,
-                    Target = validTargets[playerPartyIndex].Item1,
+                    User = enemyUnit,
+                    Target = playerUnit,
                 };
 
                 ActionSlot actionSlot = actionSlots[slotIndex].GetComponent<ActionSlot>();
 
-                actionSlot.CharacterPortrait.GetComponent<Image>().sprite = enemy.CharacterData.CharacterPortrait;
+                actionSlot.CharacterPortrait.GetComponent<Image>().sprite = enemyUnit.Character.CharacterData.CharacterPortrait;
                 actionSlot.CharacterPortrait.SetActive(true);
                 actionSlot.BattleAction = action;
                 actionSlot.IsOccupied = true;
-                actionSlot.CharacterInstance = validTargets[playerPartyIndex].Item2;
+                // actionSlot.TargetBattleUnit = playerUnit;
 
                 availableIndecies.RemoveAt(randomListIndex);
             } else {
@@ -216,6 +207,7 @@ public class BattleSystem : MonoBehaviour {
         canRunRound = true;
     }
 
+    // State Functions
     void CharacterSelection() {
         prevState = state;
         state = BattleState.CharacterSelect;
@@ -227,15 +219,62 @@ public class BattleSystem : MonoBehaviour {
         }
     }
 
-    public void OnCharacterSelect(GameObject characterHud) {
-        currentSelectedCharacter = characterHud;
+    void ActionSelection() {
+        prevState = state;
+        state = BattleState.ActionSelection;
+        currentSelectedPlayerUnit.Hud.ActionPanel.SetActive(true);
+        currentSelectedPlayerUnit.Hud.ActionPanel.transform.GetChild(1).gameObject.GetComponent<Button>().Select();
+    }
+
+    void TargetSelection(BattleAction battleAction) {
+        prevState = state;
+        state = BattleState.TargetSelection;
+        currentAction = battleAction;
+
+        if (enemyUnits.Count > 0) {
+            isSelectingEnemy = true;
+            currentTargetIndex = 0;
+        } else if (playerUnits.Count > 0) {
+            isSelectingEnemy = false;
+            currentTargetIndex = 0;
+        }
+        UpdateTargetIndicator();
+    }
+
+    void ActionSlotSelection(BattleAction battleAction) {
+        prevState = state;
+        state = BattleState.ActionSlotSelection;
+        currentAction = battleAction;
+
+        StartCoroutine(DelayActionSlotSelection());
+
+        foreach (var slot in actionSlots) {
+            slot.GetComponent<ActionSlot>().DisableLeftRightNav();
+        }
+    }
+
+    void BattleOver(bool won) {
+        prevState = state;
+        state = BattleState.BattleOver;
+
+        foreach(var playerUnit in playerUnits) {
+            Destroy(playerUnit.CurrentModelInstance);
+        }
+        GameManager.Instance.GameState = GameState.FreeRoam;
+        BattleManager.Instance.EndBattle();
+    }
+
+
+    // Button Input Functions
+    public void OnCharacterSelect(int playerCharacterIndex) {
+        currentSelectedPlayerUnit = playerUnits[playerCharacterIndex];
         if (actionPoints <= 0) {
-            currentSelectedCharacter = null;
+            currentSelectedPlayerUnit = null;
             Debug.Log(actionPoints);
             return;
         }
 
-        if (!currentSelectedCharacter.GetComponent<CharacterHud>().Character.IsAlive) {
+        if (!currentSelectedPlayerUnit.Character.IsAlive) {
             Debug.Log("bro is dead...");
             return;
         }
@@ -249,33 +288,29 @@ public class BattleSystem : MonoBehaviour {
                 // TargetSelection();
                 break;
             default:
-                currentSelectedCharacter = null;
+                currentSelectedPlayerUnit = null;
                 Debug.Log("Default, no state match");
                 break;
         }
     }    
 
-    void ActionSelection() {
-        prevState = state;
-        state = BattleState.ActionSelection;
-        GameObject actionPanel = currentSelectedCharacter.transform.GetChild(4).gameObject;
-        actionPanel.SetActive(true);
-        actionPanel.transform.GetChild(1).gameObject.GetComponent<Button>().Select();
-    }
-
-    void TargetSelection(BattleAction battleAction) {
-        prevState = state;
-        state = BattleState.TargetSelection;
-        currentAction = battleAction;
-
-        if (encounterIntances.Count > 0) {
-            isSelectingEnemy = true;
-            currentTargetIndex = 0;
-        } else if (partyInstances.Count > 0) {
-            isSelectingEnemy = false;
-            currentTargetIndex = 0;
+    public void OnActionSelection(string actionType) {
+        BattleAction battleAction = new();
+        MusicManager.Instance.PlaySound("MenuConfirm");
+        switch (actionType) {
+            case "attack":
+                battleAction.Type = ActionType.Attack;
+                battleAction.User = currentSelectedPlayerUnit;
+                TargetSelection(battleAction);
+                break; 
+            case "run":
+                battleAction.Type = ActionType.Run;
+                battleAction.User = currentSelectedPlayerUnit;
+                ActionSlotSelection(battleAction);
+                break;
         }
-        UpdateTargetIndicator();
+
+        currentSelectedPlayerUnit.Hud.ActionPanel.SetActive(false);
     }
 
     public void OnTargetNavigate(InputAction.CallbackContext context) {
@@ -299,13 +334,13 @@ public class BattleSystem : MonoBehaviour {
             // }
 
             if (input.x > 0.5f) {
-                List<GameObject> currentList = isSelectingEnemy ? encounterIntances : partyInstances;
+                List<BattleUnit> currentList = isSelectingEnemy ? enemyUnits : playerUnits;
                 if (currentList.Count > 0) {
                     currentTargetIndex = (currentTargetIndex + 1) % currentList.Count;
                     UpdateTargetIndicator();
                 }
             } else if (input.x < -0.5f) {
-                List<GameObject> currentList = isSelectingEnemy ? encounterIntances : partyInstances;
+                List<BattleUnit> currentList = isSelectingEnemy ? enemyUnits : playerUnits;
                 if (currentList.Count > 0) {
                     currentTargetIndex = (currentTargetIndex - 1 + currentList.Count) % currentList.Count;
                     UpdateTargetIndicator();
@@ -322,10 +357,10 @@ public class BattleSystem : MonoBehaviour {
     } 
 
     void UpdateTargetIndicator() {
-        List<GameObject> currentTargetList = isSelectingEnemy ? encounterIntances : partyInstances;
+        List<BattleUnit> currentTargetList = isSelectingEnemy ? enemyUnits: playerUnits;
         if (currentTargetList.Count < 0) return;
 
-        GameObject currentTarget = currentTargetList[currentTargetIndex];
+        GameObject currentTarget = currentTargetList[currentTargetIndex].CurrentModelInstance;
 
         if (lastSelectedTarget != null && lastSelectedTarget != currentTarget) {
             lastSelectedTarget.GetComponent<MeshRenderer>().materials[^1].SetFloat("_OutlineThickness", 0f);
@@ -336,55 +371,17 @@ public class BattleSystem : MonoBehaviour {
 
     public void OnTargetSelected(InputAction.CallbackContext  context) {
         if (context.started && state == BattleState.TargetSelection) {
-            List<Character> currentList = isSelectingEnemy ? encounterParty : playerParty;
-            List<GameObject> currentInstanceList = isSelectingEnemy ? encounterIntances : partyInstances;
+            List<BattleUnit> currentList = isSelectingEnemy ? enemyUnits : playerUnits;
 
             if (currentList.Count == 0) return;
             if (currentAction.Type == ActionType.Attack && !isSelectingEnemy) return;
 
             MusicManager.Instance.PlaySound("MenuConfirm");
-            currentTargetInstance = currentInstanceList[currentTargetIndex];
-            Character selectedCharacter = currentList[currentTargetIndex];
-            currentAction.Target = selectedCharacter;
+
+            currentAction.Target = currentList[currentTargetIndex]; 
+
             ActionSlotSelection(currentAction);
         }
-    }
-
-    public void OnActionSelection(string actionType) {
-        BattleAction battleAction = new();
-        MusicManager.Instance.PlaySound("MenuConfirm");
-        switch (actionType) {
-            case "attack":
-                battleAction.Type = ActionType.Attack;
-                battleAction.User = currentSelectedCharacter.GetComponent<CharacterHud>().Character;
-                TargetSelection(battleAction);
-                break; 
-            case "run":
-                battleAction.Type = ActionType.Run;
-                battleAction.User = currentSelectedCharacter.GetComponent<CharacterHud>().Character;
-                ActionSlotSelection(battleAction);
-                break;
-        }
-        GameObject actionPanel = currentSelectedCharacter.transform.GetChild(4).gameObject;
-        actionPanel.SetActive(false);
-    }
-
-    void ActionSlotSelection(BattleAction battleAction) {
-        prevState = state;
-        state = BattleState.ActionSlotSelection;
-        currentAction = battleAction;
-
-        StartCoroutine(DelayActionSlotSelection());
-
-        foreach (var slot in actionSlots) {
-            slot.GetComponent<ActionSlot>().DisableLeftRightNav();
-        }
-    }
-
-    IEnumerator DelayActionSlotSelection() {
-        EventSystem.current.SetSelectedGameObject(null);
-        yield return null;
-        actionSlots[0].Select();
     }
 
     public void OnActionSlotSelection(ActionSlot actionSlot) {
@@ -400,11 +397,12 @@ public class BattleSystem : MonoBehaviour {
 
         MusicManager.Instance.PlaySound("MenuConfirm");
         // Move this code into the ActionSlot class
-        actionSlot.CharacterPortrait.GetComponent<Image>().sprite = currentSelectedCharacter.GetComponent<CharacterHud>().Character.CharacterData.CharacterPortrait;
+        actionSlot.CharacterPortrait.GetComponent<Image>().sprite = currentSelectedPlayerUnit.Character.CharacterData.CharacterPortrait;
         actionSlot.CharacterPortrait.SetActive(true);
-        actionSlot.BattleAction = currentAction;
         actionSlot.IsOccupied = true;
-        actionSlot.CharacterInstance = currentTargetInstance;
+
+        actionSlot.BattleAction = currentAction;
+        // actionSlot.TargetBattleUnit = currentAction.Target;
 
         foreach (var slot in actionSlots) {
             slot.GetComponent<ActionSlot>().EnableLeftRightNav();
@@ -413,6 +411,12 @@ public class BattleSystem : MonoBehaviour {
         actionPoints--;
         actionPointText.text = $"{actionPoints}";
         CharacterSelection();
+    }
+
+    IEnumerator DelayActionSlotSelection() {
+        EventSystem.current.SetSelectedGameObject(null);
+        yield return null;
+        actionSlots[0].Select();
     }
 
     public void OnRoundRunSelected(InputAction.CallbackContext context) {
@@ -432,82 +436,7 @@ public class BattleSystem : MonoBehaviour {
 
     }
 
-    IEnumerator OnCharacterDeath(ActionSlot actionSlot) {
-        // get XP;
-        // death animation
-        // remove model from instanceList or mark as dead and skip over;
-        Debug.Log(actionSlot.BattleAction.Target);
-        Character dyingCharacter = actionSlot.BattleAction.Target;
-        GameObject dyingCharacterInstance = actionSlot.CharacterInstance;
-        if (dyingCharacter.CharacterData.CharacerType == CharacerType.Enemy) {
-            foreach(var encounter in encounterParty) {
-                if(encounter == dyingCharacter) {
-                    encounterParty.Remove(encounter);
-                    break;
-                }
-            }
-
-            foreach(var encounterInstance in encounterIntances) {
-                if(encounterInstance == dyingCharacterInstance) {
-                    encounterIntances.Remove(encounterInstance);
-                    break;
-                }
-            }
-        } else {
-            foreach(var partyCharacter in playerParty) {
-                if(partyCharacter == dyingCharacter) {
-                    encounterParty.Remove(partyCharacter);
-                    break;
-                }
-            }
-
-            foreach(var partyInstance in partyInstances) {
-                if(partyInstance == dyingCharacterInstance) {
-                    encounterIntances.Remove(partyInstance);
-                    break;
-                }
-            }
-        }
-
-        if (dyingCharacter.CharacterData.CharacerType == CharacerType.PartyMember) {
-            dyingCharacterInstance.transform.GetChild(2).GetComponent<SkinnedMeshRenderer>().materials[0].color = Color.red;
-        } else {
-            dyingCharacterInstance.GetComponent<MeshRenderer>().materials[0].color = Color.red;
-        }
-
-
-        if (encounterIntances.Count <= 0 || CheckIfPartyDead()) {
-            Debug.Log(partyInstances);
-            BattleOver(true);
-        }
-
-        yield return new WaitForEndOfFrame();
-
-    }
-
-    bool CheckIfPartyDead() {
-        int numDead = 0;
-        foreach(var partyMember in playerParty) {
-            if (!partyMember.IsAlive) {
-                numDead++;
-            }
-        }
-
-        return numDead == 3;
-    }
-
-    IEnumerator TryToEscape() {
-        numEscapeAttempts++;
-        float f = 5 * 128 / 7 + 30 * numEscapeAttempts;
-        f %= 256;
-
-        if (Random.Range(0, 256) < f) {
-            BattleOver(true);
-        }
-
-        yield return null;
-    }
-
+    // Running actions/battle
     IEnumerator RunRound() {
         prevState = state;
         state = BattleState.RunningRound;
@@ -518,7 +447,7 @@ public class BattleSystem : MonoBehaviour {
                 continue;
             }
 
-            if (!actionSlot.BattleAction.User.IsAlive) {
+            if (!actionSlot.BattleAction.User.Character.IsAlive) {
                 continue;
             }
 
@@ -549,11 +478,12 @@ public class BattleSystem : MonoBehaviour {
     }
 
     IEnumerator RunAttack(ActionSlot actionSlot) {
-        Character user = actionSlot.BattleAction.User;
-        Character target = actionSlot.BattleAction.Target;
-        int totalDamage = CalculateAttackDamage(user, target); 
-        target.DecreaseHP(totalDamage);
-        GameObject damageTextObject = actionSlot.CharacterInstance.transform.GetChild(0).gameObject;
+        BattleUnit user = actionSlot.BattleAction.User;
+        BattleUnit target = actionSlot.BattleAction.Target;
+        int totalDamage = CalculateAttackDamage(user.Character, target.Character); 
+        target.Character.DecreaseHP(totalDamage);
+
+        GameObject damageTextObject = actionSlot.BattleAction.Target.CurrentModelInstance.transform.GetChild(0).gameObject;
         damageTextObject.SetActive(true);
         damageTextObject.GetComponent<DamageText>().text.text = $"{totalDamage}";
 
@@ -561,8 +491,7 @@ public class BattleSystem : MonoBehaviour {
 
         damageTextObject.SetActive(false);
 
-        if (target.HP <= 0) {
-            Debug.Log(actionSlot.CharacterInstance);
+        if (target.Character.HP <= 0) {
             yield return StartCoroutine(OnCharacterDeath(actionSlot));
         }
 
@@ -576,14 +505,60 @@ public class BattleSystem : MonoBehaviour {
         return userDamage - targetDefense;
     }
 
-    void BattleOver(bool won) {
-        prevState = state;
-        state = BattleState.BattleOver;
+    IEnumerator TryToEscape() {
+        numEscapeAttempts++;
+        float f = 5 * 128 / 7 + 30 * numEscapeAttempts;
+        f %= 256;
 
-        foreach(var partyInstance in partyInstances) {
-            Destroy(partyInstance);
+        if (Random.Range(0, 256) < f) {
+            BattleOver(true);
         }
-        GameManager.Instance.GameState = GameState.FreeRoam;
-        BattleManager.Instance.EndBattle();
+
+        yield return null;
     }
+    // ability -> calculate damage, check for status effects, check if you can cast
+    // items -> calculate value, check for any status effects
+
+    IEnumerator OnCharacterDeath(ActionSlot actionSlot) {
+        // get XP;
+        // death animation
+        // remove model from instanceList or mark as dead and skip over;
+        BattleUnit dyingUnit = actionSlot.BattleAction.Target;
+        if (dyingUnit.Character.CharacterData.CharacerType == CharacerType.Enemy) {
+            dyingUnit.CurrentModelInstance.GetComponent<MeshRenderer>().materials[0].color = Color.red;
+            foreach(var enemyUnit in enemyUnits) {
+                if(enemyUnit == dyingUnit) {
+                    enemyUnits.Remove(enemyUnit);
+                    break;
+                }
+            }
+        } else {
+            dyingUnit.CurrentModelInstance.transform.GetChild(2).GetComponent<SkinnedMeshRenderer>().materials[0].color = Color.red;
+            foreach(var playerUnit in playerUnits) {
+                if(playerUnit == dyingUnit) {
+                    // playerUnits.Remove(playerUnit);
+                    playerUnit.Character.IsAlive = false;
+                    break;
+                }
+            }
+        }
+
+        if (enemyUnits.Count <= 0 || CheckIfPartyDead()) {
+            BattleOver(true);
+        }
+
+        yield return new WaitForEndOfFrame();
+    }
+
+    bool CheckIfPartyDead() {
+        int numDead = 0;
+        foreach(var playerUnit in playerUnits) {
+            if (!playerUnit.Character.IsAlive) {
+                numDead++;
+            }
+        }
+
+        return numDead == 3;
+    }
+
 }

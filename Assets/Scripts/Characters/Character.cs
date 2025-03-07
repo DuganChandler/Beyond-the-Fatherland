@@ -52,6 +52,9 @@ public class Character  {
         IsAlive = true;
     }
 
+
+
+
     public int CalculateBasicAttackDamage() {
         if (PrimaryStat == Stat.Strength) {
             return 10 * Stats.Strength;

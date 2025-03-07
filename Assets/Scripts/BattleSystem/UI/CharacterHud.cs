@@ -1,17 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class CharacterHud : MonoBehaviour {
     [SerializeField] TextMeshProUGUI nameText;
     [SerializeField] InfoBar hpBar;
     [SerializeField] InfoBar mpBar;
+    [SerializeField] GameObject actionPanel;
 
     private Character _character;
-    public Character Character {
+    
+    public bool IsAlive {
         get {
-            return _character;
+            return _character.IsAlive;
+        }
+    }
+
+    public GameObject ActionPanel {
+        get {
+            return actionPanel;
         }
     }
 
