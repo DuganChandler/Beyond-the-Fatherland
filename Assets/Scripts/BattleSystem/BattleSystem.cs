@@ -279,6 +279,11 @@ public class BattleSystem : MonoBehaviour {
             return;
         }
 
+        if (state != BattleState.CharacterSelect) {
+            Debug.Log("Not in the character select state brother");
+            return;
+        }
+
         MusicManager.Instance.PlaySound("MenuConfirm");
         switch (state) {
             case BattleState.CharacterSelect:
