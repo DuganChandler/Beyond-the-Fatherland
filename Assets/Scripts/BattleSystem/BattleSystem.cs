@@ -5,7 +5,6 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using TMPro;
-using Unity.VisualScripting;
 
 public enum BattleState {
     Start,
@@ -195,11 +194,12 @@ public class BattleSystem : MonoBehaviour {
 
         if (backAction != null) {
             Debug.Log("not null");
-            ChangeState(() => backAction());
+            backAction();
         }
     }
 
     private void ChangeState(System.Action stateChangeFunc) {
+        backAction = null;
         stateChangeFunc();
     }
 
@@ -261,6 +261,10 @@ public class BattleSystem : MonoBehaviour {
         prevState = state;
         state = BattleState.CharacterSelect;
         playerPortraits[0].Select();
+
+        foreach (var slot in actionSlots) {
+            slot.GetComponent<ActionSlot>().EnableLeftRightNav();
+        }
 
         if (hasRoundPassed) {
             LoadEnemyActionSlots();
@@ -336,13 +340,13 @@ public class BattleSystem : MonoBehaviour {
                 backAction = () => {
                     currentAction.Type = ActionType.None; 
                     currentAction.User = null;
-                    backAction = null;
+                    EventSystem.current.SetSelectedGameObject(null);
                     ChangeState(() => ActionSelection());
                 };
                 break;
             case BattleState.TargetSelection:
                 backAction = () => {
-                    backAction = null;
+                    EventSystem.current.SetSelectedGameObject(null);
                     ChangeState(() => TargetSelection());
                 };
                 break;
@@ -512,9 +516,6 @@ public class BattleSystem : MonoBehaviour {
         actionSlot.BattleAction = currentAction;
         // actionSlot.TargetBattleUnit = currentAction.Target;
 
-        foreach (var slot in actionSlots) {
-            slot.GetComponent<ActionSlot>().EnableLeftRightNav();
-        }
         canRunRound = true;
         actionPoints--;
         actionPointText.text = $"{actionPoints}";
