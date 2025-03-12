@@ -46,6 +46,8 @@ public class BattleSystem : MonoBehaviour {
     [SerializeField] Material enemyOutline;
     [SerializeField] TextMeshProUGUI actionPointText;
 
+    private System.Action backAction;
+
     private List<BattleUnit> playerUnits;
     private List<BattleUnit> enemyUnits;
 
@@ -112,7 +114,7 @@ public class BattleSystem : MonoBehaviour {
             enemyUnits.Add(unit);
         }
         LoadEnemyActionSlots();
-        CharacterSelection();
+        ChangeState(() => CharacterSelection());
         yield return null;
     }
 
@@ -152,6 +154,52 @@ public class BattleSystem : MonoBehaviour {
                 Debug.Log("BattleOver");
                 break;
         }
+    }
+    
+    public void OnBackSelected(InputAction.CallbackContext context) {
+        if (!context.started) {
+            return;
+        }
+
+        switch (state) {
+            case BattleState.Start:
+                Debug.Log($"Cannot go back in {state}");
+                return;
+            case BattleState.CharacterSelect:
+                Debug.Log($"Cannot go back in {state}");
+                return;
+            case BattleState.ActionSelection:
+                Debug.Log("ActionSelection");
+                break;
+            case BattleState.AbilitySelection:
+                Debug.Log("AbilitySelection");
+                break;
+            case BattleState.ItemSelection:
+                Debug.Log("ItemSelection");
+                break;
+            case BattleState.TargetSelection:
+                Debug.Log("TargetSelection");
+                break;
+            case BattleState.ActionSlotSelection:
+                Debug.Log("ActionSlotSelection");
+                break;
+            case BattleState.RunningRound:
+                Debug.Log($"Cannot go back in {state}");
+                return;
+            case BattleState.BattleOver:
+                Debug.Log("BattleOver");
+                break;
+        }
+
+        if (backAction != null) {
+            MusicManager.Instance.PlaySound("MenuBack");
+            backAction();
+        }
+    }
+
+    private void ChangeState(System.Action stateChangeFunc) {
+        backAction = null;
+        stateChangeFunc();
     }
 
     void LoadEnemyActionSlots() {
@@ -213,6 +261,10 @@ public class BattleSystem : MonoBehaviour {
         state = BattleState.CharacterSelect;
         playerPortraits[0].Select();
 
+        foreach (var slot in actionSlots) {
+            slot.GetComponent<ActionSlot>().EnableLeftRightNav();
+        }
+
         if (hasRoundPassed) {
             LoadEnemyActionSlots();
             hasRoundPassed = false;
@@ -222,14 +274,47 @@ public class BattleSystem : MonoBehaviour {
     void ActionSelection() {
         prevState = state;
         state = BattleState.ActionSelection;
+
+        backAction = () => {
+            currentSelectedPlayerUnit.Hud.ActionPanel.SetActive(false);
+            ChangeState(() => CharacterSelection());
+        };
+
         currentSelectedPlayerUnit.Hud.ActionPanel.SetActive(true);
         currentSelectedPlayerUnit.Hud.ActionPanel.transform.GetChild(1).gameObject.GetComponent<Button>().Select();
     }
 
-    void TargetSelection(BattleAction battleAction) {
+    void TargetSelection() {
         prevState = state;
         state = BattleState.TargetSelection;
-        currentAction = battleAction;
+        currentAction.Target = null;
+
+        switch (prevState) {
+            case BattleState.ActionSelection:
+                backAction = () => {
+                   currentAction.Type = ActionType.None; 
+                   currentAction.User = null;
+                   ChangeState(() => ActionSelection());
+                };
+                break;
+            case BattleState.ActionSlotSelection:
+                backAction = () => {
+                   currentAction.Type = ActionType.None; 
+                   currentAction.User = null;
+                   ChangeState(() => ActionSelection());
+                };
+                break;
+            case BattleState.AbilitySelection:
+                backAction = () => {
+
+                };
+                break;
+            case BattleState.ItemSelection:
+                backAction = () => {
+                    return;
+                };
+                break;
+        }
 
         if (enemyUnits.Count > 0) {
             isSelectingEnemy = true;
@@ -241,10 +326,26 @@ public class BattleSystem : MonoBehaviour {
         UpdateTargetIndicator();
     }
 
-    void ActionSlotSelection(BattleAction battleAction) {
+    void ActionSlotSelection() {
         prevState = state;
         state = BattleState.ActionSlotSelection;
-        currentAction = battleAction;
+
+        switch (prevState) {
+            case BattleState.ActionSelection:
+                backAction = () => {
+                    currentAction.Type = ActionType.None; 
+                    currentAction.User = null;
+                    EventSystem.current.SetSelectedGameObject(null);
+                    ChangeState(() => ActionSelection());
+                };
+                break;
+            case BattleState.TargetSelection:
+                backAction = () => {
+                    EventSystem.current.SetSelectedGameObject(null);
+                    ChangeState(() => TargetSelection());
+                };
+                break;
+        }
 
         StartCoroutine(DelayActionSlotSelection());
 
@@ -279,10 +380,15 @@ public class BattleSystem : MonoBehaviour {
             return;
         }
 
+        if (state != BattleState.CharacterSelect) {
+            Debug.Log("Not in the character select state brother");
+            return;
+        }
+
         MusicManager.Instance.PlaySound("MenuConfirm");
         switch (state) {
             case BattleState.CharacterSelect:
-                ActionSelection();                
+                ChangeState(() => ActionSelection());
                 break;
             case BattleState.TargetSelection:
                 // TargetSelection();
@@ -301,15 +407,16 @@ public class BattleSystem : MonoBehaviour {
             case "attack":
                 battleAction.Type = ActionType.Attack;
                 battleAction.User = currentSelectedPlayerUnit;
-                TargetSelection(battleAction);
+                currentAction = battleAction;
+                ChangeState(() => TargetSelection());
                 break; 
             case "run":
                 battleAction.Type = ActionType.Run;
                 battleAction.User = currentSelectedPlayerUnit;
-                ActionSlotSelection(battleAction);
+                currentAction = battleAction;
+                ChangeState(() => ActionSlotSelection());
                 break;
         }
-
         currentSelectedPlayerUnit.Hud.ActionPanel.SetActive(false);
     }
 
@@ -380,7 +487,7 @@ public class BattleSystem : MonoBehaviour {
 
             currentAction.Target = currentList[currentTargetIndex]; 
 
-            ActionSlotSelection(currentAction);
+            ChangeState(() => ActionSlotSelection());
         }
     }
 
@@ -404,19 +511,20 @@ public class BattleSystem : MonoBehaviour {
         actionSlot.BattleAction = currentAction;
         // actionSlot.TargetBattleUnit = currentAction.Target;
 
-        foreach (var slot in actionSlots) {
-            slot.GetComponent<ActionSlot>().EnableLeftRightNav();
-        }
         canRunRound = true;
         actionPoints--;
         actionPointText.text = $"{actionPoints}";
-        CharacterSelection();
+        ChangeState(() => CharacterSelection());
     }
 
     IEnumerator DelayActionSlotSelection() {
         EventSystem.current.SetSelectedGameObject(null);
         yield return null;
         actionSlots[0].Select();
+    }
+
+    IEnumerator DelayInput() {
+        yield return new WaitForEndOfFrame();
     }
 
     public void OnRoundRunSelected(InputAction.CallbackContext context) {
@@ -472,7 +580,7 @@ public class BattleSystem : MonoBehaviour {
             actionPointText.text = $"{actionPoints}";
             hasRoundPassed = true;
             numEscapeAttempts = 0;
-            CharacterSelection();
+            ChangeState(() => CharacterSelection());
         }
         yield return null;
     }
