@@ -1121,6 +1121,8 @@ MonoBehaviour:
   sounds:
   - soundName: MenuConfirm
     clip: {fileID: 8300000, guid: 5227c92a6aecb5c478eb382ebbfc7406, type: 3}
+  - soundName: MenuBack
+    clip: {fileID: 8300000, guid: 1583e74c21775aa4c81d40994b0efcb8, type: 3}
 --- !u!1 &1717201024
 GameObject:
   m_ObjectHideFlags: 0

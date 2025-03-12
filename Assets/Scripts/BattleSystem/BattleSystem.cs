@@ -161,7 +161,6 @@ public class BattleSystem : MonoBehaviour {
             return;
         }
 
-        Debug.Log(backAction);
         switch (state) {
             case BattleState.Start:
                 Debug.Log($"Cannot go back in {state}");
@@ -193,7 +192,7 @@ public class BattleSystem : MonoBehaviour {
         }
 
         if (backAction != null) {
-            Debug.Log("not null");
+            MusicManager.Instance.PlaySound("MenuBack");
             backAction();
         }
     }
@@ -276,10 +275,8 @@ public class BattleSystem : MonoBehaviour {
         prevState = state;
         state = BattleState.ActionSelection;
 
-        Debug.Log("aciton seelction selected");
         backAction = () => {
             currentSelectedPlayerUnit.Hud.ActionPanel.SetActive(false);
-            backAction = null;
             ChangeState(() => CharacterSelection());
         };
 
@@ -297,7 +294,6 @@ public class BattleSystem : MonoBehaviour {
                 backAction = () => {
                    currentAction.Type = ActionType.None; 
                    currentAction.User = null;
-                   backAction = null;
                    ChangeState(() => ActionSelection());
                 };
                 break;
@@ -305,7 +301,6 @@ public class BattleSystem : MonoBehaviour {
                 backAction = () => {
                    currentAction.Type = ActionType.None; 
                    currentAction.User = null;
-                   backAction = null;
                    ChangeState(() => ActionSelection());
                 };
                 break;
