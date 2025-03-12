@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -16,11 +13,9 @@ public class PlayerController : MonoBehaviour {
     private Vector3 lastPosition;
     private float distanceAccumulated = 0f;
 
-    private Vector2 moveInput;
+    private Vector3 moveInput;
     private Rigidbody rb;
     private CapsuleCollider capsuleCollider;
-
-
 
     void Start() {
         rb = GetComponent<Rigidbody>();
@@ -30,6 +25,7 @@ public class PlayerController : MonoBehaviour {
     }
 
     void Update() {
+        Rotate();
         CalculateDistanceTraveled();
         CheckRandomEncounter();
     }
@@ -38,14 +34,14 @@ public class PlayerController : MonoBehaviour {
        Run(); 
     }
 
-    private bool IsEncounterLayer() {
+    private (bool, GameObject) IsEncounterLayer() {
         RaycastHit hit;
 
         Debug.DrawRay(capsuleCollider.bounds.center, Vector3.down * 1f, Color.red);
         if (Physics.Raycast(capsuleCollider.bounds.center, Vector3.down, out hit, 1f, encounterLayer)) {
-            return true;
+            return (true, hit.collider.gameObject);
         }
-        return false;
+        return (false, null);
     }
 
     private void CalculateDistanceTraveled() {
@@ -56,13 +52,17 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void CheckRandomEncounter() {
-        if (!IsEncounterLayer()) {
+        var encounterLayer = IsEncounterLayer();
+        if (!encounterLayer.Item1) {
             distanceAccumulated = 0f;
             return;
         }
 
         if (distanceAccumulated >= distanceThreshhold) {
             if (Random.value <= encounterChance) {
+                BattleManager.Instance.EncounterPartyList = encounterLayer.Item2.GetComponent<EncounterMapArea>().GetRandomEncounter();
+                BattleManager.Instance.PlayerPartyList = GetComponent<PartyList>().CharacterList;
+                Debug.Log(GetComponent<PartyList>().CharacterList);
                 BattleManager.Instance.StartBattle();
             }
             distanceAccumulated = 0f;
@@ -70,12 +70,24 @@ public class PlayerController : MonoBehaviour {
     }
 
     void Run() {
-        Vector3 velocity = new Vector3(moveInput.x * walkSpeed, rb.velocity.y, moveInput.y * walkSpeed);
-        rb.velocity = transform.TransformDirection(velocity);
+        Quaternion rotation = Quaternion.Euler(0, Camera.main.transform.eulerAngles.y, 0);
+        Vector3 rotatedMoveInput = rotation * moveInput;
+        Vector3 velocity = new Vector3(rotatedMoveInput.x * walkSpeed, rb.velocity.y, rotatedMoveInput.z * walkSpeed);
+        rb.velocity = velocity;
+    }
+
+    void Rotate() {
+         if (moveInput.sqrMagnitude > 0.001f) {
+            Quaternion cameraYaw = Quaternion.Euler(0, Camera.main.transform.eulerAngles.y, 0);
+            Vector3 rotatedInput = cameraYaw * moveInput;
+            Quaternion targetRotation = Quaternion.LookRotation(rotatedInput, Vector3.up);
+            transform.rotation = targetRotation; //Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
+        }
     }
 
     // Invoked by unity event via the Unity Input System
     public void onMove(InputAction.CallbackContext context) {
         moveInput = context.ReadValue<Vector2>();
+        moveInput = new Vector3(moveInput.x, 0, moveInput.y);
     }
 }
