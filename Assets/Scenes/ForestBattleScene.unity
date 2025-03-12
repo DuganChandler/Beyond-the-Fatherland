@@ -4340,6 +4340,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 82561cd5-ed02-41b9-ac11-a8e5190638e9
     m_ActionName: Player/Execute[/XInputControllerWindows/buttonWest]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1218607545}
+        m_TargetAssemblyTypeName: BattleSystem, Assembly-CSharp
+        m_MethodName: OnBackSelected
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 4f60a980-d3e5-4bda-888f-70cf3a4ec0ce
+    m_ActionName: Player/Back[/Keyboard/b]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
