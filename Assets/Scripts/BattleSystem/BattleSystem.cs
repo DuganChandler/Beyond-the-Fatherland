@@ -45,6 +45,7 @@ public class BattleSystem : MonoBehaviour {
     [SerializeField] Material partyOutline;
     [SerializeField] Material enemyOutline;
     [SerializeField] TextMeshProUGUI actionPointText;
+    [SerializeField] PointerManager pointerManager;
 
     private System.Action backAction;
 
@@ -292,16 +293,19 @@ public class BattleSystem : MonoBehaviour {
         switch (prevState) {
             case BattleState.ActionSelection:
                 backAction = () => {
-                   currentAction.Type = ActionType.None; 
-                   currentAction.User = null;
-                   ChangeState(() => ActionSelection());
+                    currentAction.Type = ActionType.None; 
+                    currentAction.User = null;
+                    ClearTargetIndicator();
+                    ChangeState(() => ActionSelection());
                 };
                 break;
             case BattleState.ActionSlotSelection:
                 backAction = () => {
-                   currentAction.Type = ActionType.None; 
-                   currentAction.User = null;
-                   ChangeState(() => ActionSelection());
+                    currentAction.Type = ActionType.None; 
+                    currentAction.User = null;
+                    pointerManager.ClearPointers();
+                    ClearTargetIndicator();
+                    ChangeState(() => ActionSelection());
                 };
                 break;
             case BattleState.AbilitySelection:
@@ -336,12 +340,14 @@ public class BattleSystem : MonoBehaviour {
                     currentAction.Type = ActionType.None; 
                     currentAction.User = null;
                     EventSystem.current.SetSelectedGameObject(null);
+                    pointerManager.ClearPointers();
                     ChangeState(() => ActionSelection());
                 };
                 break;
             case BattleState.TargetSelection:
                 backAction = () => {
                     EventSystem.current.SetSelectedGameObject(null);
+                    pointerManager.ClearPointers();
                     ChangeState(() => TargetSelection());
                 };
                 break;
@@ -403,6 +409,7 @@ public class BattleSystem : MonoBehaviour {
     public void OnActionSelection(string actionType) {
         BattleAction battleAction = new();
         MusicManager.Instance.PlaySound("MenuConfirm");
+        EventSystem.current.SetSelectedGameObject(null);
         switch (actionType) {
             case "attack":
                 battleAction.Type = ActionType.Attack;
@@ -472,12 +479,23 @@ public class BattleSystem : MonoBehaviour {
         if (lastSelectedTarget != null && lastSelectedTarget != currentTarget) {
             lastSelectedTarget.GetComponent<MeshRenderer>().materials[^1].SetFloat("_OutlineThickness", 0f);
         }
-        currentTarget.GetComponent<MeshRenderer>().materials[^1].SetFloat("_OutlineThickness", 0.02f);
+        currentTarget.GetComponent<MeshRenderer>().materials[^1].SetFloat("_OutlineThickness", 0.04f);
+
+        pointerManager.TargetSingle(currentTarget.transform);
+
         lastSelectedTarget = currentTarget;
+    }
+
+    void ClearTargetIndicator() {
+        if (lastSelectedTarget) {
+            lastSelectedTarget.GetComponent<MeshRenderer>().materials[^1].SetFloat("_OutlineThickness", 0f);
+        }
+        pointerManager.ClearPointers();
     }
 
     public void OnTargetSelected(InputAction.CallbackContext  context) {
         if (context.started && state == BattleState.TargetSelection) {
+            ClearTargetIndicator();
             List<BattleUnit> currentList = isSelectingEnemy ? enemyUnits : playerUnits;
 
             if (currentList.Count == 0) return;
