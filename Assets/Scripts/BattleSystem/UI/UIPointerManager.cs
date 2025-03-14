@@ -21,7 +21,7 @@ public class UIPointerManager : MonoBehaviour {
                 if (activePointer == null) {
                     activePointer = Instantiate(pointerPrefab, canvas.transform);
                 }
-                activePointer.position = selectedRect.position + (Vector3)pointerOffset;
+                activePointer.position = selectedRect.Find("PointerPosition").transform.position;
             }
         } else {
             // Optionally clear the pointer if nothing is selected

@@ -557,6 +557,7 @@ public class BattleSystem : MonoBehaviour {
                 return;
             }
             MusicManager.Instance.PlaySound("MenuConfirm");
+            EventSystem.current.SetSelectedGameObject(null);
             StartCoroutine(RunRound());
         }
 
