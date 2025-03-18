@@ -197,7 +197,19 @@ MonoBehaviour:
   m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
   m_DeviceRegainedEvent:
     m_PersistentCalls:
       m_Calls: []
@@ -229,6 +241,14 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 82561cd5-ed02-41b9-ac11-a8e5190638e9
     m_ActionName: Player/Execute[/XInputControllerWindows2/buttonWest]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 4f60a980-d3e5-4bda-888f-70cf3a4ec0ce
+    m_ActionName: Player/Back[/Keyboard/b]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 40274fd6-96dc-4f96-b8a7-f18b0bf9c3f3
+    m_ActionName: Player/Pause[/Keyboard/escape]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
