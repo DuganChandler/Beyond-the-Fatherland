@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,6 +11,9 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float encounterChance = 0.3f;
     [SerializeField] private float distanceThreshhold = 10f;
     [SerializeField] private GameObject sceneObjects;
+
+    [Header("Interactable Settings")]
+    [SerializeField] private LayerMask interactableLayer; 
 
     private Vector3 lastPosition;
     private float distanceAccumulated = 0f;
@@ -26,8 +31,8 @@ public class PlayerController : MonoBehaviour {
 
     void Update() {
         Rotate();
-        CalculateDistanceTraveled();
-        CheckRandomEncounter();
+        // CalculateDistanceTraveled();
+        // CheckRandomEncounter();
     }
 
     void FixedUpdate() {
@@ -85,9 +90,27 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    IEnumerator Interact() {
+        var facingDirection = transform.forward;
+        var InteractPos = transform.position + facingDirection;
+
+        var collider = Physics.OverlapSphere(InteractPos, 0.3f, interactableLayer);
+        if (collider.Length > 0) {
+            Debug.Log("Interacted");
+            yield return collider[0].GetComponent<IInteractable>()?.Interact(transform);
+        }
+    }
+
     // Invoked by unity event via the Unity Input System
-    public void onMove(InputAction.CallbackContext context) {
+    public void OnMove(InputAction.CallbackContext context) {
         moveInput = context.ReadValue<Vector2>();
         moveInput = new Vector3(moveInput.x, 0, moveInput.y);
+    }
+
+    // need to check if in free roam
+    public void OnInteract(InputAction.CallbackContext context) {
+        if (context.started && GameManager.Instance.GameState == GameState.FreeRoam) {
+            StartCoroutine(Interact());
+        }
     }
 }

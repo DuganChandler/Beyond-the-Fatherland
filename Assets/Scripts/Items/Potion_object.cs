@@ -3,11 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+public enum ItemCategory {
+    Usable,
+    Story,
+}
+
 [CreateAssetMenu(fileName = "New Potion", menuName = "Items/Potion")]
 public class Potion : ScriptableObject {
 
     // Holds potion type
     public enum PotionType { Health, Mana, Both }
+
+    public ItemCategory category;
 
     [Header("Potion Details")]
     public string potionName;       //Name of potion
@@ -32,6 +39,7 @@ public class PotionEditor : Editor
         potion.potionDescription = EditorGUILayout.TextArea(potion.potionDescription, GUILayout.Height(60));
 
         potion.potionType = (Potion.PotionType)EditorGUILayout.EnumPopup("Potion Type", potion.potionType);
+        potion.category = (ItemCategory)EditorGUILayout.EnumPopup("Item Category", potion.category);
 
         // Show only relevant fields
         if (potion.potionType == Potion.PotionType.Health || potion.potionType == Potion.PotionType.Both)
