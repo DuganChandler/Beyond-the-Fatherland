@@ -55,6 +55,8 @@ public class BattleSystem : MonoBehaviour {
     private List<Character> playerCharacters;
     private List<Character> enemyCharacters;
 
+    private list<ItemSlots> itemList;
+
     private BattleState state;
     private BattleState prevState;
 
@@ -578,12 +580,20 @@ public class BattleSystem : MonoBehaviour {
                 continue;
             }
 
-            if (actionSlot.BattleAction.Type == ActionType.Attack) {
-                //attack
-                yield return StartCoroutine(RunAttack(actionSlot));
-            } else if (actionSlot.BattleAction.Type == ActionType.Run) {
-                yield return StartCoroutine(TryToEscape());
+            switch( actionSlot.BattleAction.Type) {
+
+                case ActionType.Attack:
+                    yield return (RunAttack(actionSlot));
+                case ActionType.Ability:
+
+                    break;
+                case ActionType.Item:
+                    yield return (RunItem(actionSlot));
+                case ActionType.Run:
+                    yield return (TryToEscape());
             }
+
+
         }
 
         if (state != BattleState.BattleOver) {
@@ -613,6 +623,27 @@ public class BattleSystem : MonoBehaviour {
         GameObject damageTextObject = actionSlot.BattleAction.Target.CurrentModelInstance.transform.GetChild(0).gameObject;
         damageTextObject.SetActive(true);
         damageTextObject.GetComponent<DamageText>().text.text = $"{totalDamage}";
+
+        yield return new WaitForSeconds(1f);
+
+        damageTextObject.SetActive(false);
+
+        if (target.Character.HP <= 0) {
+            yield return StartCoroutine(OnCharacterDeath(actionSlot));
+        }
+
+        yield return new WaitForEndOfFrame();
+    }
+
+    IEnumerator RunItem(ActionSlot actionSlot) {
+        BattleUnit user = actionSlot.BattleAction.User;
+        BattleUnit target = actionSlot.BattleAction.Target;
+        
+        //Check for Health
+    
+        //check for Mana
+
+        //check for Condition
 
         yield return new WaitForSeconds(1f);
 

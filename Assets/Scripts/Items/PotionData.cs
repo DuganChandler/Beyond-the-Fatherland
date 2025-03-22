@@ -4,10 +4,16 @@ using UnityEngine;
 using UnityEditor;
 
 [CreateAssetMenu(fileName = "New Potion", menuName = "Items/Potion")]
-public class Potion : ScriptableObject {
+public class PotionData : ScriptableObject {
 
     // Holds potion type
-    public enum PotionType { Health, Mana, Both }
+    public enum PotionType { Health, Mana, Both, None }         //type of restoration
+
+    public enum Conditions {None, Poison, Confusion, Multi}     //Conditions
+
+    public enum TargetType {Enemy, Player, Both, None}          // target of effect
+
+    public enum ItemCategory { Usable, Story, Equipment, Key}   //type of item
 
     [Header("Potion Details")]
     public string potionName;       //Name of potion
@@ -15,10 +21,18 @@ public class Potion : ScriptableObject {
     [TextArea]
     public string potionDescription;    //text blurb about potion
     public PotionType potionType;       //Type of potion
-    public int restoreHP;               // value restored for HP
-    public int restoreMP;               // Value restored for MP
-}
+    public Conditions conditionsType;   //Does it effct condition
+    public TargetType targetType;       //Who is it used on
+    public ItemCategory itemType;       // type of item
+    public int HP;               // value restored for HP
+    public int MP;               // Value restored for MP
 
+
+    //public useItem() {
+
+    //}
+}
+/*
 [CustomEditor(typeof(Potion))]
 public class PotionEditor : Editor
 {
@@ -49,4 +63,4 @@ public class PotionEditor : Editor
             EditorUtility.SetDirty(potion);
         }
     }
-}
+}*/
