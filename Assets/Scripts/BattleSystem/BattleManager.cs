@@ -35,12 +35,15 @@ public class BattleManager : MonoBehaviour
             character.IsAlive = true;
         }
 
+        GameManager.Instance.GameState = GameState.Battle;
+
         MusicManager.Instance.PlayMusic("BattleTheme", 0.25f);
         ForestObjects.SetActive(false);
         SceneHelper.LoadScene("ForestBattleScene", true, true);
     }
 
     public void EndBattle() {
+        GameManager.Instance.GameState = GameState.FreeRoam;
         MusicManager.Instance.StopMusic();
         SceneHelper.UnloadScene("ForestBattleScene");
         CallAfterDelay.Create(1.0f, () => {

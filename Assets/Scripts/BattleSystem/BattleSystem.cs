@@ -87,7 +87,6 @@ public class BattleSystem : MonoBehaviour {
     private void SetBattleData() {
         playerCharacters = BattleManager.Instance.PlayerPartyList;
         enemyCharacters = BattleManager.Instance.EncounterPartyList;
-
         playerUnits = new();
         enemyUnits = new();
 
@@ -367,7 +366,6 @@ public class BattleSystem : MonoBehaviour {
         foreach(var playerUnit in playerUnits) {
             Destroy(playerUnit.CurrentModelInstance);
         }
-        GameManager.Instance.GameState = GameState.FreeRoam;
         BattleManager.Instance.EndBattle();
     }
 

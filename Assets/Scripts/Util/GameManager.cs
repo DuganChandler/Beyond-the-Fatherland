@@ -5,7 +5,8 @@ using UnityEngine;
 public enum GameState {
     FreeRoam,
     Battle,
-    Dialogue
+    Dialog,
+    Busy
 }
 
 public class GameManager : MonoBehaviour {
@@ -22,6 +23,7 @@ public class GameManager : MonoBehaviour {
     }
 
     public GameState GameState { get; set; } = GameState.FreeRoam;
+    public bool inDialog { get; set; } = false;
     // Start is called before the first frame update
     void Start()
     {
