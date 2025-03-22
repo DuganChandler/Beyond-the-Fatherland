@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour {
         } 
     }
 
-    public GameState GameState { get; set; }
+    public GameState GameState { get; set; } = GameState.FreeRoam;
     // Start is called before the first frame update
     void Start()
     {
