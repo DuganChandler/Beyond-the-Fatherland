@@ -9,7 +9,6 @@ public struct DialogLine {
     public Sprite portrait;
 } 
 
-
 [System.Serializable]
 public class Dialog {
     [SerializeField] List<DialogLine> dialogLines;
