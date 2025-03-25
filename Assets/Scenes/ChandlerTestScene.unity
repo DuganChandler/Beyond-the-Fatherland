@@ -1451,7 +1451,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a25fc69e99d8af4faaaafc0e5083b21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  item: {fileID: 11400000, guid: b83c0fcc9206a454e8a0c4fcc6e84cd6, type: 2}
+  item: {fileID: 11400000, guid: 8e6883ccc451c9f4aa39c94135eaeb58, type: 2}
 --- !u!1 &714815946
 GameObject:
   m_ObjectHideFlags: 0
@@ -4369,6 +4369,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6181409006104254305, guid: 81be460877732894eb656eda11dc6f38,
         type: 3}
+      propertyPath: managedReferences[-2]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6181409006104254305, guid: 81be460877732894eb656eda11dc6f38,
+        type: 3}
       propertyPath: usableItems.Array.size
       value: 1
       objectReference: {fileID: 0}
@@ -4376,12 +4381,12 @@ PrefabInstance:
         type: 3}
       propertyPath: usableItems.Array.data[0].Item
       value: 
-      objectReference: {fileID: 11400000, guid: b83c0fcc9206a454e8a0c4fcc6e84cd6,
+      objectReference: {fileID: 11400000, guid: 8e6883ccc451c9f4aa39c94135eaeb58,
         type: 2}
     - target: {fileID: 6181409006104254305, guid: 81be460877732894eb656eda11dc6f38,
         type: 3}
       propertyPath: usableItems.Array.data[0].Count
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6367033555435711841, guid: 81be460877732894eb656eda11dc6f38,
         type: 3}

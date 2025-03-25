@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 public class Pickup : MonoBehaviour, IInteractable {
-    [SerializeField] Potion item;
+    [SerializeField] ItemBase item;
 
     public bool Used { get; set; } = false;
 

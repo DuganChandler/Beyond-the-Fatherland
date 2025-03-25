@@ -54,7 +54,7 @@ public class BookReader : MonoBehaviour {
             return;
         }
 
-        BookEntry entry = bookLibrary.books[index];
+        BookEntry entry = bookLibrary.books[index].BookEntry;
         StartCoroutine(LoadBookCoroutine(entry));
     }
 
