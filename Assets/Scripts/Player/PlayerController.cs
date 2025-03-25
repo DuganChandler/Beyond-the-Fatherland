@@ -32,8 +32,20 @@ public class PlayerController : MonoBehaviour {
 
     void Update() {
         Rotate();
-        // CalculateDistanceTraveled();
-        // CheckRandomEncounter();
+        CalculateDistanceTraveled();
+        CheckRandomEncounter();
+        // if (Input.GetKeyDown(KeyCode.B)) {
+        //     CircleFadeTransition shatterEffect = FindObjectOfType<CircleFadeTransition>();
+        //     if (shatterEffect != null) {
+        //         // Start the shatter effect and load the battle scene in its callback.
+        //         StartCoroutine(shatterEffect.TriggerTransition());
+        //         shatterEffect.onTransitionComplete = () => {
+        //             // Load the battle scene additively once the shatter is done.
+        //             BattleManager.Instance.StartBattle();
+        //             // SceneHelper.LoadScene("ForestBattleScene", true, true);
+        //         };
+        //     }
+        // }
     }
 
     void FixedUpdate() {
@@ -71,14 +83,14 @@ public class PlayerController : MonoBehaviour {
                 BattleManager.Instance.EncounterPartyList = encounterLayer.Item2.GetComponent<EncounterMapArea>().GetRandomEncounter();
                 BattleManager.Instance.PlayerPartyList = GetComponent<PartyList>().CharacterList;
                 Debug.Log(GetComponent<PartyList>().CharacterList);
-                BattleManager.Instance.StartBattle();
+                StartCoroutine(BattleManager.Instance.StartBattle());
             }
             distanceAccumulated = 0f;
         }
     }
 
     void Run() {
-        if (GameManager.Instance.inDialog) {
+        if (GameManager.Instance.inDialog || GameManager.Instance.GameState == GameState.Battle) {
             rb.velocity = Vector3.zero;
             return;
         }

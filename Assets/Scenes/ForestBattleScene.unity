@@ -2338,7 +2338,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 1
+  m_Intensity: 2
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -4453,7 +4453,7 @@ PrefabInstance:
     - target: {fileID: 3252714026578061042, guid: bb4a603814ef88742b1f5cde3960b567,
         type: 3}
       propertyPath: field of view
-      value: 40
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 3252714026578061042, guid: bb4a603814ef88742b1f5cde3960b567,
         type: 3}
@@ -4683,17 +4683,17 @@ PrefabInstance:
     - target: {fileID: 7115525998273895744, guid: bb4a603814ef88742b1f5cde3960b567,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -12.247449
+      value: -18.371174
       objectReference: {fileID: 0}
     - target: {fileID: 7115525998273895744, guid: bb4a603814ef88742b1f5cde3960b567,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 12.540002
+      value: 15.000002
       objectReference: {fileID: 0}
     - target: {fileID: 7115525998273895744, guid: bb4a603814ef88742b1f5cde3960b567,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -12.247448
+      value: -18.371172
       objectReference: {fileID: 0}
     - target: {fileID: 7115525998273895744, guid: bb4a603814ef88742b1f5cde3960b567,
         type: 3}
@@ -5628,7 +5628,6 @@ GameObject:
   - component: {fileID: 1967189435}
   - component: {fileID: 1967189434}
   - component: {fileID: 1967189433}
-  - component: {fileID: 1967189432}
   m_Layer: 5
   m_Name: BattleCanvas
   m_TagString: Untagged
@@ -5656,18 +5655,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &1967189432
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1967189430}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b52ef921d7a07c14693ecc5e324bc2ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1967189433
 MonoBehaviour:
   m_ObjectHideFlags: 0

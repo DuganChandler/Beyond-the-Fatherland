@@ -72,16 +72,13 @@ public class BattleSystem : MonoBehaviour {
 
     private int numEscapeAttempts;
 
-    void OnEnable() {
+    void Awake() {
         StartBattle(); 
     }
 
     public void StartBattle() {
         SetBattleData();
-
-        CallAfterDelay.Create(1.0f, () => {
-            StartCoroutine(SetupBattle());
-        });
+        StartCoroutine(SetupBattle());
     }
 
     private void SetBattleData() {
@@ -97,6 +94,8 @@ public class BattleSystem : MonoBehaviour {
     }
 
     public IEnumerator SetupBattle() {
+        yield return new WaitForEndOfFrame(); 
+        MusicManager.Instance.PlayMusic("BattleTheme", 0.25f);
         // initalize party and enemy prefabs in given positions
         // set hud data
         for (int i = 0; i < playerCharacters.Count; i++) {
