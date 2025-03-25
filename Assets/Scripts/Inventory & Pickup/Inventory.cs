@@ -4,7 +4,7 @@ using UnityEngine;
 
 [Serializable]
 public struct ItemSlot {
-    public Potion Item;
+    public PotionData Item;
     public int Count;
 } 
 
@@ -22,7 +22,7 @@ public class Inventory : MonoBehaviour {
         return allItems[slotIndex];
     }
 
-    public void AddItem(Potion item, int count = 1) {
+    public void AddItem(PotionData item, int count = 1) {
         int itemCategory = (int)item.category;
         List<ItemSlot> currentSlotCategory = GetSlotsByCategory(itemCategory);
 
@@ -49,7 +49,7 @@ public class Inventory : MonoBehaviour {
         }
     }
 
-    public void RemoveItem(Potion item, int count = 1) {
+    public void RemoveItem(PotionData item, int count = 1) {
         int itemCategory = (int)item.category;
         List<ItemSlot> currentSlotCategory = GetSlotsByCategory(itemCategory);
 

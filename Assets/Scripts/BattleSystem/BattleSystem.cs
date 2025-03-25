@@ -30,6 +30,7 @@ public struct BattleAction {
     public ActionType Type;
     public BattleUnit User;
     public BattleUnit Target;
+    public ItemSlot item;
 }
 
 public class BattleSystem : MonoBehaviour {
@@ -55,7 +56,7 @@ public class BattleSystem : MonoBehaviour {
     private List<Character> playerCharacters;
     private List<Character> enemyCharacters;
 
-    private list<ItemSlots> itemList;
+    //private list<ItemSlots> itemList;
 
     private BattleState state;
     private BattleState prevState;
@@ -419,6 +420,13 @@ public class BattleSystem : MonoBehaviour {
                 currentAction = battleAction;
                 ChangeState(() => TargetSelection());
                 break; 
+            case "item":        //set up item interaction
+                battleAction.Type = ActionType.Item;
+                battleAction.User = currentSelectedPlayerUnit;
+                
+                currentAction = battleAction;
+                ChangeState(() => TargetSelection());
+                break;
             case "run":
                 battleAction.Type = ActionType.Run;
                 battleAction.User = currentSelectedPlayerUnit;
@@ -584,13 +592,16 @@ public class BattleSystem : MonoBehaviour {
 
                 case ActionType.Attack:
                     yield return (RunAttack(actionSlot));
+                    break;
                 case ActionType.Ability:
 
                     break;
                 case ActionType.Item:
                     yield return (RunItem(actionSlot));
+                    break;
                 case ActionType.Run:
                     yield return (TryToEscape());
+                    break;
             }
 
 
@@ -645,15 +656,9 @@ public class BattleSystem : MonoBehaviour {
 
         //check for Condition
 
-        yield return new WaitForSeconds(1f);
+        //yield return new WaitForSeconds(1f);
 
-        damageTextObject.SetActive(false);
-
-        if (target.Character.HP <= 0) {
-            yield return StartCoroutine(OnCharacterDeath(actionSlot));
-        }
-
-        yield return new WaitForEndOfFrame();
+        //yield return new WaitForEndOfFrame();
     }
 
     int CalculateAttackDamage(Character user, Character target) {

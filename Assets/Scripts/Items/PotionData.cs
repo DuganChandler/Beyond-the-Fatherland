@@ -35,9 +35,6 @@ public class PotionData : ScriptableObject {
     public int MP;               // Value restored for MP
 
 
-    //public useItem() {
-
-    //}
 }
 /*
 [CustomEditor(typeof(Potion))]
