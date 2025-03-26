@@ -30,6 +30,7 @@ public class BattleManager : MonoBehaviour
 
     public List<Character> PlayerPartyList { get; set; }
     public List<Character> EncounterPartyList { get; set; }
+    public Inventory PlayerInventory { get; set; }
     public BattleState BattleState { get; set; }
 
     public IEnumerator StartBattle() {

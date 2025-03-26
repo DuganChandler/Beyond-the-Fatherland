@@ -9,13 +9,13 @@ public struct ItemSlot {
 } 
 
 public class Inventory : MonoBehaviour {
-    [SerializeField] List<ItemSlot> usableItems;
+    [SerializeField] List<ItemSlot> combatItems;
     [SerializeField] List<ItemSlot> storyItems;
 
     List<List<ItemSlot>> allItems;
 
     void Awake() {
-        allItems = new() { usableItems, storyItems };
+        allItems = new() { combatItems, storyItems };
     }
 
     public List<ItemSlot> GetSlotsByCategory(int slotIndex) {

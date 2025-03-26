@@ -1,24 +1,35 @@
 using UnityEngine;
 
 public enum ItemCategory {
-    Usable,
+    Combat,
     Story,
+}
+
+public enum ItemTarget {
+    Player,
+    Enemy
 }
 
 public abstract class ItemBase : ScriptableObject {
     [Header("Item Details")]
     [SerializeField] private  string itemName;
     [SerializeField] private ItemCategory itemCategory;
+    [SerializeField] private ItemTarget itemTarget;
     [SerializeField] private Sprite itemSprite;
 
     [TextArea]
     [SerializeField] private string itemDescription;
 
-
     public virtual ItemCategory ItemCategory { 
         get {
             return itemCategory;
         } 
+    }
+
+    public virtual ItemTarget ItemTarget {
+        get {
+            return itemTarget;
+        }
     }
 
     public virtual string ItemDescription { 
