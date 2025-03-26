@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class BattleUnit {
     public BattleUnit(Character character, CharacterHud hud = null) {

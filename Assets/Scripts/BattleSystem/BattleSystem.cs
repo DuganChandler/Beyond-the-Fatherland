@@ -30,6 +30,7 @@ public struct BattleAction {
     public ActionType Type;
     public BattleUnit User;
     public BattleUnit Target;
+    public ItemSlot ItemSlot;
 }
 
 public class BattleSystem : MonoBehaviour {
@@ -37,6 +38,7 @@ public class BattleSystem : MonoBehaviour {
     [SerializeField] private List<GameObject> partyPositions;
     [SerializeField] private List<GameObject> encounterPositions;
     [SerializeField] private int actionPoints;
+    [SerializeField] private ItemUser itemUser;
 
     [Header("Battle UI")]
     [SerializeField] List<Button> playerPortraits; 
@@ -46,6 +48,8 @@ public class BattleSystem : MonoBehaviour {
     [SerializeField] Material enemyOutline;
     [SerializeField] TextMeshProUGUI actionPointText;
     [SerializeField] PointerManager pointerManager;
+    [SerializeField] ItemMenu itemMenu;
+    [SerializeField] GameObject ItemPanel;
 
     private System.Action backAction;
 
@@ -65,6 +69,8 @@ public class BattleSystem : MonoBehaviour {
     private int currentTargetIndex = 0;
     private GameObject lastSelectedTarget = null;
 
+    private Inventory playerInventory;
+
     private bool hasRoundPassed = false;
 
     private bool canNavigate = true;
@@ -72,24 +78,35 @@ public class BattleSystem : MonoBehaviour {
 
     private int numEscapeAttempts;
 
-    void OnEnable() {
+    void Awake() {
         StartBattle(); 
+    }
+
+    void OnEnable() {
+        Debug.Log(itemMenu);
+        if (itemMenu != null) {
+            itemMenu.OnItemSelected += HandleItemSelection;
+        } 
+    }
+
+    void OnDisable() {
+        if (itemMenu != null) {
+            itemMenu.OnItemSelected -= HandleItemSelection;
+        } 
     }
 
     public void StartBattle() {
         SetBattleData();
-
-        CallAfterDelay.Create(1.0f, () => {
-            StartCoroutine(SetupBattle());
-        });
+        StartCoroutine(SetupBattle());
     }
 
     private void SetBattleData() {
         playerCharacters = BattleManager.Instance.PlayerPartyList;
         enemyCharacters = BattleManager.Instance.EncounterPartyList;
-
         playerUnits = new();
         enemyUnits = new();
+
+        playerInventory = BattleManager.Instance.PlayerInventory;
 
         actionPoints = 3;
         actionPointText.text = $"{actionPoints}";
@@ -98,6 +115,8 @@ public class BattleSystem : MonoBehaviour {
     }
 
     public IEnumerator SetupBattle() {
+        yield return new WaitForEndOfFrame(); 
+        MusicManager.Instance.PlayMusic("BattleTheme", 0.25f);
         // initalize party and enemy prefabs in given positions
         // set hud data
         for (int i = 0; i < playerCharacters.Count; i++) {
@@ -245,7 +264,6 @@ public class BattleSystem : MonoBehaviour {
                 actionSlot.CharacterPortrait.SetActive(true);
                 actionSlot.BattleAction = action;
                 actionSlot.IsOccupied = true;
-                // actionSlot.TargetBattleUnit = playerUnit;
 
                 availableIndecies.RemoveAt(randomListIndex);
             } else {
@@ -285,7 +303,43 @@ public class BattleSystem : MonoBehaviour {
         currentSelectedPlayerUnit.Hud.ActionPanel.transform.GetChild(1).gameObject.GetComponent<Button>().Select();
     }
 
+    void ItemSelection() {
+        prevState = state;
+        state = BattleState.ItemSelection;
+
+        if (prevState == BattleState.ActionSelection) {
+            backAction = () => {
+                currentAction.Type = ActionType.None; 
+                currentAction.User = null;
+                ItemPanel.SetActive(false);
+                ChangeState(() => ActionSelection());
+            };
+        } else if (prevState == BattleState.TargetSelection) {
+            backAction = () => {
+                currentAction.Type = ActionType.None; 
+                currentAction.User = null;
+                ItemPanel.SetActive(false);
+                ChangeState(() => ActionSelection());
+            };
+        }
+
+        itemMenu.PopulateInventory(playerInventory);
+        ItemPanel.SetActive(true);
+    }
+
+    void HandleItemSelection(ItemSlot selectedSlot) {
+        Debug.Log("handle them items");
+        currentAction.ItemSlot = selectedSlot;
+        EventSystem.current.SetSelectedGameObject(null);
+        ItemPanel.SetActive(false);
+
+        playerInventory.RemoveItem(selectedSlot.Item);
+
+        ChangeState(() => TargetSelection());
+    }
+
     void TargetSelection() {
+        Debug.Log("we made it to target selection");
         prevState = state;
         state = BattleState.TargetSelection;
         currentAction.Target = null;
@@ -300,13 +354,28 @@ public class BattleSystem : MonoBehaviour {
                 };
                 break;
             case BattleState.ActionSlotSelection:
-                backAction = () => {
-                    currentAction.Type = ActionType.None; 
-                    currentAction.User = null;
-                    pointerManager.ClearPointers();
-                    ClearTargetIndicator();
-                    ChangeState(() => ActionSelection());
-                };
+                switch (currentAction.Type) {
+                    case ActionType.Ability:
+                        break;
+                    case ActionType.Item:
+                        backAction = () => {
+                            pointerManager.ClearPointers();
+                            ClearTargetIndicator();
+                            currentAction.ItemSlot.Item = null;
+                            currentAction.ItemSlot.Count = 0;
+                            ChangeState(() => ItemSelection());
+                        };
+                        break;
+                    default:
+                        backAction = () => {
+                            currentAction.Type = ActionType.None; 
+                            currentAction.User = null;
+                            pointerManager.ClearPointers();
+                            ClearTargetIndicator();
+                            ChangeState(() => ActionSelection());
+                        };
+                        break;
+                } 
                 break;
             case BattleState.AbilitySelection:
                 backAction = () => {
@@ -315,15 +384,20 @@ public class BattleSystem : MonoBehaviour {
                 break;
             case BattleState.ItemSelection:
                 backAction = () => {
-                    return;
+                    pointerManager.ClearPointers();
+                    ClearTargetIndicator();
+                    playerInventory.AddItem(currentAction.ItemSlot.Item);
+                    currentAction.ItemSlot.Item = null;
+                    currentAction.ItemSlot.Count = 0;
+                    ChangeState(() => ItemSelection());
                 };
                 break;
         }
 
-        if (enemyUnits.Count > 0) {
+        if (currentAction.ItemSlot.Item?.ItemTarget == ItemTarget.Enemy || currentAction.Type == ActionType.Attack) {
             isSelectingEnemy = true;
             currentTargetIndex = 0;
-        } else if (playerUnits.Count > 0) {
+        } else if (currentAction.ItemSlot.Item.ItemTarget == ItemTarget.Player) {
             isSelectingEnemy = false;
             currentTargetIndex = 0;
         }
@@ -367,7 +441,7 @@ public class BattleSystem : MonoBehaviour {
         foreach(var playerUnit in playerUnits) {
             Destroy(playerUnit.CurrentModelInstance);
         }
-        GameManager.Instance.GameState = GameState.FreeRoam;
+
         BattleManager.Instance.EndBattle();
     }
 
@@ -423,6 +497,12 @@ public class BattleSystem : MonoBehaviour {
                 currentAction = battleAction;
                 ChangeState(() => ActionSlotSelection());
                 break;
+            case "item":
+                battleAction.Type = ActionType.Item;
+                battleAction.User = currentSelectedPlayerUnit;
+                currentAction = battleAction;
+                ChangeState(() => ItemSelection());
+                break;
         }
         currentSelectedPlayerUnit.Hud.ActionPanel.SetActive(false);
     }
@@ -433,20 +513,6 @@ public class BattleSystem : MonoBehaviour {
         Vector2 input = context.ReadValue<Vector2>();
 
         if (canNavigate && (Mathf.Abs(input.x) > 0.5f || Mathf.Abs(input.y) > 0.5f)) {
-            // if (input.y > 0.5f) {
-            //     if (!isSelectingEnemy && encounterIntances.Count > 0) {
-            //         isSelectingEnemy = true;
-            //         currentTargetIndex = Mathf.Min(currentTargetIndex, encounterIntances.Count - 1);
-            //         UpdateTargetIndicator();
-            //     }
-            // } else if (input.y < -0.5f) {
-            //     if (isSelectingEnemy && partyInstances.Count > 0) {
-            //         isSelectingEnemy = false;
-            //         currentTargetIndex = Mathf.Min(currentTargetIndex, partyInstances.Count - 1);
-            //         UpdateTargetIndicator();
-            //     }
-            // }
-
             if (input.x > 0.5f) {
                 List<BattleUnit> currentList = isSelectingEnemy ? enemyUnits : playerUnits;
                 if (currentList.Count > 0) {
@@ -476,10 +542,10 @@ public class BattleSystem : MonoBehaviour {
 
         GameObject currentTarget = currentTargetList[currentTargetIndex].CurrentModelInstance;
 
-        if (lastSelectedTarget != null && lastSelectedTarget != currentTarget) {
-            lastSelectedTarget.GetComponent<MeshRenderer>().materials[^1].SetFloat("_OutlineThickness", 0f);
-        }
-        currentTarget.GetComponent<MeshRenderer>().materials[^1].SetFloat("_OutlineThickness", 0.04f);
+        // if (lastSelectedTarget != null && lastSelectedTarget != currentTarget) {
+        //     lastSelectedTarget.GetComponent<MeshRenderer>().materials[^1].SetFloat("_OutlineThickness", 0f);
+        // }
+        // currentTarget.GetComponent<MeshRenderer>().materials[^1].SetFloat("_OutlineThickness", 0.04f);
 
         pointerManager.TargetSingle(currentTarget.transform);
 
@@ -487,9 +553,9 @@ public class BattleSystem : MonoBehaviour {
     }
 
     void ClearTargetIndicator() {
-        if (lastSelectedTarget) {
-            lastSelectedTarget.GetComponent<MeshRenderer>().materials[^1].SetFloat("_OutlineThickness", 0f);
-        }
+        // if (lastSelectedTarget) {
+        //     lastSelectedTarget.GetComponent<MeshRenderer>().materials[^1].SetFloat("_OutlineThickness", 0f);
+        // }
         pointerManager.ClearPointers();
     }
 
@@ -578,11 +644,16 @@ public class BattleSystem : MonoBehaviour {
                 continue;
             }
 
-            if (actionSlot.BattleAction.Type == ActionType.Attack) {
-                //attack
-                yield return StartCoroutine(RunAttack(actionSlot));
-            } else if (actionSlot.BattleAction.Type == ActionType.Run) {
-                yield return StartCoroutine(TryToEscape());
+            switch (actionSlot.BattleAction.Type) {
+                case ActionType.Attack:
+                    yield return StartCoroutine(RunAttack(actionSlot));
+                    break;
+                case ActionType.Run:
+                    yield return StartCoroutine(TryToEscape());
+                    break;
+                case ActionType.Item:
+                    yield return StartCoroutine(RunItem(actionSlot));
+                    break;
             }
         }
 
@@ -607,10 +678,19 @@ public class BattleSystem : MonoBehaviour {
     IEnumerator RunAttack(ActionSlot actionSlot) {
         BattleUnit user = actionSlot.BattleAction.User;
         BattleUnit target = actionSlot.BattleAction.Target;
+
+        if (!target.Character.IsAlive) {
+            foreach (var unit in enemyUnits) {
+                if (unit.Character.IsAlive) {
+                    target = unit;
+                }
+            }
+        }
+
         int totalDamage = CalculateAttackDamage(user.Character, target.Character); 
         target.Character.DecreaseHP(totalDamage);
 
-        GameObject damageTextObject = actionSlot.BattleAction.Target.CurrentModelInstance.transform.GetChild(0).gameObject;
+        GameObject damageTextObject = target.CurrentModelInstance.transform.GetChild(0).gameObject;
         damageTextObject.SetActive(true);
         damageTextObject.GetComponent<DamageText>().text.text = $"{totalDamage}";
 
@@ -645,6 +725,47 @@ public class BattleSystem : MonoBehaviour {
     }
     // ability -> calculate damage, check for status effects, check if you can cast
     // items -> calculate value, check for any status effects
+
+    IEnumerator RunItem(ActionSlot actionSlot) {
+        BattleUnit target = actionSlot.BattleAction.Target;
+        BattleUnit user = actionSlot.BattleAction.User;
+        CombatItemData currentItem = (CombatItemData)actionSlot.BattleAction.ItemSlot.Item;
+
+        BattleUnit newTarget = null;
+
+        if (!target.Character.IsAlive && currentItem.ItemTarget == ItemTarget.Player) {
+            newTarget = user;
+        } else if (!target.Character.IsAlive && currentItem.ItemTarget == ItemTarget.Enemy) {
+            foreach(var enemy in enemyUnits) {
+                newTarget = enemy;
+            }
+        }
+
+        GameObject damageTextObject = newTarget.CurrentModelInstance.transform.GetChild(0).gameObject;
+        yield return StartCoroutine(UseItem(currentItem, user.Character, newTarget.Character, damageTextObject));
+
+    }
+
+    public IEnumerator UseItem(CombatItemData item, Character user, Character target, GameObject damageTextObject) {
+        Character newTarget = target;
+
+        foreach (ItemEffectBase effect in item.effects) {
+            EffectInfo effectInfo = effect.ApplyEffect(user, newTarget);
+            damageTextObject.SetActive(true);
+            damageTextObject.GetComponent<DamageText>().text.text = $"{effectInfo.TextInformation}";
+            damageTextObject.GetComponent<DamageText>().text.color = effectInfo.TextColor;
+
+            yield return new WaitForSeconds(1f);
+
+            damageTextObject.SetActive(false);
+        }
+
+        damageTextObject.GetComponent<DamageText>().text.color = Color.white;
+
+        playerInventory.RemoveItem(item);
+
+        yield return new WaitForEndOfFrame();
+    }
 
     IEnumerator OnCharacterDeath(ActionSlot actionSlot) {
         // get XP;
