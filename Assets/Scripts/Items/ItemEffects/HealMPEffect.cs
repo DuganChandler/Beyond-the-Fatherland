@@ -4,7 +4,8 @@ using UnityEngine;
 public class HealMPEffect : ItemEffectBase {
     [SerializeField] private int healAmount;
 
-    public override void ApplyEffect(Character user, Character target) {
+    public override EffectInfo ApplyEffect(Character user, Character target) {
         target.IncreaseHP(healAmount);
+        return new EffectInfo();
     }
 }

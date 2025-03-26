@@ -390,10 +390,10 @@ public class BattleSystem : MonoBehaviour {
                 break;
         }
 
-        if (enemyUnits.Count > 0 && (currentAction.ItemSlot.Item.ItemTarget == ItemTarget.Enemy || currentAction.Type == ActionType.Attack)) {
+        if (currentAction.ItemSlot.Item?.ItemTarget == ItemTarget.Enemy || currentAction.Type == ActionType.Attack) {
             isSelectingEnemy = true;
             currentTargetIndex = 0;
-        } else if (playerUnits.Count > 0 && currentAction.ItemSlot.Item.ItemTarget == ItemTarget.Player) {
+        } else if (currentAction.ItemSlot.Item.ItemTarget == ItemTarget.Player) {
             isSelectingEnemy = false;
             currentTargetIndex = 0;
         }
@@ -509,20 +509,6 @@ public class BattleSystem : MonoBehaviour {
         Vector2 input = context.ReadValue<Vector2>();
 
         if (canNavigate && (Mathf.Abs(input.x) > 0.5f || Mathf.Abs(input.y) > 0.5f)) {
-            // if (input.y > 0.5f) {
-            //     if (!isSelectingEnemy && encounterIntances.Count > 0) {
-            //         isSelectingEnemy = true;
-            //         currentTargetIndex = Mathf.Min(currentTargetIndex, encounterIntances.Count - 1);
-            //         UpdateTargetIndicator();
-            //     }
-            // } else if (input.y < -0.5f) {
-            //     if (isSelectingEnemy && partyInstances.Count > 0) {
-            //         isSelectingEnemy = false;
-            //         currentTargetIndex = Mathf.Min(currentTargetIndex, partyInstances.Count - 1);
-            //         UpdateTargetIndicator();
-            //     }
-            // }
-
             if (input.x > 0.5f) {
                 List<BattleUnit> currentList = isSelectingEnemy ? enemyUnits : playerUnits;
                 if (currentList.Count > 0) {
@@ -730,8 +716,24 @@ public class BattleSystem : MonoBehaviour {
     IEnumerator RunItem(ActionSlot actionSlot) {
         BattleUnit target = actionSlot.BattleAction.Target;
         CombatItemData currentItem = (CombatItemData)actionSlot.BattleAction.ItemSlot.Item;
-        yield return StartCoroutine(itemUser.UseItem(currentItem, null, target.Character));
-        yield return new WaitForSeconds(1f);
+        GameObject damageTextObject = actionSlot.BattleAction.Target.CurrentModelInstance.transform.GetChild(0).gameObject;
+        yield return StartCoroutine(UseItem(currentItem, null, target.Character, damageTextObject));
+    }
+
+    public IEnumerator UseItem(CombatItemData item, Character user, Character target, GameObject damageTextObject) {
+        foreach (ItemEffectBase effect in item.effects) {
+            EffectInfo effectInfo = effect.ApplyEffect(user, target);
+            damageTextObject.SetActive(true);
+            damageTextObject.GetComponent<DamageText>().text.text = $"{effectInfo.TextInformation}";
+            damageTextObject.GetComponent<DamageText>().text.color = effectInfo.TextColor;
+
+            yield return new WaitForSeconds(1f);
+
+            damageTextObject.SetActive(false);
+        }
+
+        damageTextObject.GetComponent<DamageText>().text.color = Color.white;
+
         yield return new WaitForEndOfFrame();
     }
 
