@@ -4,26 +4,26 @@ using UnityEngine;
 
 [Serializable]
 public struct ItemSlot {
-    public Potion Item;
+    public ItemBase Item;
     public int Count;
 } 
 
 public class Inventory : MonoBehaviour {
-    [SerializeField] List<ItemSlot> usableItems;
+    [SerializeField] List<ItemSlot> combatItems;
     [SerializeField] List<ItemSlot> storyItems;
 
     List<List<ItemSlot>> allItems;
 
     void Awake() {
-        allItems = new() { usableItems, storyItems };
+        allItems = new() { combatItems, storyItems };
     }
 
     public List<ItemSlot> GetSlotsByCategory(int slotIndex) {
         return allItems[slotIndex];
     }
 
-    public void AddItem(Potion item, int count = 1) {
-        int itemCategory = (int)item.category;
+    public void AddItem(ItemBase item, int count = 1) {
+        int itemCategory = (int)item.ItemCategory;
         List<ItemSlot> currentSlotCategory = GetSlotsByCategory(itemCategory);
 
         if (currentSlotCategory.Count == 0) {
@@ -36,7 +36,7 @@ public class Inventory : MonoBehaviour {
 
         for (int i = 0; i < currentSlotCategory.Count; ++i) {
             ItemSlot currentSlot = currentSlotCategory[i]; 
-            if (currentSlot.Item.name == item.name) {
+            if (currentSlot.Item.ItemName == item.ItemName) {
                 currentSlot.Count += count;
                 currentSlotCategory[i] = currentSlot;
             } else {
@@ -49,13 +49,13 @@ public class Inventory : MonoBehaviour {
         }
     }
 
-    public void RemoveItem(Potion item, int count = 1) {
-        int itemCategory = (int)item.category;
+    public void RemoveItem(ItemBase item, int count = 1) {
+        int itemCategory = (int)item.ItemCategory;
         List<ItemSlot> currentSlotCategory = GetSlotsByCategory(itemCategory);
 
         for (int i = 0; i < currentSlotCategory.Count; ++i) {
             ItemSlot currentSlot = currentSlotCategory[i]; 
-            if (currentSlot.Item.name == item.name) {
+            if (currentSlot.Item.ItemName == item.ItemName) {
                 currentSlot.Count -= count;
                 if (currentSlot.Count < 1) {
                     currentSlotCategory.RemoveAt(i);

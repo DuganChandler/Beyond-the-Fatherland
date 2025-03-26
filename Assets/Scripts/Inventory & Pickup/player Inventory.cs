@@ -1,9 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class playerInventory : MonoBehaviour
+public class PlayerInventory : MonoBehaviour
 {
     public List<InventorySlot> inventory = new List<InventorySlot>();  // Direct inventory list
 

@@ -1,7 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
 
 [System.Serializable]
@@ -51,9 +48,6 @@ public class Character  {
 
         IsAlive = true;
     }
-
-
-
 
     public int CalculateBasicAttackDamage() {
         if (PrimaryStat == Stat.Strength) {

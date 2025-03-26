@@ -1451,7 +1451,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a25fc69e99d8af4faaaafc0e5083b21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  item: {fileID: 11400000, guid: b83c0fcc9206a454e8a0c4fcc6e84cd6, type: 2}
+  item: {fileID: 11400000, guid: 8e6883ccc451c9f4aa39c94135eaeb58, type: 2}
 --- !u!1 &714815946
 GameObject:
   m_ObjectHideFlags: 0
@@ -4369,19 +4369,40 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6181409006104254305, guid: 81be460877732894eb656eda11dc6f38,
         type: 3}
+      propertyPath: managedReferences[-2]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6181409006104254305, guid: 81be460877732894eb656eda11dc6f38,
+        type: 3}
+      propertyPath: combatItems.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6181409006104254305, guid: 81be460877732894eb656eda11dc6f38,
+        type: 3}
       propertyPath: usableItems.Array.size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6181409006104254305, guid: 81be460877732894eb656eda11dc6f38,
         type: 3}
-      propertyPath: usableItems.Array.data[0].Item
+      propertyPath: combatItems.Array.data[0].Item
       value: 
-      objectReference: {fileID: 11400000, guid: b83c0fcc9206a454e8a0c4fcc6e84cd6,
+      objectReference: {fileID: 11400000, guid: 8e6883ccc451c9f4aa39c94135eaeb58,
         type: 2}
     - target: {fileID: 6181409006104254305, guid: 81be460877732894eb656eda11dc6f38,
         type: 3}
+      propertyPath: usableItems.Array.data[0].Item
+      value: 
+      objectReference: {fileID: 11400000, guid: 8e6883ccc451c9f4aa39c94135eaeb58,
+        type: 2}
+    - target: {fileID: 6181409006104254305, guid: 81be460877732894eb656eda11dc6f38,
+        type: 3}
+      propertyPath: combatItems.Array.data[0].Count
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6181409006104254305, guid: 81be460877732894eb656eda11dc6f38,
+        type: 3}
       propertyPath: usableItems.Array.data[0].Count
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6367033555435711841, guid: 81be460877732894eb656eda11dc6f38,
         type: 3}
@@ -4570,7 +4591,7 @@ PrefabInstance:
     - target: {fileID: 3252714026578061042, guid: bb4a603814ef88742b1f5cde3960b567,
         type: 3}
       propertyPath: field of view
-      value: 40
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 3252714026578061042, guid: bb4a603814ef88742b1f5cde3960b567,
         type: 3}
@@ -4800,17 +4821,17 @@ PrefabInstance:
     - target: {fileID: 7115525998273895744, guid: bb4a603814ef88742b1f5cde3960b567,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -12.247449
+      value: -18.371174
       objectReference: {fileID: 0}
     - target: {fileID: 7115525998273895744, guid: bb4a603814ef88742b1f5cde3960b567,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 12.540002
+      value: 15.000002
       objectReference: {fileID: 0}
     - target: {fileID: 7115525998273895744, guid: bb4a603814ef88742b1f5cde3960b567,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -12.247448
+      value: -18.371172
       objectReference: {fileID: 0}
     - target: {fileID: 7115525998273895744, guid: bb4a603814ef88742b1f5cde3960b567,
         type: 3}

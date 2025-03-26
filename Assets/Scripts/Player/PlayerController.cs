@@ -82,6 +82,7 @@ public class PlayerController : MonoBehaviour {
             if (Random.value <= encounterChance) {
                 BattleManager.Instance.EncounterPartyList = encounterLayer.Item2.GetComponent<EncounterMapArea>().GetRandomEncounter();
                 BattleManager.Instance.PlayerPartyList = GetComponent<PartyList>().CharacterList;
+                BattleManager.Instance.PlayerInventory = GetComponent<Inventory>();
                 Debug.Log(GetComponent<PartyList>().CharacterList);
                 StartCoroutine(BattleManager.Instance.StartBattle());
             }
