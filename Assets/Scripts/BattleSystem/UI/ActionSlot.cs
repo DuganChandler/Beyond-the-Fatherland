@@ -23,15 +23,6 @@ public class ActionSlot : MonoBehaviour {
         }
     }
 
-    // private BattleUnit _targetBattleUnit;
-    // public BattleUnit TargetBattleUnit{
-    //     get {
-    //         return _targetBattleUnit;
-    //     } set {
-    //         _targetBattleUnit= value;
-    //     }
-    // }
-
     public bool IsOccupied { get; set; }
 
     public void ResetData() {
@@ -56,12 +47,7 @@ public class ActionSlot : MonoBehaviour {
         actionSlotButton.navigation = nav;
     }
 
-    // Start is called before the first frame update
     void Start() {
         actionSlotButton = GetComponent<Button>();
-    }
-
-    // Update is called once per frame
-    void Update() {
     }
 }
