@@ -9,5 +9,6 @@ public enum CombatItemTargetVal {
 
 [CreateAssetMenu(fileName = "New Combat Item", menuName = "Items/Combat Item")]
 public class CombatItemData : ItemBase {
+    public bool canTargetDead;
     public List<ItemEffectBase> effects;
 }

@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using TMPro;
+using Unity.VisualScripting;
 
 public enum BattleState {
     Start,
@@ -678,10 +679,19 @@ public class BattleSystem : MonoBehaviour {
     IEnumerator RunAttack(ActionSlot actionSlot) {
         BattleUnit user = actionSlot.BattleAction.User;
         BattleUnit target = actionSlot.BattleAction.Target;
+
+        if (!target.Character.IsAlive) {
+            foreach (var unit in enemyUnits) {
+                if (unit.Character.IsAlive) {
+                    target = unit;
+                }
+            }
+        }
+
         int totalDamage = CalculateAttackDamage(user.Character, target.Character); 
         target.Character.DecreaseHP(totalDamage);
 
-        GameObject damageTextObject = actionSlot.BattleAction.Target.CurrentModelInstance.transform.GetChild(0).gameObject;
+        GameObject damageTextObject = target.CurrentModelInstance.transform.GetChild(0).gameObject;
         damageTextObject.SetActive(true);
         damageTextObject.GetComponent<DamageText>().text.text = $"{totalDamage}";
 
@@ -719,15 +729,29 @@ public class BattleSystem : MonoBehaviour {
 
     IEnumerator RunItem(ActionSlot actionSlot) {
         BattleUnit target = actionSlot.BattleAction.Target;
+        BattleUnit user = actionSlot.BattleAction.User;
         CombatItemData currentItem = (CombatItemData)actionSlot.BattleAction.ItemSlot.Item;
-        GameObject damageTextObject = actionSlot.BattleAction.Target.CurrentModelInstance.transform.GetChild(0).gameObject;
-        yield return StartCoroutine(UseItem(currentItem, null, target.Character, damageTextObject));
+
+        BattleUnit newTarget = null;
+
+        if (!target.Character.IsAlive && currentItem.ItemTarget == ItemTarget.Player) {
+            newTarget = user;
+        } else if (!target.Character.IsAlive && currentItem.ItemTarget == ItemTarget.Enemy) {
+            foreach(var enemy in enemyUnits) {
+                newTarget = enemy;
+            }
+        }
+
+        GameObject damageTextObject = newTarget.CurrentModelInstance.transform.GetChild(0).gameObject;
+        yield return StartCoroutine(UseItem(currentItem, user.Character, newTarget.Character, damageTextObject));
 
     }
 
     public IEnumerator UseItem(CombatItemData item, Character user, Character target, GameObject damageTextObject) {
+        Character newTarget = target;
+
         foreach (ItemEffectBase effect in item.effects) {
-            EffectInfo effectInfo = effect.ApplyEffect(user, target);
+            EffectInfo effectInfo = effect.ApplyEffect(user, newTarget);
             damageTextObject.SetActive(true);
             damageTextObject.GetComponent<DamageText>().text.text = $"{effectInfo.TextInformation}";
             damageTextObject.GetComponent<DamageText>().text.color = effectInfo.TextColor;
