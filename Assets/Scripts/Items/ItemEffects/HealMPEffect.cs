@@ -6,6 +6,6 @@ public class HealMPEffect : ItemEffectBase {
 
     public override EffectInfo ApplyEffect(Character user, Character target) {
         target.IncreaseHP(healAmount);
-        return new EffectInfo();
+        return new EffectInfo(Color.blue, $"{healAmount}");
     }
 }

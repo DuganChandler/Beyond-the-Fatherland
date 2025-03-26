@@ -29,11 +29,13 @@ public class ItemMenu : MonoBehaviour {
 
     // Clears existing buttons and repopulates the inventory menu.
     public void PopulateInventory(Inventory playerInventory) {
+        ClearButtons();
+
         var combatItems = playerInventory.GetSlotsByCategory((int)ItemCategory.Combat);
         if (combatItems.Count <= 0) {
             return;
         }
-        ClearButtons();
+
         // Iterate over each item slot in the player's inventory.
         int i = 0;
         foreach (ItemSlot slot in combatItems) {
@@ -43,6 +45,8 @@ public class ItemMenu : MonoBehaviour {
                 ItemSlot currentSlot = slot;
                 // Instantiate the button and set it as a child of the content panel.
                 GameObject buttonObj = Instantiate(buttonPrefab, contentPanel);
+                buttonObjects.Add(buttonObj);
+
                 ItemButton itemButton = buttonObj.GetComponent<ItemButton>();
 
                 itemButton.ItemName.text = currentSlot.Item.ItemName;

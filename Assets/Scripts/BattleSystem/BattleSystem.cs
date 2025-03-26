@@ -332,6 +332,9 @@ public class BattleSystem : MonoBehaviour {
         currentAction.ItemSlot = selectedSlot;
         EventSystem.current.SetSelectedGameObject(null);
         ItemPanel.SetActive(false);
+
+        playerInventory.RemoveItem(selectedSlot.Item);
+
         ChangeState(() => TargetSelection());
     }
 
@@ -383,6 +386,7 @@ public class BattleSystem : MonoBehaviour {
                 backAction = () => {
                     pointerManager.ClearPointers();
                     ClearTargetIndicator();
+                    playerInventory.AddItem(currentAction.ItemSlot.Item);
                     currentAction.ItemSlot.Item = null;
                     currentAction.ItemSlot.Count = 0;
                     ChangeState(() => ItemSelection());
@@ -718,6 +722,7 @@ public class BattleSystem : MonoBehaviour {
         CombatItemData currentItem = (CombatItemData)actionSlot.BattleAction.ItemSlot.Item;
         GameObject damageTextObject = actionSlot.BattleAction.Target.CurrentModelInstance.transform.GetChild(0).gameObject;
         yield return StartCoroutine(UseItem(currentItem, null, target.Character, damageTextObject));
+
     }
 
     public IEnumerator UseItem(CombatItemData item, Character user, Character target, GameObject damageTextObject) {
@@ -733,6 +738,8 @@ public class BattleSystem : MonoBehaviour {
         }
 
         damageTextObject.GetComponent<DamageText>().text.color = Color.white;
+
+        playerInventory.RemoveItem(item);
 
         yield return new WaitForEndOfFrame();
     }
