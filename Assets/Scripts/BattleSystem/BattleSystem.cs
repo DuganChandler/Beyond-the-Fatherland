@@ -72,22 +72,18 @@ public class BattleSystem : MonoBehaviour {
 
     private int numEscapeAttempts;
 
-    void OnEnable() {
+    void Awake() {
         StartBattle(); 
     }
 
     public void StartBattle() {
         SetBattleData();
-
-        CallAfterDelay.Create(1.0f, () => {
-            StartCoroutine(SetupBattle());
-        });
+        StartCoroutine(SetupBattle());
     }
 
     private void SetBattleData() {
         playerCharacters = BattleManager.Instance.PlayerPartyList;
         enemyCharacters = BattleManager.Instance.EncounterPartyList;
-
         playerUnits = new();
         enemyUnits = new();
 
@@ -98,6 +94,8 @@ public class BattleSystem : MonoBehaviour {
     }
 
     public IEnumerator SetupBattle() {
+        yield return new WaitForEndOfFrame(); 
+        MusicManager.Instance.PlayMusic("BattleTheme", 0.25f);
         // initalize party and enemy prefabs in given positions
         // set hud data
         for (int i = 0; i < playerCharacters.Count; i++) {
@@ -367,7 +365,6 @@ public class BattleSystem : MonoBehaviour {
         foreach(var playerUnit in playerUnits) {
             Destroy(playerUnit.CurrentModelInstance);
         }
-        GameManager.Instance.GameState = GameState.FreeRoam;
         BattleManager.Instance.EndBattle();
     }
 

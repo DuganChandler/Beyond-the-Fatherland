@@ -2338,7 +2338,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 1
+  m_Intensity: 2
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -2858,6 +2858,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Run
+      objectReference: {fileID: 0}
+    - target: {fileID: 1522809971874451101, guid: 3fe6d4020caef9242a601e5904d9ef56,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3087242942020531269, guid: 3fe6d4020caef9242a601e5904d9ef56,
         type: 3}
@@ -3702,6 +3707,14 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 4f60a980-d3e5-4bda-888f-70cf3a4ec0ce
     m_ActionName: Player/Back[/Keyboard/b]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: ad9ae823-db70-4ccd-8987-7c3bee0a85ca
+    m_ActionName: Player/Interact[/Keyboard/enter]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 40274fd6-96dc-4f96-b8a7-f18b0bf9c3f3
+    m_ActionName: Player/Pause[/Keyboard/escape]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -5615,7 +5628,6 @@ GameObject:
   - component: {fileID: 1967189435}
   - component: {fileID: 1967189434}
   - component: {fileID: 1967189433}
-  - component: {fileID: 1967189432}
   m_Layer: 5
   m_Name: BattleCanvas
   m_TagString: Untagged
@@ -5643,18 +5655,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &1967189432
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1967189430}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b52ef921d7a07c14693ecc5e324bc2ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1967189433
 MonoBehaviour:
   m_ObjectHideFlags: 0

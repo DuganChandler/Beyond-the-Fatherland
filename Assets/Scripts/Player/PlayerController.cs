@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,12 +11,17 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float distanceThreshhold = 10f;
     [SerializeField] private GameObject sceneObjects;
 
+    [Header("Interactable Settings")]
+    [SerializeField] private LayerMask interactableLayer; 
+
     private Vector3 lastPosition;
     private float distanceAccumulated = 0f;
 
     private Vector3 moveInput;
     private Rigidbody rb;
     private CapsuleCollider capsuleCollider;
+
+    public static event System.Action OnDialogContinue;
 
     void Start() {
         rb = GetComponent<Rigidbody>();
@@ -28,10 +34,24 @@ public class PlayerController : MonoBehaviour {
         Rotate();
         CalculateDistanceTraveled();
         CheckRandomEncounter();
+        // if (Input.GetKeyDown(KeyCode.B)) {
+        //     CircleFadeTransition shatterEffect = FindObjectOfType<CircleFadeTransition>();
+        //     if (shatterEffect != null) {
+        //         // Start the shatter effect and load the battle scene in its callback.
+        //         StartCoroutine(shatterEffect.TriggerTransition());
+        //         shatterEffect.onTransitionComplete = () => {
+        //             // Load the battle scene additively once the shatter is done.
+        //             BattleManager.Instance.StartBattle();
+        //             // SceneHelper.LoadScene("ForestBattleScene", true, true);
+        //         };
+        //     }
+        // }
     }
 
     void FixedUpdate() {
-       Run(); 
+        if (GameManager.Instance.GameState == GameState.FreeRoam) {
+            Run();
+        }
     }
 
     private (bool, GameObject) IsEncounterLayer() {
@@ -63,13 +83,17 @@ public class PlayerController : MonoBehaviour {
                 BattleManager.Instance.EncounterPartyList = encounterLayer.Item2.GetComponent<EncounterMapArea>().GetRandomEncounter();
                 BattleManager.Instance.PlayerPartyList = GetComponent<PartyList>().CharacterList;
                 Debug.Log(GetComponent<PartyList>().CharacterList);
-                BattleManager.Instance.StartBattle();
+                StartCoroutine(BattleManager.Instance.StartBattle());
             }
             distanceAccumulated = 0f;
         }
     }
 
     void Run() {
+        if (GameManager.Instance.inDialog || GameManager.Instance.GameState == GameState.Battle) {
+            rb.velocity = Vector3.zero;
+            return;
+        }
         Quaternion rotation = Quaternion.Euler(0, Camera.main.transform.eulerAngles.y, 0);
         Vector3 rotatedMoveInput = rotation * moveInput;
         Vector3 velocity = new Vector3(rotatedMoveInput.x * walkSpeed, rb.velocity.y, rotatedMoveInput.z * walkSpeed);
@@ -85,9 +109,38 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    IEnumerator Interact() {
+        var facingDirection = transform.forward;
+        var InteractPos = transform.position + facingDirection;
+
+        var collider = Physics.OverlapSphere(InteractPos, 0.3f, interactableLayer);
+        if (collider.Length > 0) {
+            Debug.Log("Interacted");
+            yield return collider[0].GetComponent<IInteractable>()?.Interact(transform);
+        }
+    }
+
     // Invoked by unity event via the Unity Input System
-    public void onMove(InputAction.CallbackContext context) {
+    public void OnMove(InputAction.CallbackContext context) {
+        if (GameManager.Instance.inDialog) {
+            moveInput = Vector3.zero;
+            return;
+        }
         moveInput = context.ReadValue<Vector2>();
         moveInput = new Vector3(moveInput.x, 0, moveInput.y);
+    }
+
+    // need to check if in free roam
+    public void OnInteract(InputAction.CallbackContext context) {
+        if (context.started && GameManager.Instance.GameState == GameState.FreeRoam) {
+            StartCoroutine(Interact());
+        }
+    }
+
+    public void OnDialog(InputAction.CallbackContext context) {
+        if (context.started) {
+            Debug.Log("Dialog Selected");
+            OnDialogContinue?.Invoke();
+        }
     }
 }
