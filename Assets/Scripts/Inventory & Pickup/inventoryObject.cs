@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO.Enumeration;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Inventory", menuName = "Inventory System/Inventory")]
 [System.Serializable]
 public class InventorySlot
 {

@@ -98,6 +98,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerCharacter
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 4231cd3fe26f9154e93d02b1d3e5e4ae,
+        type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: 5418252380809294293, guid: 4231cd3fe26f9154e93d02b1d3e5e4ae,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -172,6 +177,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 8729483095866050078}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4231cd3fe26f9154e93d02b1d3e5e4ae,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6181409006104254305}
   m_SourcePrefab: {fileID: 100100000, guid: 4231cd3fe26f9154e93d02b1d3e5e4ae, type: 3}
 --- !u!1 &749412378664416941 stripped
 GameObject:
@@ -197,7 +206,19 @@ MonoBehaviour:
   m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
   m_DeviceRegainedEvent:
     m_PersistentCalls:
       m_Calls: []
@@ -229,6 +250,18 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 82561cd5-ed02-41b9-ac11-a8e5190638e9
     m_ActionName: Player/Execute[/XInputControllerWindows2/buttonWest]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 4f60a980-d3e5-4bda-888f-70cf3a4ec0ce
+    m_ActionName: Player/Back[/Keyboard/b]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 40274fd6-96dc-4f96-b8a7-f18b0bf9c3f3
+    m_ActionName: Player/Pause[/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: ad9ae823-db70-4ccd-8987-7c3bee0a85ca
+    m_ActionName: Player/Interact[/Keyboard/enter]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -253,6 +286,9 @@ MonoBehaviour:
   encounterChance: 0.3
   distanceThreshhold: 10
   sceneObjects: {fileID: 0}
+  interactableLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &4706837132297292044
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -322,3 +358,17 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
+--- !u!114 &6181409006104254305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 749412378664416941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9478e5b32a74a5446abed01562488bb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  usableItems: []
+  storyItems: []

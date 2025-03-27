@@ -1,4 +1,7 @@
+using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using UnityEditor.SearchService;
 using UnityEngine;
 
 public class BattleManager : MonoBehaviour
@@ -27,24 +30,38 @@ public class BattleManager : MonoBehaviour
 
     public List<Character> PlayerPartyList { get; set; }
     public List<Character> EncounterPartyList { get; set; }
+    public Inventory PlayerInventory { get; set; }
     public BattleState BattleState { get; set; }
 
-    public void StartBattle() {
+    public IEnumerator StartBattle() {
         foreach (var character in PlayerPartyList) {
             character.IncreaseHP(1000);
             character.IsAlive = true;
         }
+        GameManager.Instance.GameState = GameState.Battle;
 
-        MusicManager.Instance.PlayMusic("BattleTheme", 0.25f);
-        ForestObjects.SetActive(false);
-        SceneHelper.LoadScene("ForestBattleScene", true, true);
+        yield return StartCoroutine(SceneHelper.LoadSceneWithTransition("ForestBattleScene", true, true, null, () => {
+            CircleFadeTransition circleFade = FindObjectOfType<CircleFadeTransition>();
+            if (circleFade != null) {
+                circleFade.onTransitionComplete = () => {
+                    SceneHelper.AllowActivation();
+                    circleFade.Cleanup();
+                    ForestObjects.SetActive(false);
+                };
+                StartCoroutine(circleFade.TriggerTransition());
+            }
+        }));
+
+        yield return null;
     }
 
     public void EndBattle() {
+        GameManager.Instance.GameState = GameState.FreeRoam;
         MusicManager.Instance.StopMusic();
         SceneHelper.UnloadScene("ForestBattleScene");
         CallAfterDelay.Create(1.0f, () => {
             ForestObjects.SetActive(true);
         });
     }
+
 }
