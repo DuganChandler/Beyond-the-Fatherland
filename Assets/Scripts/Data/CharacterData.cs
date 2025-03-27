@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/Characters/CharacterData", order = 1)]
@@ -23,6 +24,8 @@ public class CharacterData : ScriptableObject {
     [SerializeField] int baseMP;
     [SerializeField] CharacterStats characterStats;
     [SerializeField] Stat primaryStat;
+    [Header("Abilities")]
+    [SerializeField] List<AbilityBase> abilities;
 
     // Make sure to check if the character type is BOSS
     public Stats GetStatsAtLevel(int level) {
@@ -69,7 +72,11 @@ public class CharacterData : ScriptableObject {
         }
     } 
 
-    // [Header("Abilities")]
+    public List<AbilityBase> Abilities{
+        get{
+            return abilities;
+        }
+    }
     // Create List of Abilities
 }
 

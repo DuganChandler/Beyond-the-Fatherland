@@ -31,6 +31,7 @@ public struct BattleAction {
     public BattleUnit User;
     public BattleUnit Target;
     public ItemSlot ItemSlot;
+    public AbilityBase abilityBase;
 }
 
 public class BattleSystem : MonoBehaviour {
@@ -50,6 +51,8 @@ public class BattleSystem : MonoBehaviour {
     [SerializeField] PointerManager pointerManager;
     [SerializeField] ItemMenu itemMenu;
     [SerializeField] GameObject ItemPanel;
+    [SerializeField] GameObject abilityPanel;
+    [SerializeField] AbilityMenu abilityMenu;
 
     private System.Action backAction;
 
@@ -87,12 +90,18 @@ public class BattleSystem : MonoBehaviour {
         if (itemMenu != null) {
             itemMenu.OnItemSelected += HandleItemSelection;
         } 
+        if (abilityMenu != null) {
+            abilityMenu.OnAbilitySelected += HandleAbilitySelection;
+        } 
     }
 
     void OnDisable() {
         if (itemMenu != null) {
             itemMenu.OnItemSelected -= HandleItemSelection;
         } 
+        if (abilityMenu != null) {
+            abilityMenu.OnAbilitySelected -= HandleAbilitySelection;
+        }
     }
 
     public void StartBattle() {
@@ -303,6 +312,35 @@ public class BattleSystem : MonoBehaviour {
         currentSelectedPlayerUnit.Hud.ActionPanel.transform.GetChild(1).gameObject.GetComponent<Button>().Select();
     }
 
+    void AbilitySeletion(){
+        prevState = state;
+        state = BattleState.AbilitySelection;
+
+        if(prevState == BattleState.ActionSelection){
+            backAction = () => {
+                currentAction.Type = ActionType.None;
+                currentAction.User = null;
+                abilityPanel.SetActive(false);
+                ChangeState(() => ActionSelection());
+            };
+        }else if(prevState == BattleState.TargetSelection){
+           backAction = () => {
+                currentAction.Type = ActionType.None; 
+                currentAction.User = null;
+                abilityPanel.SetActive(false);
+                ChangeState(() => ActionSelection());
+            }; 
+        }
+        abilityMenu.PopulateAbilities(currentSelectedPlayerUnit.Character.Abilities);
+        abilityPanel.SetActive(true);
+    }
+    void HandleAbilitySelection(AbilityBase selectedAbility){
+        currentAction.abilityBase = selectedAbility;
+        EventSystem.current.SetSelectedGameObject(null);
+        abilityPanel.SetActive(false);
+        ChangeState(() => TargetSelection());
+    }
+
     void ItemSelection() {
         prevState = state;
         state = BattleState.ItemSelection;
@@ -356,7 +394,12 @@ public class BattleSystem : MonoBehaviour {
             case BattleState.ActionSlotSelection:
                 switch (currentAction.Type) {
                     case ActionType.Ability:
-                        break;
+                    backAction = () => {
+                        pointerManager.ClearPointers();
+                        ClearTargetIndicator();
+                        ChangeState(() => AbilitySeletion());
+                    };
+                    break;
                     case ActionType.Item:
                         backAction = () => {
                             pointerManager.ClearPointers();
@@ -379,7 +422,9 @@ public class BattleSystem : MonoBehaviour {
                 break;
             case BattleState.AbilitySelection:
                 backAction = () => {
-
+                    pointerManager.ClearPointers();
+                    ClearTargetIndicator();
+                    ChangeState(() => AbilitySeletion());
                 };
                 break;
             case BattleState.ItemSelection:
@@ -394,10 +439,10 @@ public class BattleSystem : MonoBehaviour {
                 break;
         }
 
-        if (currentAction.ItemSlot.Item?.ItemTarget == ItemTarget.Enemy || currentAction.Type == ActionType.Attack) {
+        if (currentAction.ItemSlot.Item?.ItemTarget == ItemTarget.Enemy || currentAction.Type == ActionType.Attack || currentAction.abilityBase?.AbilityTarget == AbilityTarget.Enemy) {
             isSelectingEnemy = true;
             currentTargetIndex = 0;
-        } else if (currentAction.ItemSlot.Item.ItemTarget == ItemTarget.Player) {
+        } else if (currentAction.ItemSlot.Item?.ItemTarget == ItemTarget.Player || currentAction.abilityBase?.AbilityTarget == AbilityTarget.Player) {
             isSelectingEnemy = false;
             currentTargetIndex = 0;
         }
@@ -502,6 +547,12 @@ public class BattleSystem : MonoBehaviour {
                 battleAction.User = currentSelectedPlayerUnit;
                 currentAction = battleAction;
                 ChangeState(() => ItemSelection());
+                break;
+            case "ability":
+                battleAction.Type = ActionType.Ability;
+                battleAction.User = currentSelectedPlayerUnit;
+                currentAction = battleAction;
+                ChangeState(() => AbilitySeletion());
                 break;
         }
         currentSelectedPlayerUnit.Hud.ActionPanel.SetActive(false);
@@ -654,6 +705,9 @@ public class BattleSystem : MonoBehaviour {
                 case ActionType.Item:
                     yield return StartCoroutine(RunItem(actionSlot));
                     break;
+                case ActionType.Ability:
+                    yield return StartCoroutine(RunAbility(actionSlot));
+                    break;
             }
         }
 
@@ -724,6 +778,44 @@ public class BattleSystem : MonoBehaviour {
         yield return null;
     }
     // ability -> calculate damage, check for status effects, check if you can cast
+    IEnumerator RunAbility(ActionSlot actionSlot){
+        BattleUnit target = actionSlot.BattleAction.Target;
+        BattleUnit user = actionSlot.BattleAction.User;
+        AbilityBase currentAbility = actionSlot.BattleAction.abilityBase;
+
+        BattleUnit newTarget = null;
+
+        if (!target.Character.IsAlive && currentAbility.AbilityTarget == AbilityTarget.Player) {
+            newTarget = user;
+        } else if (!target.Character.IsAlive && currentAbility.AbilityTarget == AbilityTarget.Enemy) {
+            foreach(var enemy in enemyUnits) {
+                newTarget = enemy;
+            }
+        }else{
+            newTarget = target;
+        }
+
+        GameObject damageTextObject = newTarget.CurrentModelInstance.transform.GetChild(0).gameObject;
+        yield return StartCoroutine(UseAbility(currentAbility,user.Character,newTarget.Character,damageTextObject));
+    }
+
+    public IEnumerator UseAbility(AbilityBase ability, Character user, Character target, GameObject damageTextObject){
+        Character newTarget = target;
+
+        foreach (AbilityEffectBase effect in ability.Effects){
+            AbilityEffectInfo effectInfo = effect.ApplyEffect(user,target);
+            damageTextObject.SetActive(true);
+            damageTextObject.GetComponent<DamageText>().text.text = $"{effectInfo.TextInformation}";
+            damageTextObject.GetComponent<DamageText>().text.color = effectInfo.TextColor;
+
+            yield return new WaitForSeconds(1f);
+
+            damageTextObject.SetActive(false);
+        }
+        damageTextObject.GetComponent<DamageText>().text.color = Color.white;
+        yield return new WaitForEndOfFrame();
+
+    }
     // items -> calculate value, check for any status effects
 
     IEnumerator RunItem(ActionSlot actionSlot) {
@@ -739,6 +831,8 @@ public class BattleSystem : MonoBehaviour {
             foreach(var enemy in enemyUnits) {
                 newTarget = enemy;
             }
+        }else{
+            newTarget = target;
         }
 
         GameObject damageTextObject = newTarget.CurrentModelInstance.transform.GetChild(0).gameObject;
