@@ -288,7 +288,7 @@ MonoBehaviour:
   sceneObjects: {fileID: 0}
   interactableLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
 --- !u!114 &4706837132297292044
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -303,11 +303,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterList:
   - characterData: {fileID: 11400000, guid: 341e814a113598f4e8f8e4b3231ec5f0, type: 2}
-    level: 1
+    level: 2
   - characterData: {fileID: 11400000, guid: ca4b6cfd7fa7aa54180ce5c974d079af, type: 2}
-    level: 1
+    level: 2
   - characterData: {fileID: 11400000, guid: 51c8cdbe884df004b9c80107929657c7, type: 2}
-    level: 1
+    level: 2
 --- !u!136 &3399394174405784988
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -327,10 +327,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 1.9846828
+  m_Radius: 0.29094994
+  m_Height: 1.9187673
   m_Direction: 1
-  m_Center: {x: 0, y: 0.048975825, z: 0}
+  m_Center: {x: 0.004316807, y: 0.0639959, z: 0}
 --- !u!54 &8729483095866050078
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -370,5 +370,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9478e5b32a74a5446abed01562488bb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  usableItems: []
+  combatItems: []
   storyItems: []

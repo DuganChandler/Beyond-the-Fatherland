@@ -8,8 +8,6 @@ public class ItemMenu : MonoBehaviour {
     public GameObject buttonPrefab;   // Reference to your Button prefab.
     public Transform contentPanel;    // Reference to the ScrollRect's content panel.
 
-    [SerializeField] private BattleSystem battleSystem;
-
     private int lastButtonSelected = 0; 
  
     private List<Button> buttonList = new();
