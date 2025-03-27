@@ -6,6 +6,7 @@ public class CharacterHud : MonoBehaviour {
     [SerializeField] InfoBar hpBar;
     [SerializeField] InfoBar mpBar;
     [SerializeField] GameObject actionPanel;
+    [SerializeField] GameObject abilityPanel;
 
     private Character _character;
     
@@ -18,6 +19,12 @@ public class CharacterHud : MonoBehaviour {
     public GameObject ActionPanel {
         get {
             return actionPanel;
+        }
+    }
+
+    public GameObject AbilityPanel {
+        get {
+            return abilityPanel;
         }
     }
 

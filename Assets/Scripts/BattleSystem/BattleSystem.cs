@@ -31,6 +31,7 @@ public struct BattleAction {
     public BattleUnit User;
     public BattleUnit Target;
     public ItemSlot ItemSlot;
+    public AbilityBase Ability;
 }
 
 public class BattleSystem : MonoBehaviour {
@@ -303,6 +304,28 @@ public class BattleSystem : MonoBehaviour {
         currentSelectedPlayerUnit.Hud.ActionPanel.transform.GetChild(1).gameObject.GetComponent<Button>().Select();
     }
 
+    void AbilitySelection(){
+        prevState = state;
+        state = BattleState.AbilitySelection;
+        if (prevState == BattleState.ActionSelection) {
+            backAction = () => {
+                currentAction.Type = ActionType.None; 
+                currentAction.User = null;
+                currentSelectedPlayerUnit.Hud.AbilityPanel.SetActive(false);
+                ChangeState(() => ActionSelection());
+            };
+        }else if (prevState == BattleState.TargetSelection) {
+            backAction = () => {
+                currentAction.Type = ActionType.None; 
+                currentAction.User = null;
+                currentSelectedPlayerUnit.Hud.AbilityPanel.SetActive(false);
+                ChangeState(() => ActionSelection());
+            };
+        }
+        currentSelectedPlayerUnit.Hud.AbilityPanel.SetActive(true);
+        currentSelectedPlayerUnit.Hud.AbilityPanel.transform.GetChild(0).gameObject.GetComponent<Button>().Select();
+    }
+
     void ItemSelection() {
         prevState = state;
         state = BattleState.ItemSelection;
@@ -355,8 +378,7 @@ public class BattleSystem : MonoBehaviour {
                 break;
             case BattleState.ActionSlotSelection:
                 switch (currentAction.Type) {
-                    case ActionType.Ability:
-                        break;
+
                     case ActionType.Item:
                         backAction = () => {
                             pointerManager.ClearPointers();
@@ -379,7 +401,10 @@ public class BattleSystem : MonoBehaviour {
                 break;
             case BattleState.AbilitySelection:
                 backAction = () => {
-
+                    pointerManager.ClearPointers();
+                    ClearTargetIndicator();
+                    ChangeState(() => AbilitySelection());
+                        
                 };
                 break;
             case BattleState.ItemSelection:
@@ -502,6 +527,12 @@ public class BattleSystem : MonoBehaviour {
                 battleAction.User = currentSelectedPlayerUnit;
                 currentAction = battleAction;
                 ChangeState(() => ItemSelection());
+                break;
+            case "ability":
+                battleAction.Type = ActionType.Ability;
+                battleAction.User = currentSelectedPlayerUnit;
+                currentAction = battleAction;
+                ChangeState(() => AbilitySelection());
                 break;
         }
         currentSelectedPlayerUnit.Hud.ActionPanel.SetActive(false);
@@ -654,6 +685,7 @@ public class BattleSystem : MonoBehaviour {
                 case ActionType.Item:
                     yield return StartCoroutine(RunItem(actionSlot));
                     break;
+                
             }
         }
 
@@ -711,6 +743,9 @@ public class BattleSystem : MonoBehaviour {
         Debug.Log($"User Damage: {userDamage} Target Defense: {targetDefense}");
         return userDamage - targetDefense;
     }
+
+    
+    
 
     IEnumerator TryToEscape() {
         numEscapeAttempts++;
