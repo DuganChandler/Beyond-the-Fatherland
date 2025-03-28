@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
@@ -83,5 +84,11 @@ public class Character  {
     public void IncraseMP(int amount) {
         MP = Mathf.Clamp(MP + amount, 0, MaxMP);
         OnMpChange?.Invoke(); 
+    }
+
+    public List<AbilityBase> Abilities{
+        get{
+            return characterData.Abilities;
+        }
     }
 }

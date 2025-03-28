@@ -23,3 +23,6 @@ MonoBehaviour:
   baseMP: 65
   characterStats: {fileID: 11400000, guid: 8849d72589329174f8e098cd82a232f1, type: 2}
   primaryStat: 0
+  abilities:
+  - {fileID: 11400000, guid: 3d1cbc7ed8f4c6c4aaf2ec11ba5e0b32, type: 2}
+  - {fileID: 11400000, guid: 1aeba399d2e0b594aa25d1851686a685, type: 2}
