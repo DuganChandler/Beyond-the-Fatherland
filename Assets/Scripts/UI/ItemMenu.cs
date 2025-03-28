@@ -43,6 +43,7 @@ public class ItemMenu : MonoBehaviour {
                 ItemSlot currentSlot = slot;
                 // Instantiate the button and set it as a child of the content panel.
                 GameObject buttonObj = Instantiate(buttonPrefab, contentPanel);
+
                 buttonObjects.Add(buttonObj);
 
                 ItemButton itemButton = buttonObj.GetComponent<ItemButton>();

@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour {
     [Header("Interactable Settings")]
     [SerializeField] private LayerMask interactableLayer; 
 
+    [SerializeField] private GameObject bagMenuUI;
+
     private Vector3 lastPosition;
     private float distanceAccumulated = 0f;
 
@@ -31,9 +33,8 @@ public class PlayerController : MonoBehaviour {
     }
 
     void Update() {
-        Rotate();
-        CalculateDistanceTraveled();
-        CheckRandomEncounter();
+        // CalculateDistanceTraveled();
+        // CheckRandomEncounter();
         // if (Input.GetKeyDown(KeyCode.B)) {
         //     CircleFadeTransition shatterEffect = FindObjectOfType<CircleFadeTransition>();
         //     if (shatterEffect != null) {
@@ -50,7 +51,10 @@ public class PlayerController : MonoBehaviour {
 
     void FixedUpdate() {
         if (GameManager.Instance.GameState == GameState.FreeRoam) {
+            Rotate();
             Run();
+        } else {
+            rb.velocity = Vector3.zero;
         }
     }
 
@@ -144,4 +148,17 @@ public class PlayerController : MonoBehaviour {
             OnDialogContinue?.Invoke();
         }
     }
+
+    public void OnPause(InputAction.CallbackContext context) {
+        if (context.started) {
+            if (GameManager.Instance.GameState != GameState.Pause && GameManager.Instance.GameState == GameState.FreeRoam) {
+                bagMenuUI.SetActive(true);
+                GameManager.Instance.GameState = GameState.Pause;
+            } else {
+                bagMenuUI.SetActive(false);
+                GameManager.Instance.GameState = GameState.FreeRoam;
+            }
+        }
+    }
+
 }
