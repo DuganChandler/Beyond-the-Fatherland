@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
-using UnityEditor.SearchService;
 using UnityEngine;
 
 public class BattleManager : MonoBehaviour
@@ -22,7 +20,7 @@ public class BattleManager : MonoBehaviour
     public GameObject ForestObjects {
         get {
             if (_ForestObjects== null) {
-                _ForestObjects= GameObject.Find("ChandlerTestSceneObjects");
+                _ForestObjects= GameObject.Find("ArborynForestObjects");
             }
             return _ForestObjects;
         }
@@ -35,8 +33,10 @@ public class BattleManager : MonoBehaviour
 
     public IEnumerator StartBattle() {
         foreach (var character in PlayerPartyList) {
-            character.IncreaseHP(1000);
-            character.IsAlive = true;
+            if (!character.IsAlive) {
+                character.IncreaseHP(1);
+                character.IsAlive = true;
+            }
         }
         GameManager.Instance.GameState = GameState.Battle;
 
@@ -58,6 +58,9 @@ public class BattleManager : MonoBehaviour
     public void EndBattle() {
         GameManager.Instance.GameState = GameState.FreeRoam;
         MusicManager.Instance.StopMusic();
+
+        MusicManager.Instance.PlayMusicNoFade("ForestTheme"); 
+
         SceneHelper.UnloadScene("ForestBattleScene");
         CallAfterDelay.Create(1.0f, () => {
             ForestObjects.SetActive(true);

@@ -53,6 +53,7 @@ public class BattleSystem : MonoBehaviour {
     [SerializeField] GameObject ItemPanel;
     [SerializeField] GameObject abilityPanel;
     [SerializeField] AbilityMenu abilityMenu;
+    [SerializeField] BattleDialogBox dialogBox;
 
     private System.Action backAction;
 
@@ -125,7 +126,7 @@ public class BattleSystem : MonoBehaviour {
 
     public IEnumerator SetupBattle() {
         yield return new WaitForEndOfFrame(); 
-        MusicManager.Instance.PlayMusic("BattleTheme", 0.25f);
+        MusicManager.Instance.PlayMusic("BattleTheme");
         // initalize party and enemy prefabs in given positions
         // set hud data
         for (int i = 0; i < playerCharacters.Count; i++) {
@@ -144,7 +145,6 @@ public class BattleSystem : MonoBehaviour {
         }
         LoadEnemyActionSlots();
         ChangeState(() => CharacterSelection());
-        yield return null;
     }
 
     void Update() {
@@ -481,9 +481,18 @@ public class BattleSystem : MonoBehaviour {
         }
     }
 
-    void BattleOver(bool won) {
+    IEnumerator BattleOver(bool won) {
         prevState = state;
         state = BattleState.BattleOver;
+        
+        if (won) {
+            foreach(var unit in playerUnits) {
+                if (unit.Character.IsAlive) {
+                    yield return GiveEXP(unit.Character, 100); 
+                }
+            }
+        }
+        
 
         foreach(var playerUnit in playerUnits) {
             Destroy(playerUnit.CurrentModelInstance);
@@ -492,6 +501,16 @@ public class BattleSystem : MonoBehaviour {
         BattleManager.Instance.EndBattle();
     }
 
+    IEnumerator GiveEXP(Character character, int expAmount) {
+        character.EXP += expAmount;     
+        yield return dialogBox.TypeDialog($"{character.CharacterData.name} has gained {expAmount} EXP!");
+
+        while (character.CheckForLevelUp()) {
+            yield return dialogBox.TypeDialog($"{character.CharacterData.name} has leveled up to {character.Level}");
+        }
+
+        yield return new WaitForSeconds(1);
+    }
 
     // Button Input Functions
     public void OnCharacterSelect(int playerCharacterIndex) {
@@ -774,7 +793,7 @@ public class BattleSystem : MonoBehaviour {
         f %= 256;
 
         if (Random.Range(0, 256) < f) {
-            BattleOver(true);
+            StartCoroutine(BattleOver(false));
         }
 
         yield return null;
@@ -798,10 +817,10 @@ public class BattleSystem : MonoBehaviour {
         }
 
         GameObject damageTextObject = newTarget.CurrentModelInstance.transform.GetChild(0).gameObject;
-        yield return StartCoroutine(UseAbility(currentAbility,user.Character,newTarget.Character,damageTextObject));
+        yield return StartCoroutine(UseAbility(currentAbility,user.Character,newTarget.Character,damageTextObject, actionSlot));
     }
 
-    public IEnumerator UseAbility(AbilityBase ability, Character user, Character target, GameObject damageTextObject){
+    public IEnumerator UseAbility(AbilityBase ability, Character user, Character target, GameObject damageTextObject, ActionSlot actionSlot){
         Character newTarget = target;
 
         foreach (AbilityEffectBase effect in ability.Effects){
@@ -815,6 +834,11 @@ public class BattleSystem : MonoBehaviour {
             damageTextObject.SetActive(false);
         }
         damageTextObject.GetComponent<DamageText>().text.color = Color.white;
+
+        if (target.HP <= 0) {
+            yield return StartCoroutine(OnCharacterDeath(actionSlot));
+        }
+
         yield return new WaitForEndOfFrame();
 
     }
@@ -887,8 +911,10 @@ public class BattleSystem : MonoBehaviour {
             }
         }
 
-        if (enemyUnits.Count <= 0 || CheckIfPartyDead()) {
-            BattleOver(true);
+        if (enemyUnits.Count <= 0) {
+            yield return BattleOver(true);
+        } else if (CheckIfPartyDead()){
+            yield return BattleOver(false);
         }
 
         yield return new WaitForEndOfFrame();
