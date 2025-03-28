@@ -1,20 +1,23 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
-public class MainMenuController : MonoBehaviour
-{
-    // Start is called before the first frame update
+public class MainMenuController : MonoBehaviour {
+    [SerializeField] Button startButton;
+
+    void Awake() {
+        startButton.Select(); 
+    }
+
     void Start() {
-
-
+        MusicManager.Instance.PlayMusicNoFade("TitleTheme"); 
     }
 
-    // Update is called once per frame
-    void Update() {
-        
+    public void OnQuitGame() {
+        Application.Quit();
     }
 
-
+    public void OnStartGame() {
+        MusicManager.Instance.PlayMusicNoFade("ForestTheme"); 
+        SceneHelper.LoadScene("ArborynForest", false, true);
+    }
 }

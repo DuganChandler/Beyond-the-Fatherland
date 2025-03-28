@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class CharacterHud : MonoBehaviour {
     [SerializeField] TextMeshProUGUI nameText;
+    [SerializeField] TextMeshProUGUI levelText;
     [SerializeField] InfoBar hpBar;
     [SerializeField] InfoBar mpBar;
     [SerializeField] GameObject actionPanel;
@@ -29,6 +30,7 @@ public class CharacterHud : MonoBehaviour {
         _character = character;
         
         nameText.text = character.CharacterData.name;
+        levelText.text = $"Lv. {character.Level}";
 
         hpBar.SetResource((float)character.HP / character.MaxHP);
         mpBar.SetResource((float)character.MP / character.MaxMP);
