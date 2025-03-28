@@ -308,6 +308,8 @@ public class BattleSystem : MonoBehaviour {
             ChangeState(() => CharacterSelection());
         };
 
+        Debug.Log(currentSelectedPlayerUnit);
+
         currentSelectedPlayerUnit.Hud.ActionPanel.SetActive(true);
         currentSelectedPlayerUnit.Hud.ActionPanel.transform.GetChild(1).gameObject.GetComponent<Button>().Select();
     }

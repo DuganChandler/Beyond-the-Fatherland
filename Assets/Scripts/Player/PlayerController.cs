@@ -33,8 +33,8 @@ public class PlayerController : MonoBehaviour {
     }
 
     void Update() {
-        // CalculateDistanceTraveled();
-        // CheckRandomEncounter();
+        CalculateDistanceTraveled();
+        CheckRandomEncounter();
         // if (Input.GetKeyDown(KeyCode.B)) {
         //     CircleFadeTransition shatterEffect = FindObjectOfType<CircleFadeTransition>();
         //     if (shatterEffect != null) {
