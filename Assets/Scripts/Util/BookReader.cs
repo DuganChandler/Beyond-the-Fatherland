@@ -3,6 +3,7 @@ using TMPro;
 using System.IO;
 using System.Collections;
 using UnityEngine.Networking;
+using UnityEngine.InputSystem;
 
 public class BookReader : MonoBehaviour {
     [Header("Library & Book Selection")]
@@ -20,9 +21,13 @@ public class BookReader : MonoBehaviour {
     private string[] pages;
     private int currentPageIndex = 0;
 
+    private Vector2 playerInput;
+
+    private bool canNavigate = true;
+
     void Start() {
         // Option 1: Load a book by an index from the library.
-        LoadBookByIndex(selectedBookIndex);
+        // LoadBookByIndex(selectedBookIndex);
         // Option 2: Alternatively, you could expose a method that UI buttons call to select a book.
     }
 
@@ -37,6 +42,25 @@ public class BookReader : MonoBehaviour {
             // disable left arrow
         } else if (currentPageIndex == pages.Length - 1) {
             // disable right arrow
+        }
+    }
+
+    public void OnPageTurn(InputAction.CallbackContext context) {
+        if (GameManager.Instance.GameState != GameState.Pause) return;
+
+        playerInput = context.ReadValue<Vector2>();
+
+        if (canNavigate && Mathf.Abs(playerInput.x) > 0.5f) {
+            if (playerInput.x > 0.5f) {
+                NextPage();
+            } else if (playerInput.x < -0.5f) {
+                PreviousPage();
+            }
+            canNavigate = false;
+        }
+
+        if (Mathf.Abs(playerInput.x) < 0.5f && Mathf.Abs(playerInput.y) < 0.5f) {
+            canNavigate = true;
         }
     }
 
@@ -55,6 +79,24 @@ public class BookReader : MonoBehaviour {
         }
 
         BookEntry entry = bookLibrary.books[index].BookEntry;
+        StartCoroutine(LoadBookCoroutine(entry));
+    }
+
+    public void LoadBookByName(string title) {
+        if (bookLibrary == null || bookLibrary.books == null || bookLibrary.books.Count == 0) {
+            Debug.LogError("BookLibrary is empty or not assigned.");
+            return;
+        }
+
+        BookEntry entry = new();
+
+        foreach (BookItemData book in bookLibrary.books) {
+            if (book.BookEntry.bookTitle == title) {
+                entry = book.BookEntry;
+                break;
+            }
+        }
+
         StartCoroutine(LoadBookCoroutine(entry));
     }
 

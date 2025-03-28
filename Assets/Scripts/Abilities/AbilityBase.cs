@@ -23,13 +23,13 @@ public class AbilityBase: ScriptableObject
     [SerializeField] AbilityTarget target;
     [SerializeField] bool isAOE;
     [SerializeField] AbilityCategory category;
-    [SerializeField] AbilityEffects effects;
     //[SerializeField] List<Secondaries> secondaries;
 
     [Header("Audio")]
     [SerializeField] AudioClip sound;
+    [SerializeField] List<AbilityEffectBase> effects;
 
-    public string Name {
+    public string AbilityName {
         get { return name; }
     }
 
@@ -45,19 +45,21 @@ public class AbilityBase: ScriptableObject
         get { return actionCost; }
     }
 
-
+    public List<AbilityEffectBase> Effects{
+        get{
+            return effects;
+        }
+    }
 
 
     public AbilityCategory Category {
         get { return category; }
     }
 
-    public AbilityEffects Effects {
-        get { return effects; }
-    }
-
-    public AbilityTarget Target {
-        get { return target; }
+    public  AbilityTarget AbilityTarget{
+        get{
+          return target;
+        }
     }
 
     /*public List<Secondaries> Secondaries {
@@ -67,39 +69,7 @@ public class AbilityBase: ScriptableObject
     public AudioClip Sound => sound;
 }
 
-[System.Serializable]
-public class AbilityEffects 
-{
-    [SerializeField] List<StatBoost> boosts;
-    [SerializeField] AbilityProperty property;
-    public List<StatBoost> Boosts {
-        get { return boosts; }
-    }
-    public AbilityProperty Property {
-        get { return property; }
-    }
-}
 
-[System.Serializable]
-public class Secondaries : AbilityEffects
-{
-    [SerializeField] int chance;
-    [SerializeField] AbilityTarget target;
-
-    public int Chance {
-        get { return chance; }
-    }
-
-    public AbilityTarget Target {
-        get { return target; }
-    }
-}
-
-[System.Serializable]
-public class StatBoost {
-    public Stat stat;
-    public int boost;
-}
 
 public enum Element { //again for later
     None
@@ -113,7 +83,7 @@ public enum AbilityCategory {
 
 public enum AbilityTarget {
     Enemy,
-    Party
+    Player
 }
 
 
