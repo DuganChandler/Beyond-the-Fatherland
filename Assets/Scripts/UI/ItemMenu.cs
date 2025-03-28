@@ -26,17 +26,17 @@ public class ItemMenu : MonoBehaviour {
     }
 
     // Clears existing buttons and repopulates the inventory menu.
-    public void PopulateInventory(Inventory playerInventory) {
+    public void PopulateInventory(Inventory playerInventory, ItemCategory category) {
         ClearButtons();
 
-        var combatItems = playerInventory.GetSlotsByCategory((int)ItemCategory.Combat);
-        if (combatItems.Count <= 0) {
+        var items = playerInventory.GetSlotsByCategory((int)category);
+        if (items.Count <= 0) {
             return;
         }
 
         // Iterate over each item slot in the player's inventory.
         int i = 0;
-        foreach (ItemSlot slot in combatItems) {
+        foreach (ItemSlot slot in items) {
             if (slot.Count > 0) {
                 ++i;
                 // Create a local copy to avoid lambda closure issues.
@@ -90,6 +90,7 @@ public class ItemMenu : MonoBehaviour {
 
     // This method is called when an item button is clicked.
     void OnItemButtonClicked(ItemSlot slot, int buttonSelected) {
+        MusicManager.Instance.PlaySound("MenuConfirm");
         lastButtonSelected = buttonSelected;
         OnItemSelected?.Invoke(slot);
     }

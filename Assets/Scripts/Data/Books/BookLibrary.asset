@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb757124884482848806dfb23de9e7eb, type: 3}
   m_Name: BookLibrary
   m_EditorClassIdentifier: 
-  books: []
+  books:
+  - {fileID: 11400000, guid: 4834dbf7274c4cc4eb08a23665ef7104, type: 2}

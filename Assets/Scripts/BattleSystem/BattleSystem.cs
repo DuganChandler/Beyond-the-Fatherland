@@ -323,7 +323,7 @@ public class BattleSystem : MonoBehaviour {
             };
         }
 
-        itemMenu.PopulateInventory(playerInventory);
+        itemMenu.PopulateInventory(playerInventory, ItemCategory.Combat);
         ItemPanel.SetActive(true);
     }
 

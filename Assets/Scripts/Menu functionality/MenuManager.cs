@@ -33,6 +33,7 @@ public class MenuManager : MonoBehaviour {
     [SerializeField] private GameObject system;
     [SerializeField] private GameObject items;
     [SerializeField] private GameObject books;
+    [SerializeField] private GameObject bookReadingSection;
     [SerializeField] private GameObject status;
 
     [Header("Menu Buttons")]
@@ -45,6 +46,9 @@ public class MenuManager : MonoBehaviour {
     [Header("Player Information")]
     [SerializeField] Inventory playerInventory;
     [SerializeField] PartyList partyList;
+
+    [Header("Book Reader")]
+    [SerializeField] private BookReader bookReader;
 
     private Stack<BagMenuStateObject> menuStates;
 
@@ -81,6 +85,7 @@ public class MenuManager : MonoBehaviour {
 
     void OnEnable() {
         items.GetComponent<ItemMenu>().OnItemSelected += HandleItemSelection;
+        books.GetComponent<ItemMenu>().OnItemSelected += HandleBookSelection;
 
         menuStates = new();
 
@@ -96,6 +101,7 @@ public class MenuManager : MonoBehaviour {
 
     void OnDisable() {
         items.GetComponent<ItemMenu>().OnItemSelected -= HandleItemSelection;
+        books.GetComponent<ItemMenu>().OnItemSelected -= HandleBookSelection;
 
         EventSystem.current.SetSelectedGameObject(null);
         if (menuStates.Count > 0) {
@@ -125,7 +131,7 @@ public class MenuManager : MonoBehaviour {
 
         menuStates.Push(new BagMenuStateObject(BagMenuState.Items, items));
         items.SetActive(true);
-        items.GetComponent<ItemMenu>().PopulateInventory(playerInventory);
+        items.GetComponent<ItemMenu>().PopulateInventory(playerInventory, ItemCategory.Combat);
     }
 
     public void OnStatusMenu () {
@@ -146,6 +152,9 @@ public class MenuManager : MonoBehaviour {
         MusicManager.Instance.PlaySound("MenuConfirm");
         menuStates.Peek().MenuObject.SetActive(false);
         menuStates.Push(new BagMenuStateObject(BagMenuState.Books, books));
+
+        books.GetComponent<ItemMenu>().PopulateInventory(playerInventory, ItemCategory.Story);
+
         books.SetActive(true);
     }
 
@@ -177,9 +186,18 @@ public class MenuManager : MonoBehaviour {
         }
 
         if (menuStates.Peek().State == BagMenuState.Using) {
-            if(itemToUse.Item != null) {
+            if(itemToUse.Item != null && itemToUse.Item.ItemCategory == ItemCategory.Combat) {
                 menuStates.Pop();
-                items.GetComponent<ItemMenu>().PopulateInventory(playerInventory);
+                items.GetComponent<ItemMenu>().PopulateInventory(playerInventory, ItemCategory.Combat);
+            } else if (itemToUse.Item != null && itemToUse.Item.ItemCategory == ItemCategory.Story) {
+                menuStates.Pop();
+
+                bookReadingSection.SetActive(false);
+
+                characterPortraits.SetActive(true);
+                books.SetActive(true);
+
+                books.GetComponent<ItemMenu>().PopulateInventory(playerInventory, ItemCategory.Story);
             }
         }
     }
@@ -189,6 +207,18 @@ public class MenuManager : MonoBehaviour {
         menuStates.Push(new BagMenuStateObject(BagMenuState.Using, null));
         characterPortraitButtonList[0].Select();
         itemToUse = slot;
+    }
+
+    private void HandleBookSelection(ItemSlot slot) {
+            menuStates.Push(new BagMenuStateObject(BagMenuState.Using, null));
+            itemToUse = slot;
+
+            characterPortraits.SetActive(false);
+            books.SetActive(false);
+            bookReadingSection.SetActive(true);
+
+            BookItemData bookToRead = (BookItemData)itemToUse.Item;
+            bookReader.LoadBookByName(bookToRead.BookEntry.bookTitle);
     }
 
     private void HandleAbilitySelection(AbilityBase ability) {
@@ -215,7 +245,7 @@ public class MenuManager : MonoBehaviour {
 
         yield return new WaitForEndOfFrame();
 
-        items.GetComponent<ItemMenu>().PopulateInventory(playerInventory);
+        items.GetComponent<ItemMenu>().PopulateInventory(playerInventory, ItemCategory.Combat);
 
         menuStates.Pop();
         menuStates.Pop();
