@@ -7,20 +7,20 @@ Cuprum is a variable font with this axis:
   wght
 
 This means all the styles are contained in these files:
-  Cuprum-VariableFont_wght.ttf
-  Cuprum-Italic-VariableFont_wght.ttf
+  Cuprum/Cuprum-VariableFont_wght.ttf
+  Cuprum/Cuprum-Italic-VariableFont_wght.ttf
 
 If your app fully supports variable fonts, you can now pick intermediate styles
 that aren’t available as static fonts. Not all apps support variable fonts, and
 in those cases you can use the static font files for Cuprum:
-  static/Cuprum-Regular.ttf
-  static/Cuprum-Medium.ttf
-  static/Cuprum-SemiBold.ttf
-  static/Cuprum-Bold.ttf
-  static/Cuprum-Italic.ttf
-  static/Cuprum-MediumItalic.ttf
-  static/Cuprum-SemiBoldItalic.ttf
-  static/Cuprum-BoldItalic.ttf
+  Cuprum/static/Cuprum-Regular.ttf
+  Cuprum/static/Cuprum-Medium.ttf
+  Cuprum/static/Cuprum-SemiBold.ttf
+  Cuprum/static/Cuprum-Bold.ttf
+  Cuprum/static/Cuprum-Italic.ttf
+  Cuprum/static/Cuprum-MediumItalic.ttf
+  Cuprum/static/Cuprum-SemiBoldItalic.ttf
+  Cuprum/static/Cuprum-BoldItalic.ttf
 
 Get started
 -----------
