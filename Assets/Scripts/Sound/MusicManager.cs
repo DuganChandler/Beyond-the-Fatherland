@@ -1,13 +1,16 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MusicManager : MonoBehaviour {
 
-    [SerializeField]
-    private MusicLibrary musicLibrary;
-    [SerializeField]
-    private AudioSource musicSource;
+    // music
+    [SerializeField] private MusicLibrary musicLibrary;
+    [SerializeField] private AudioSource musicSource;
+
+    // sfx
+    [SerializeField] private SoundLibrary soundLibrary;
+    [SerializeField] private AudioSource soundSource;
+
 
     /* 
     *  Create Singleton intance of the Music Manager
@@ -40,6 +43,7 @@ public class MusicManager : MonoBehaviour {
         musicSource.clip = nextTrack;
         musicSource.Play();
     }
+
  
     IEnumerator AnimateMusicCrossfade(AudioClip nextTrack, float fadeDuration = 0.5f) {
         float percent = 0;
@@ -53,9 +57,9 @@ public class MusicManager : MonoBehaviour {
         musicSource.Play();
  
         percent = 0;
-        while (percent < 1) {
+        while (percent < 0.25) {
             percent += Time.deltaTime * 1 / fadeDuration;
-            musicSource.volume = Mathf.Lerp(0, 1f, percent);
+            musicSource.volume = Mathf.Lerp(0, 0.25f, percent);
             yield return null;
         }
     }
@@ -70,5 +74,13 @@ public class MusicManager : MonoBehaviour {
 
     public void EnableMusic() {
         gameObject.SetActive(true);
+    }
+
+    public void StopMusic() {
+        musicSource.Stop();
+    }
+
+    public void PlaySound(string soundName) {
+        soundSource.PlayOneShot(soundLibrary.GetClipFromName(soundName));
     }
 }

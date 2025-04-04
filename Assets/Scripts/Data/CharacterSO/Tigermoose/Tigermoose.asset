@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b4dc85a27b0e314ca6790da0424e564, type: 3}
+  m_Name: Tigermoose
+  m_EditorClassIdentifier: 
+  name: Tigermoose
+  description: A tiger + moose = fuck that shit
+  characterPrefab: {fileID: 4392875892391519670, guid: 7a665b7ab6ab0fa4cafb50a143f10d6e,
+    type: 3}
+  characterPortrait: {fileID: 21300000, guid: 799693325b8cf20478545eee0a09822b, type: 3}
+  characerType: 1
+  currentLevel: 1
+  baseHP: 60
+  baseMP: 10
+  characterStats: {fileID: 11400000, guid: 95fb5e87992473b46a74d857616b4a9d, type: 2}

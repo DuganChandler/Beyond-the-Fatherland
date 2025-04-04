@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bba6f6b913b7124c966bc88bd0f0e06, type: 3}
+  m_Name: Overwhelming Strike
+  m_EditorClassIdentifier: 
+  name: Overwhelming Strike
+  description: 
+  element: 0
+  power: 0
+  actionCost: 0
+  target: 0
+  isAOE: 0
+  category: 0
+  sound: {fileID: 0}
+  effects:
+  - {fileID: 11400000, guid: 69d8024c464dedb4e89cbe136e843f20, type: 2}
+  - {fileID: 11400000, guid: 43b50c9fdc72f314ea30b436073cad21, type: 2}

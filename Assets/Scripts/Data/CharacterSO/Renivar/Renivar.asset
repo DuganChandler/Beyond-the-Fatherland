@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b4dc85a27b0e314ca6790da0424e564, type: 3}
+  m_Name: Renivar
+  m_EditorClassIdentifier: 
+  name: Renivar
+  description: Renivar Character SO
+  characterPrefab: {fileID: 6112562269900263120, guid: 58057a8a019c3ee45a6d33f3ea08ea07,
+    type: 3}
+  characterPortrait: {fileID: 21300000, guid: 93e58564d67c24546b0d9f43f5acc6a3, type: 3}
+  characerType: 0
+  currentLevel: 1
+  baseHP: 80
+  baseMP: 25
+  characterStats: {fileID: 11400000, guid: 4374d435dfdcf42439d214326b71bdbf, type: 2}
+  primaryStat: 0
+  abilities:
+  - {fileID: 11400000, guid: 3d1cbc7ed8f4c6c4aaf2ec11ba5e0b32, type: 2}
+  - {fileID: 11400000, guid: 1aeba399d2e0b594aa25d1851686a685, type: 2}
