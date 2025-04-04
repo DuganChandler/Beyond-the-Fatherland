@@ -103,7 +103,10 @@ public class MenuManager : MonoBehaviour {
         items.GetComponent<ItemMenu>().OnItemSelected -= HandleItemSelection;
         books.GetComponent<ItemMenu>().OnItemSelected -= HandleBookSelection;
 
-        EventSystem.current.SetSelectedGameObject(null);
+        if (EventSystem.current) {
+            EventSystem.current.SetSelectedGameObject(null);
+        }
+
         if (menuStates.Count > 0) {
             menuStates.Pop().MenuObject.SetActive(false);
         }
@@ -156,6 +159,12 @@ public class MenuManager : MonoBehaviour {
         books.GetComponent<ItemMenu>().PopulateInventory(playerInventory, ItemCategory.Story);
 
         books.SetActive(true);
+    }
+
+    public void OnMainMenu() {
+        // MusicManager.Instance.PlaySound("MenuConfirm");
+        SceneHelper.LoadScene("MainMenu", false, true);
+        GameManager.Instance.GameState = GameState.FreeRoam;
     }
 
     public void OnBackButton(InputAction.CallbackContext context) {
