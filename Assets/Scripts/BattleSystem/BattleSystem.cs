@@ -49,6 +49,7 @@ public class BattleSystem : MonoBehaviour {
     [SerializeField] Material enemyOutline;
     [SerializeField] TextMeshProUGUI actionPointText;
     [SerializeField] PointerManager pointerManager;
+    [SerializeField] UIPointerManager uIPointerManager;
     [SerializeField] ItemMenu itemMenu;
     [SerializeField] GameObject ItemPanel;
     [SerializeField] GameObject abilityPanel;
@@ -221,12 +222,14 @@ public class BattleSystem : MonoBehaviour {
         }
 
         if (backAction != null) {
+            uIPointerManager.LastSelected = null;
             MusicManager.Instance.PlaySound("MenuBack");
             backAction();
         }
     }
 
     private void ChangeState(System.Action stateChangeFunc) {
+        uIPointerManager.LastSelected = null;
         backAction = null;
         stateChangeFunc();
     }
