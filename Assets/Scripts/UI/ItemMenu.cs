@@ -1,16 +1,19 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class ItemMenu : MonoBehaviour {
     [Header("UI References")]
     public GameObject buttonPrefab;   // Reference to your Button prefab.
     public Transform contentPanel;    // Reference to the ScrollRect's content panel.
+    public TextMeshProUGUI itemDescription; 
 
     private int lastButtonSelected = 0; 
  
-    private List<Button> buttonList = new();
+    private List<(Button, ItemSlot)> buttonList = new();
     public List<GameObject> buttonObjects = new();
 
     public event Action<ItemSlot> OnItemSelected;
@@ -23,6 +26,19 @@ public class ItemMenu : MonoBehaviour {
         }
         buttonList.Clear();
         buttonObjects.Clear();
+    }
+
+    public void Update() {
+        SelectItemDescription();
+    }
+
+    void SelectItemDescription() {
+        Button currentSelectedButton = EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
+        foreach (var button in buttonList) {
+            if (currentSelectedButton == button.Item1) {
+                itemDescription.text = button.Item2.Item.ItemDescription;
+            }
+        }
     }
 
     // Clears existing buttons and repopulates the inventory menu.
@@ -55,7 +71,7 @@ public class ItemMenu : MonoBehaviour {
                 Button currentButton = buttonObj.GetComponent<Button>();
                 currentButton.onClick.AddListener(() => OnItemButtonClicked(currentSlot, i));
                  
-                buttonList.Add(currentButton);
+                buttonList.Add((currentButton, currentSlot));
             }
         }
         i = 0;
@@ -71,19 +87,19 @@ public class ItemMenu : MonoBehaviour {
             int upIndex = (i == 0) ? buttonList.Count - 1 : i - 1;
             int downIndex = (i == buttonList.Count - 1) ? 0 : i + 1;
             
-            nav.selectOnUp = buttonList[upIndex];
-            nav.selectOnDown = buttonList[downIndex];
+            nav.selectOnUp = buttonList[upIndex].Item1;
+            nav.selectOnDown = buttonList[downIndex].Item1;
             
             // Optionally, disable left/right navigation.
             nav.selectOnLeft = null;
             nav.selectOnRight = null;
             
-            buttonList[i].navigation = nav;
+            buttonList[i].Item1.navigation = nav;
 
             if (lastButtonSelected == i) {
-                buttonList[i].Select();
+                buttonList[i].Item1.Select();
             } else {
-                buttonList[0].Select();
+                buttonList[0].Item1.Select();
             }
         }
     } 

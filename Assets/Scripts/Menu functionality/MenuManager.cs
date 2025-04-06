@@ -107,6 +107,8 @@ public class MenuManager : MonoBehaviour {
             EventSystem.current.SetSelectedGameObject(null);
         }
 
+        CheckReversUsingState();
+
         if (menuStates.Count > 0) {
             menuStates.Pop().MenuObject.SetActive(false);
         }
@@ -194,6 +196,10 @@ public class MenuManager : MonoBehaviour {
             }
         }
 
+        CheckReversUsingState();
+    }
+
+    void CheckReversUsingState() {
         if (menuStates.Peek().State == BagMenuState.Using) {
             if(itemToUse.Item != null && itemToUse.Item.ItemCategory == ItemCategory.Combat) {
                 menuStates.Pop();

@@ -1949,6 +1949,7 @@ MonoBehaviour:
   buttonPrefab: {fileID: 5894456366132005972, guid: 37227941d3a24f94f8d851f3d6658f0c,
     type: 3}
   contentPanel: {fileID: 55863662}
+  itemDescription: {fileID: 0}
   buttonObjects: []
 --- !u!1001 &348667367
 PrefabInstance:
@@ -6868,6 +6869,7 @@ MonoBehaviour:
   enemyOutline: {fileID: 2100000, guid: fc3b8ebd2f64c354ca2bd081b70a2e0a, type: 2}
   actionPointText: {fileID: 656870451}
   pointerManager: {fileID: 1218607547}
+  uIPointerManager: {fileID: 1218607548}
   itemMenu: {fileID: 324738250}
   ItemPanel: {fileID: 324738248}
   abilityPanel: {fileID: 711396224}
