@@ -26,14 +26,6 @@ public enum ActionType {
     None
 } 
 
-public struct BattleAction {
-    public ActionType Type;
-    public BattleUnit User;
-    public BattleUnit Target;
-    public ItemSlot ItemSlot;
-    public AbilityBase abilityBase;
-}
-
 public class BattleSystem : MonoBehaviour {
     [Header("Battle Setup")]
     [SerializeField] private List<GameObject> partyPositions;
@@ -340,7 +332,7 @@ public class BattleSystem : MonoBehaviour {
         abilityPanel.SetActive(true);
     }
     void HandleAbilitySelection(AbilityBase selectedAbility){
-        currentAction.abilityBase = selectedAbility;
+        currentAction.AbilityBase = selectedAbility;
         EventSystem.current.SetSelectedGameObject(null);
         abilityPanel.SetActive(false);
         ChangeState(() => TargetSelection());
@@ -409,8 +401,7 @@ public class BattleSystem : MonoBehaviour {
                         backAction = () => {
                             pointerManager.ClearPointers();
                             ClearTargetIndicator();
-                            currentAction.ItemSlot.Item = null;
-                            currentAction.ItemSlot.Count = 0;
+                            currentAction.ItemSlot = null;
                             ChangeState(() => ItemSelection());
                         };
                         break;
@@ -437,17 +428,16 @@ public class BattleSystem : MonoBehaviour {
                     pointerManager.ClearPointers();
                     ClearTargetIndicator();
                     playerInventory.AddItem(currentAction.ItemSlot.Item);
-                    currentAction.ItemSlot.Item = null;
-                    currentAction.ItemSlot.Count = 0;
+                    currentAction.ItemSlot = null;
                     ChangeState(() => ItemSelection());
                 };
                 break;
         }
 
-        if (currentAction.ItemSlot.Item?.ItemTarget == ItemTarget.Enemy || currentAction.Type == ActionType.Attack || currentAction.abilityBase?.AbilityTarget == AbilityTarget.Enemy) {
+        if (currentAction.ItemSlot?.Item.ItemTarget == ItemTarget.Enemy || currentAction.Type == ActionType.Attack || currentAction.AbilityBase?.AbilityTarget == AbilityTarget.Enemy) {
             isSelectingEnemy = true;
             currentTargetIndex = 0;
-        } else if (currentAction.ItemSlot.Item?.ItemTarget == ItemTarget.Player || currentAction.abilityBase?.AbilityTarget == AbilityTarget.Player) {
+        } else if (currentAction.ItemSlot?.Item.ItemTarget == ItemTarget.Player || currentAction.AbilityBase?.AbilityTarget == AbilityTarget.Player) {
             isSelectingEnemy = false;
             currentTargetIndex = 0;
         }
@@ -805,7 +795,7 @@ public class BattleSystem : MonoBehaviour {
     IEnumerator RunAbility(ActionSlot actionSlot){
         BattleUnit target = actionSlot.BattleAction.Target;
         BattleUnit user = actionSlot.BattleAction.User;
-        AbilityBase currentAbility = actionSlot.BattleAction.abilityBase;
+        AbilityBase currentAbility = actionSlot.BattleAction.AbilityBase;
 
         BattleUnit newTarget = null;
 
