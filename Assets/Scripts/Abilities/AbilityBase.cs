@@ -16,7 +16,7 @@ public class AbilityBase: ScriptableObject
     [Header("Stats")]
     [SerializeField] int power;
     
-    [SerializeField] int actionCost;
+    [SerializeField] int cost;
 
     [Header("Attributes")]
     
@@ -41,8 +41,8 @@ public class AbilityBase: ScriptableObject
         get { return power; }
     }
 
-    public int ActionCost {
-        get { return actionCost; }
+    public int Cost {
+        get { return cost; }
     }
 
     public List<AbilityEffectBase> Effects{

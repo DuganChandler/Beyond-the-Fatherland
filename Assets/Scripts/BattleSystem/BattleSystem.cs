@@ -34,6 +34,7 @@ public struct BattleAction {
     public AbilityBase abilityBase;
 }
 
+
 public class BattleSystem : MonoBehaviour {
     [Header("Battle Setup")]
     [SerializeField] private List<GameObject> partyPositions;
@@ -83,6 +84,12 @@ public class BattleSystem : MonoBehaviour {
 
     private int numEscapeAttempts;
 
+    private int currentRound;
+
+    public int CurrentRound(){
+        return currentRound;
+    }
+
     void Awake() {
         StartBattle(); 
     }
@@ -123,6 +130,7 @@ public class BattleSystem : MonoBehaviour {
         actionPointText.text = $"{actionPoints}";
 
         numEscapeAttempts = 0;
+        currentRound = 1;
     }
 
     public IEnumerator SetupBattle() {
@@ -340,6 +348,10 @@ public class BattleSystem : MonoBehaviour {
         abilityPanel.SetActive(true);
     }
     void HandleAbilitySelection(AbilityBase selectedAbility){
+        if(selectedAbility.Cost > currentAction.User.Character.MP){
+            MusicManager.Instance.PlaySound("Wrong");
+            return;
+        }
         currentAction.abilityBase = selectedAbility;
         EventSystem.current.SetSelectedGameObject(null);
         abilityPanel.SetActive(false);
@@ -708,6 +720,7 @@ public class BattleSystem : MonoBehaviour {
     IEnumerator RunRound() {
         prevState = state;
         state = BattleState.RunningRound;
+        currentRound += 1;
 
         foreach (var slot in actionSlots) {
             ActionSlot actionSlot = slot.GetComponent<ActionSlot>();
@@ -837,6 +850,7 @@ public class BattleSystem : MonoBehaviour {
             damageTextObject.SetActive(false);
         }
         damageTextObject.GetComponent<DamageText>().text.color = Color.white;
+        user.DecreaseMP(ability.Cost);
 
         if (target.HP <= 0) {
             yield return StartCoroutine(OnCharacterDeath(actionSlot));
