@@ -36,7 +36,9 @@ public class ItemMenu : MonoBehaviour {
         Button currentSelectedButton = EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
         foreach (var button in buttonList) {
             if (currentSelectedButton == button.Item1) {
-                itemDescription.text = button.Item2.Item.ItemDescription;
+                if (itemDescription != null) {
+                    itemDescription.text = button.Item2.Item.ItemDescription;
+                }
             }
         }
     }

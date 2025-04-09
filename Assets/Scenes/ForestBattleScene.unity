@@ -6871,7 +6871,7 @@ MonoBehaviour:
   pointerManager: {fileID: 1218607547}
   uIPointerManager: {fileID: 1218607548}
   itemMenu: {fileID: 324738250}
-  ItemPanel: {fileID: 324738248}
+  itemPanel: {fileID: 324738248}
   abilityPanel: {fileID: 711396224}
   abilityMenu: {fileID: 711396226}
   dialogBox: {fileID: 1218607550}
