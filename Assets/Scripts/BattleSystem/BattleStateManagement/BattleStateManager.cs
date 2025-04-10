@@ -27,6 +27,8 @@ public class BattleStateManager {
 
                 states.Pop();
             }
+
+            MusicManager.Instance.PlaySound("MenuBack");
         }
     }
 

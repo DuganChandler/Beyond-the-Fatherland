@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using TMPro;
+using System.Data;
 
 public enum BattleState {
     Start,
@@ -12,12 +13,14 @@ public enum BattleState {
     ActionSelection,
     AbilitySelection,
     ItemSelection,
+    SlotActionSelection,
+    SlotSwapping,
+    SlotRemoving,
     TargetSelection,
     ActionSlotSelection,
     RunningRound,
     EndRound,
     BattleOver,
-    ActionSlotSpecialActions
 }
 
 public enum ActionType {
@@ -37,7 +40,6 @@ public class BattleSystem : MonoBehaviour {
 
     [Header("Battle UI")]
     [SerializeField] List<Button> playerPortraits; 
-    [SerializeField] List<Button> actionSlots; 
     [SerializeField] List<CharacterHud> characterHudList;
     [SerializeField] Material partyOutline;
     [SerializeField] Material enemyOutline;
@@ -45,10 +47,13 @@ public class BattleSystem : MonoBehaviour {
     [SerializeField] PointerManager pointerManager;
     [SerializeField] UIPointerManager uIPointerManager;
     [SerializeField] ItemMenu itemMenu;
+    [SerializeField] SlotActionPanelManager slotActionPanelManager;
     [SerializeField] GameObject itemPanel;
     [SerializeField] GameObject abilityPanel;
     [SerializeField] AbilityMenu abilityMenu;
     [SerializeField] BattleDialogBox dialogBox;
+    [SerializeField] GameObject slotActionPanel;
+    [SerializeField] ActionBarManager actionBarManager;
 
     private List<BattleUnit> playerUnits;
     private List<BattleUnit> enemyUnits;
@@ -74,7 +79,9 @@ public class BattleSystem : MonoBehaviour {
     public BattleStateManager StateManager { get; private set; } = new();
     public List<Button> PlayerPortraits { get => playerPortraits; }
     public GameObject AbilityPanel { get => abilityPanel; }
-    public GameObject ItemPanel{ get =>itemPanel; }
+    public GameObject ItemPanel{ get => itemPanel; }
+    public GameObject SlotActionPanel{ get => slotActionPanel; }
+    public ActionBarManager ActionBarManager { get => actionBarManager; }
     public AbilityMenu AbilityMenu { get => abilityMenu; }
     public ItemMenu ItemMenu { get => itemMenu; }
     public BattleUnit CurrentSelectedPlayerUnit { get => currentSelectedPlayerUnit; }
@@ -90,17 +97,36 @@ public class BattleSystem : MonoBehaviour {
         if (itemMenu != null) {
             itemMenu.OnItemSelected += HandleItemSelection;
         } 
+
         if (abilityMenu != null) {
             abilityMenu.OnAbilitySelected += HandleAbilitySelection;
         } 
+
+        if (slotActionPanelManager != null) {
+            slotActionPanelManager.OnSlotActionSelected += HandleSlotActionSelected;
+        }
+
+        if (actionBarManager != null) {
+            actionBarManager.OnSlotSelected += HandleActionSlotSelected;
+        }
+
     }
 
     void OnDisable() {
         if (itemMenu != null) {
             itemMenu.OnItemSelected -= HandleItemSelection;
         } 
+
         if (abilityMenu != null) {
             abilityMenu.OnAbilitySelected -= HandleAbilitySelection;
+        }
+
+        if (slotActionPanelManager != null) {
+            slotActionPanelManager.OnSlotActionSelected -= HandleSlotActionSelected;
+        }
+
+        if (actionBarManager != null) {
+            actionBarManager.OnSlotSelected -= HandleActionSlotSelected;
         }
     }
 
@@ -153,8 +179,8 @@ public class BattleSystem : MonoBehaviour {
 
     void LoadEnemyActionSlots() {
         List<int> availableIndecies = new();
-        for (int i = 0; i < actionSlots.Count; i++) {
-            ActionSlot actionSlot = actionSlots[i].GetComponent<ActionSlot>();
+        for (int i = 0; i < ActionBarManager.ActionSLots.Count; i++) {
+            ActionSlot actionSlot = actionBarManager.ActionSLots[i];
             if (!actionSlot.IsOccupied) {
                 availableIndecies.Add(i);
             }
@@ -183,7 +209,7 @@ public class BattleSystem : MonoBehaviour {
 
                 BattleAction action = new(ActionType.Attack, enemyUnit, playerUnit, null, null);
 
-                ActionSlot actionSlot = actionSlots[slotIndex].GetComponent<ActionSlot>();
+                ActionSlot actionSlot = actionBarManager.ActionSLots[slotIndex];
 
                 actionSlot.CharacterPortrait.GetComponent<Image>().sprite = enemyUnit.Character.CharacterData.CharacterPortrait;
                 actionSlot.CharacterPortrait.SetActive(true);
@@ -228,23 +254,6 @@ public class BattleSystem : MonoBehaviour {
         UpdateTargetIndicator();
     }
 
-    // helper function for handling Action Slot selection in ActionSlotSelection class
-    public void HandleActionSlotSelection() {
-        StartCoroutine(DelayActionSlotSelection());
-    }
-
-    // this helps with not instantly selecting an action slot when a target is selected
-    private IEnumerator DelayActionSlotSelection() {
-        EventSystem.current.SetSelectedGameObject(null);
-
-        foreach (var slot in actionSlots) {
-            slot.GetComponent<ActionSlot>().DisableLeftRightNav();
-        }
-
-        yield return null;
-        actionSlots[0].Select();
-    }
-
     IEnumerator BattleOver(bool won) {
         StateManager.ChangeState(new BattleOverState(this));
         
@@ -280,10 +289,15 @@ public class BattleSystem : MonoBehaviour {
             return;
         }
 
-        MusicManager.Instance.PlaySound("MenuBack");
-        uIPointerManager.LastSelected = null;
+        Debug.Log($"The Current State is: {StateManager.CurrentState.State}");
 
-        StateManager.Back();
+        if (StateManager.CurrentState.State != BattleState.CharacterSelect) {
+            uIPointerManager.LastSelected = null;
+            StateManager.Back();
+        } else {
+            StateManager.ChangeState(new SlotActionSelectionState(this));
+        }
+
     }
 
     // Button OnClick for Character Select State
@@ -410,21 +424,6 @@ public class BattleSystem : MonoBehaviour {
         }
     }
 
-    // Button OnClick for selecting an Action Slot
-    public void OnActionSlotSelection(ActionSlot actionSlot) {
-        switch (StateManager.CurrentState.State) {
-            case BattleState.ActionSlotSelection:
-                AddToActionSlot(actionSlot);
-                break;
-            case BattleState.CharacterSelect:
-                // ChangeState(() => ActionSlotSpecialActions()); 
-                break;
-            default:
-                Debug.Log($"Not in a state to use the Action Slots, Current State: {StateManager.CurrentState.State}");
-                break;
-        }
-    }
-
     private void AddToActionSlot(ActionSlot actionSlot) {
         if (actionSlot.IsOccupied) {
             Debug.Log("Choose another slot, this one is OCCUPIED");
@@ -445,24 +444,6 @@ public class BattleSystem : MonoBehaviour {
         StateManager.ChangeState(new CharacterSelectionState(this));
     }
 
-    public void EnableActionSlotsNav() {
-        foreach (var slot in actionSlots) {
-            slot.GetComponent<ActionSlot>().EnableLeftRightNav();
-        }
-    }
-
-    // public void OnRemoveActionSlot(ActionSlot actionSlot) {
-    //     if (!actionSlot.IsOccupied) {
-    //         Debug.Log("Action slot has not action!");
-    //         return;
-    //     }
-
-    //     actionSlot.ResetData();
-    //     actionPoints++;
-    //     actionPointText.text = $"{actionPoints}";
-
-    //     ChangeState(() => CharacterSelection());
-    // }
 
     // Player input callback for running a round
     public void OnRoundRunSelected(InputAction.CallbackContext context) {
@@ -490,28 +471,27 @@ public class BattleSystem : MonoBehaviour {
 
     // Coroutine to run the actions of the characters
     IEnumerator RunRound() {
-        foreach (var slot in actionSlots) {
-            ActionSlot actionSlot = slot.GetComponent<ActionSlot>();
-            if (!actionSlot.IsOccupied) {
+        foreach (var slot in actionBarManager.ActionSLots) {
+            if (!slot.IsOccupied) {
                 continue;
             }
 
-            if (!actionSlot.BattleAction.User.Character.IsAlive) {
+            if (!slot.BattleAction.User.Character.IsAlive) {
                 continue;
             }
 
-            switch (actionSlot.BattleAction.Type) {
+            switch (slot.BattleAction.Type) {
                 case ActionType.Attack:
-                    yield return StartCoroutine(RunAttack(actionSlot));
+                    yield return StartCoroutine(RunAttack(slot));
                     break;
                 case ActionType.Run:
                     yield return StartCoroutine(TryToEscape());
                     break;
                 case ActionType.Item:
-                    yield return StartCoroutine(RunItem(actionSlot));
+                    yield return StartCoroutine(RunItem(slot));
                     break;
                 case ActionType.Ability:
-                    yield return StartCoroutine(RunAbility(actionSlot));
+                    yield return StartCoroutine(RunAbility(slot));
                     break;
             }
         }
@@ -708,12 +688,12 @@ public class BattleSystem : MonoBehaviour {
     }
 
     void CleanUp() {
-        foreach (var slot in actionSlots) {
-            ActionSlot actionSlot = slot.GetComponent<ActionSlot>();
-            if (!actionSlot.IsOccupied) {
+        foreach (var slot in actionBarManager.ActionSLots) {
+            if (!slot.IsOccupied) {
                 continue;
             }
-            actionSlot.ResetData();
+
+            slot.ResetData();
         }
 
         canRunRound = false;
@@ -733,5 +713,38 @@ public class BattleSystem : MonoBehaviour {
 
         StateManager.CleanStates();
     }
+
+    private void HandleSlotActionSelected(SlotAction slotAction) {
+        StateManager.ChangeState(new ActionSlotSelectionState(this, slotAction));
+    }
+
+    private void HandleActionSlotSelected(ActionSlot actionSlot, SlotAction slotAction) {
+        if (slotAction == SlotAction.Add) {
+            AddToActionSlot(actionSlot);
+        } else if (slotAction == SlotAction.Remove) {
+            RemoveAction(actionSlot);
+        } else if (slotAction == SlotAction.Swap) {
+            Debug.Log("Entering Swap");
+        } 
+    }
+
+    public void RemoveAction(ActionSlot actionSlot) {
+        if (!actionSlot.IsOccupied) {
+            Debug.Log("Action slot has no action!");
+            return;
+        }
+
+        if (actionSlot.BattleAction.User.Character.CharacterData.CharacerType == CharacerType.Enemy) {
+            Debug.Log("Unable to remove Enemy Slot");
+            return;
+        }
+
+        actionSlot.ResetData();
+        actionPoints++;
+        actionPointText.text = $"{actionPoints}";
+
+        StateManager.ChangeState(new CharacterSelectionState(this));
+    }
+
 
 }

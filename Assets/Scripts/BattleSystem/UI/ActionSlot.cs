@@ -35,18 +35,6 @@ public class ActionSlot : MonoBehaviour {
         characterPortrait.SetActive(false);
     }
 
-    public void DisableLeftRightNav() {
-        Navigation nav = actionSlotButton.navigation;
-        nav.selectOnLeft = null;
-        actionSlotButton.navigation = nav;
-    }
-
-    public void EnableLeftRightNav() {
-        Navigation nav = actionSlotButton.navigation;
-        nav.selectOnLeft = defaultLeftNavButton;
-        actionSlotButton.navigation = nav;
-    }
-
     void Start() {
         actionSlotButton = GetComponent<Button>();
     }
