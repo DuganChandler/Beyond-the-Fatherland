@@ -14,15 +14,12 @@ public class ActionBarManager : MonoBehaviour {
     private SlotAction currentSlotAction;
 
     public List<ActionSlot> ActionSLots { get => actionSlots; }
-    public event Action<ActionSlot, SlotAction> OnSlotSelected;
-    // helper function for handling Action Slot selection in ActionSlotSelection class
 
     public void HandleActionSlotSelection(SlotAction slotAction) {
         currentSlotAction = slotAction;
         StartCoroutine(DelayActionSlotSelection());
     }
 
-    // this helps with not instantly selecting an action slot when a target is selected
     private IEnumerator DelayActionSlotSelection() {
         EventSystem.current.SetSelectedGameObject(null);
         yield return null;
@@ -32,24 +29,18 @@ public class ActionBarManager : MonoBehaviour {
     public void OnActionSlotSelected(ActionSlot slot) {
         switch (currentSlotAction) {
             case SlotAction.Add:
-                OnSlotSelected?.Invoke(slot, SlotAction.Add);
+                BattleEventManager.Instance.SlotSelected(slot, SlotAction.Add);
                 break;
             case SlotAction.Remove:
-                OnSlotSelected?.Invoke(slot, SlotAction.Remove);
+                BattleEventManager.Instance.SlotSelected(slot, SlotAction.Remove);
                 break;
             case SlotAction.Swap:
-                OnSlotSelected?.Invoke(slot, SlotAction.Swap);
+                BattleEventManager.Instance.SlotSelected(slot, SlotAction.Swap);
                 break;
         }
 
-        // add
-        // remove
         // init swap
         // complete swap
         // remove swap 
-    }
-
-    void OnEnable() {
-
     }
 }

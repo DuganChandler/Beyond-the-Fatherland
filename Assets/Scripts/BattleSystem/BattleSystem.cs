@@ -5,7 +5,6 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using TMPro;
-using System.Data;
 
 public enum BattleState {
     Start,
@@ -47,7 +46,6 @@ public class BattleSystem : MonoBehaviour {
     [SerializeField] PointerManager pointerManager;
     [SerializeField] UIPointerManager uIPointerManager;
     [SerializeField] ItemMenu itemMenu;
-    [SerializeField] SlotActionPanelManager slotActionPanelManager;
     [SerializeField] GameObject itemPanel;
     [SerializeField] GameObject abilityPanel;
     [SerializeField] AbilityMenu abilityMenu;
@@ -93,41 +91,18 @@ public class BattleSystem : MonoBehaviour {
     }
 
     void OnEnable() {
-        Debug.Log(itemMenu);
-        if (itemMenu != null) {
-            itemMenu.OnItemSelected += HandleItemSelection;
-        } 
-
-        if (abilityMenu != null) {
-            abilityMenu.OnAbilitySelected += HandleAbilitySelection;
-        } 
-
-        if (slotActionPanelManager != null) {
-            slotActionPanelManager.OnSlotActionSelected += HandleSlotActionSelected;
-        }
-
-        if (actionBarManager != null) {
-            actionBarManager.OnSlotSelected += HandleActionSlotSelected;
-        }
+        BattleEventManager.Instance.OnItemSelected += HandleItemSelection;
+        BattleEventManager.Instance.OnAbilitySelected += HandleAbilitySelection;
+        BattleEventManager.Instance.OnSlotActionSelected += HandleSlotActionSelected;
+        BattleEventManager.Instance.OnSlotSelected += HandleActionSlotSelected;
 
     }
 
     void OnDisable() {
-        if (itemMenu != null) {
-            itemMenu.OnItemSelected -= HandleItemSelection;
-        } 
-
-        if (abilityMenu != null) {
-            abilityMenu.OnAbilitySelected -= HandleAbilitySelection;
-        }
-
-        if (slotActionPanelManager != null) {
-            slotActionPanelManager.OnSlotActionSelected -= HandleSlotActionSelected;
-        }
-
-        if (actionBarManager != null) {
-            actionBarManager.OnSlotSelected -= HandleActionSlotSelected;
-        }
+        BattleEventManager.Instance.OnItemSelected -= HandleItemSelection;
+        BattleEventManager.Instance.OnAbilitySelected -= HandleAbilitySelection;
+        BattleEventManager.Instance.OnSlotActionSelected -= HandleSlotActionSelected;
+        BattleEventManager.Instance.OnSlotSelected -= HandleActionSlotSelected;
     }
 
     public void StartBattle() {

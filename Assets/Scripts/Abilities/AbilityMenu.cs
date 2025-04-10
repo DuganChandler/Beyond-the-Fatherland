@@ -94,5 +94,6 @@ public class AbilityMenu : MonoBehaviour {
     void OnAbilityButtonClicked(AbilityBase ability, int buttonSelected) {
         lastButtonSelected = buttonSelected;
         OnAbilitySelected?.Invoke(ability);
+        BattleEventManager.Instance.AbilitySelected(ability);
     }
 }

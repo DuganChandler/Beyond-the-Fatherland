@@ -11,20 +11,18 @@ public enum SlotAction{
 public class SlotActionPanelManager : MonoBehaviour {
     [SerializeField] Button button;
 
-    public event Action<SlotAction> OnSlotActionSelected;
-
     void OnEnable() {
         button.Select(); 
     }
 
     public void OnSwapSelected() {
         MusicManager.Instance.PlaySound("MenuConfirm"); 
-        OnSlotActionSelected?.Invoke(SlotAction.Swap);
+        BattleEventManager.Instance.SlotActionSelected(SlotAction.Swap);
     }
 
 
     public void OnRemoveSelected() {
         MusicManager.Instance.PlaySound("MenuConfirm"); 
-        OnSlotActionSelected?.Invoke(SlotAction.Remove);
+        BattleEventManager.Instance.SlotActionSelected(SlotAction.Remove);
     }
 }
