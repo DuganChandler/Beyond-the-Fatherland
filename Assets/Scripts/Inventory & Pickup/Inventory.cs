@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public struct ItemSlot {
+public class ItemSlot {
     public ItemBase Item;
     public int Count;
 } 
