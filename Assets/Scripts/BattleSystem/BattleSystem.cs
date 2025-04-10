@@ -130,8 +130,6 @@ public class BattleSystem : MonoBehaviour {
         yield return new WaitForEndOfFrame(); 
         MusicManager.Instance.PlayMusic("BattleTheme");
 
-        // initalize party and enemy prefabs in given positions
-        // set hud data
         for (int i = 0; i < playerCharacters.Count; i++) {
             BattleUnit unit = new(playerCharacters[i], characterHudList[i]); 
             unit.Setup();
@@ -200,23 +198,6 @@ public class BattleSystem : MonoBehaviour {
         canRunRound = true;
     }
 
-    void HandleAbilitySelection(AbilityBase selectedAbility){
-        currentAction.AbilityBase = selectedAbility;
-        uIPointerManager.LastSelected = null;
-        StateManager.ChangeState(new TargetSelectionState(this));
-    }
-
-    void HandleItemSelection(ItemSlot selectedSlot) {
-        Debug.Log("handle them items");
-        currentAction.ItemSlot = selectedSlot;
-        EventSystem.current.SetSelectedGameObject(null);
-        itemPanel.SetActive(false);
-
-        playerInventory.RemoveItem(selectedSlot.Item);
-
-        StateManager.ChangeState(new TargetSelectionState(this));
-    }
-
     // helper function for handling target selection in TargetSelectionState class
     public void HandleTargetSelection() {
         if (currentAction.ItemSlot?.Item.ItemTarget == ItemTarget.Enemy || currentAction.Type == ActionType.Attack || (currentAction.AbilityBase != null && currentAction.AbilityBase.AbilityTarget == AbilityTarget.Enemy)) {
@@ -272,7 +253,6 @@ public class BattleSystem : MonoBehaviour {
         } else {
             StateManager.ChangeState(new SlotActionSelectionState(this));
         }
-
     }
 
     // Button OnClick for Character Select State
@@ -399,6 +379,7 @@ public class BattleSystem : MonoBehaviour {
         }
     }
 
+    // adds player action to action slot
     private void AddToActionSlot(ActionSlot actionSlot) {
         if (actionSlot.IsOccupied) {
             Debug.Log("Choose another slot, this one is OCCUPIED");
@@ -416,6 +397,25 @@ public class BattleSystem : MonoBehaviour {
         actionPoints--;
         actionPointText.text = $"{actionPoints}";
         
+        StateManager.ChangeState(new CharacterSelectionState(this));
+    }
+
+    // Removes player from action slot
+    public void RemoveAction(ActionSlot actionSlot) {
+        if (!actionSlot.IsOccupied) {
+            Debug.Log("Action slot has no action!");
+            return;
+        }
+
+        if (actionSlot.BattleAction.User.Character.CharacterData.CharacerType == CharacerType.Enemy) {
+            Debug.Log("Unable to remove Enemy Slot");
+            return;
+        }
+
+        actionSlot.ResetData();
+        actionPoints++;
+        actionPointText.text = $"{actionPoints}";
+
         StateManager.ChangeState(new CharacterSelectionState(this));
     }
 
@@ -689,6 +689,8 @@ public class BattleSystem : MonoBehaviour {
         StateManager.CleanStates();
     }
 
+
+    // Event Handlers
     private void HandleSlotActionSelected(SlotAction slotAction) {
         StateManager.ChangeState(new ActionSlotSelectionState(this, slotAction));
     }
@@ -703,23 +705,21 @@ public class BattleSystem : MonoBehaviour {
         } 
     }
 
-    public void RemoveAction(ActionSlot actionSlot) {
-        if (!actionSlot.IsOccupied) {
-            Debug.Log("Action slot has no action!");
-            return;
-        }
 
-        if (actionSlot.BattleAction.User.Character.CharacterData.CharacerType == CharacerType.Enemy) {
-            Debug.Log("Unable to remove Enemy Slot");
-            return;
-        }
-
-        actionSlot.ResetData();
-        actionPoints++;
-        actionPointText.text = $"{actionPoints}";
-
-        StateManager.ChangeState(new CharacterSelectionState(this));
+    void HandleAbilitySelection(AbilityBase selectedAbility){
+        currentAction.AbilityBase = selectedAbility;
+        uIPointerManager.LastSelected = null;
+        StateManager.ChangeState(new TargetSelectionState(this));
     }
 
+    void HandleItemSelection(ItemSlot selectedSlot) {
+        Debug.Log("handle them items");
+        currentAction.ItemSlot = selectedSlot;
+        EventSystem.current.SetSelectedGameObject(null);
+        itemPanel.SetActive(false);
 
+        playerInventory.RemoveItem(selectedSlot.Item);
+
+        StateManager.ChangeState(new TargetSelectionState(this));
+    }
 }

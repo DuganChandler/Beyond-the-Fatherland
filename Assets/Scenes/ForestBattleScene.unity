@@ -177,12 +177,27 @@ PrefabInstance:
       propertyPath: defaultLeftNavButton
       value: 
       objectReference: {fileID: 1109068858}
+    - target: {fileID: 4908746647292987605, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -80
+      objectReference: {fileID: 0}
+    - target: {fileID: 4908746647292987605, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -8
+      objectReference: {fileID: 0}
     - target: {fileID: 6228851554988726206, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: bb65883bf01c84440b743475f91d3b35,
         type: 3}
+    - target: {fileID: 6280316200010025470, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -120
+      objectReference: {fileID: 0}
     - target: {fileID: 6746059300034896414, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
       propertyPath: m_Pivot.x
@@ -2055,6 +2070,7 @@ MonoBehaviour:
     type: 3}
   contentPanel: {fileID: 55863662}
   itemDescription: {fileID: 0}
+  itemCategory: 0
   buttonObjects: []
 --- !u!1001 &348667367
 PrefabInstance:
@@ -2650,12 +2666,27 @@ PrefabInstance:
       propertyPath: defaultLeftNavButton
       value: 
       objectReference: {fileID: 1109068858}
+    - target: {fileID: 4908746647292987605, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -80
+      objectReference: {fileID: 0}
+    - target: {fileID: 4908746647292987605, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -8
+      objectReference: {fileID: 0}
     - target: {fileID: 6228851554988726206, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: bb65883bf01c84440b743475f91d3b35,
         type: 3}
+    - target: {fileID: 6280316200010025470, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -120
+      objectReference: {fileID: 0}
     - target: {fileID: 6746059300034896414, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
       propertyPath: m_Pivot.x
@@ -5180,12 +5211,27 @@ PrefabInstance:
       propertyPath: defaultLeftNavButton
       value: 
       objectReference: {fileID: 1109068858}
+    - target: {fileID: 4908746647292987605, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -80
+      objectReference: {fileID: 0}
+    - target: {fileID: 4908746647292987605, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -8
+      objectReference: {fileID: 0}
     - target: {fileID: 6228851554988726206, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: bb65883bf01c84440b743475f91d3b35,
         type: 3}
+    - target: {fileID: 6280316200010025470, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -120
+      objectReference: {fileID: 0}
     - target: {fileID: 6746059300034896414, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
       propertyPath: m_Pivot.x
@@ -7229,12 +7275,27 @@ PrefabInstance:
       propertyPath: defaultLeftNavButton
       value: 
       objectReference: {fileID: 1109068858}
+    - target: {fileID: 4908746647292987605, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -80
+      objectReference: {fileID: 0}
+    - target: {fileID: 4908746647292987605, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -8
+      objectReference: {fileID: 0}
     - target: {fileID: 6228851554988726206, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: bb65883bf01c84440b743475f91d3b35,
         type: 3}
+    - target: {fileID: 6280316200010025470, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -120
+      objectReference: {fileID: 0}
     - target: {fileID: 6746059300034896414, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
       propertyPath: m_Pivot.x
@@ -7559,7 +7620,6 @@ MonoBehaviour:
   pointerManager: {fileID: 1218607547}
   uIPointerManager: {fileID: 1218607548}
   itemMenu: {fileID: 324738250}
-  slotActionPanelManager: {fileID: 2006814583}
   itemPanel: {fileID: 324738248}
   abilityPanel: {fileID: 711396224}
   abilityMenu: {fileID: 711396226}
@@ -8245,12 +8305,27 @@ PrefabInstance:
       propertyPath: defaultLeftNavButton
       value: 
       objectReference: {fileID: 1109068858}
+    - target: {fileID: 4908746647292987605, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -80
+      objectReference: {fileID: 0}
+    - target: {fileID: 4908746647292987605, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -8
+      objectReference: {fileID: 0}
     - target: {fileID: 6228851554988726206, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: bb65883bf01c84440b743475f91d3b35,
         type: 3}
+    - target: {fileID: 6280316200010025470, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -120
+      objectReference: {fileID: 0}
     - target: {fileID: 6746059300034896414, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
       propertyPath: m_Pivot.x
@@ -8591,12 +8666,27 @@ PrefabInstance:
       propertyPath: defaultLeftNavButton
       value: 
       objectReference: {fileID: 1109068858}
+    - target: {fileID: 4908746647292987605, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -80
+      objectReference: {fileID: 0}
+    - target: {fileID: 4908746647292987605, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -8
+      objectReference: {fileID: 0}
     - target: {fileID: 6228851554988726206, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: bb65883bf01c84440b743475f91d3b35,
         type: 3}
+    - target: {fileID: 6280316200010025470, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -120
+      objectReference: {fileID: 0}
     - target: {fileID: 6746059300034896414, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
       propertyPath: m_Pivot.x
@@ -9219,12 +9309,27 @@ PrefabInstance:
       propertyPath: defaultLeftNavButton
       value: 
       objectReference: {fileID: 1109068858}
+    - target: {fileID: 4908746647292987605, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -80
+      objectReference: {fileID: 0}
+    - target: {fileID: 4908746647292987605, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -8
+      objectReference: {fileID: 0}
     - target: {fileID: 6228851554988726206, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: bb65883bf01c84440b743475f91d3b35,
         type: 3}
+    - target: {fileID: 6280316200010025470, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -120
+      objectReference: {fileID: 0}
     - target: {fileID: 6746059300034896414, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
       propertyPath: m_Pivot.x
@@ -9486,12 +9591,27 @@ PrefabInstance:
       propertyPath: defaultLeftNavButton
       value: 
       objectReference: {fileID: 1109068858}
+    - target: {fileID: 4908746647292987605, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -80
+      objectReference: {fileID: 0}
+    - target: {fileID: 4908746647292987605, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -8
+      objectReference: {fileID: 0}
     - target: {fileID: 6228851554988726206, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: bb65883bf01c84440b743475f91d3b35,
         type: 3}
+    - target: {fileID: 6280316200010025470, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -120
+      objectReference: {fileID: 0}
     - target: {fileID: 6746059300034896414, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
       propertyPath: m_Pivot.x
@@ -10287,12 +10407,27 @@ PrefabInstance:
       propertyPath: defaultLeftNavButton
       value: 
       objectReference: {fileID: 1109068858}
+    - target: {fileID: 4908746647292987605, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -80
+      objectReference: {fileID: 0}
+    - target: {fileID: 4908746647292987605, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -8
+      objectReference: {fileID: 0}
     - target: {fileID: 6228851554988726206, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: bb65883bf01c84440b743475f91d3b35,
         type: 3}
+    - target: {fileID: 6280316200010025470, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -120
+      objectReference: {fileID: 0}
     - target: {fileID: 6746059300034896414, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
       propertyPath: m_Pivot.x
@@ -12627,12 +12762,32 @@ PrefabInstance:
       propertyPath: defaultLeftNavButton
       value: 
       objectReference: {fileID: 1109068858}
+    - target: {fileID: 3059807269152363072, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4908746647292987605, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -80
+      objectReference: {fileID: 0}
+    - target: {fileID: 4908746647292987605, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -8
+      objectReference: {fileID: 0}
     - target: {fileID: 6228851554988726206, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: bb65883bf01c84440b743475f91d3b35,
         type: 3}
+    - target: {fileID: 6280316200010025470, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -120
+      objectReference: {fileID: 0}
     - target: {fileID: 6746059300034896414, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
       propertyPath: m_Pivot.x
