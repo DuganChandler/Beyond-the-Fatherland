@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BattleEventManager : MonoBehaviour {
@@ -19,7 +17,7 @@ public class BattleEventManager : MonoBehaviour {
     public event Action<ItemSlot> OnItemSelected;
     public event Action<AbilityBase> OnAbilitySelected;
     public event Action<SlotAction> OnSlotActionSelected;
-    public event Action<ActionSlot, SlotAction> OnSlotSelected;
+    public event Action<ActionSlot, SlotAction, bool> OnSlotSelected;
 
     public void ItemSelected(ItemSlot itemSlot) {
         OnItemSelected?.Invoke(itemSlot);
@@ -33,7 +31,7 @@ public class BattleEventManager : MonoBehaviour {
         OnSlotActionSelected?.Invoke(slotAction);
     }
 
-    public void SlotSelected(ActionSlot actionSlot, SlotAction slotAction) {
-        OnSlotSelected?.Invoke(actionSlot,slotAction);
+    public void SlotSelected(ActionSlot actionSlot, SlotAction slotAction, bool swapped = false) {
+        OnSlotSelected?.Invoke(actionSlot,slotAction, swapped);
     }
 }

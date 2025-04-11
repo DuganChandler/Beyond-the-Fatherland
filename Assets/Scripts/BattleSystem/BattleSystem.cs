@@ -13,7 +13,7 @@ public enum BattleState {
     AbilitySelection,
     ItemSelection,
     SlotActionSelection,
-    SlotSwapping,
+    SlotSwap,
     SlotRemoving,
     TargetSelection,
     ActionSlotSelection,
@@ -689,19 +689,23 @@ public class BattleSystem : MonoBehaviour {
         StateManager.CleanStates();
     }
 
-
     // Event Handlers
     private void HandleSlotActionSelected(SlotAction slotAction) {
         StateManager.ChangeState(new ActionSlotSelectionState(this, slotAction));
     }
 
-    private void HandleActionSlotSelected(ActionSlot actionSlot, SlotAction slotAction) {
+    private void HandleActionSlotSelected(ActionSlot actionSlot, SlotAction slotAction, bool swapped) {
         if (slotAction == SlotAction.Add) {
             AddToActionSlot(actionSlot);
         } else if (slotAction == SlotAction.Remove) {
             RemoveAction(actionSlot);
         } else if (slotAction == SlotAction.Swap) {
-            Debug.Log("Entering Swap");
+            if (!swapped) {
+                StateManager.ChangeState(new SlotSwapState(this));
+            } else if (swapped) {
+                Debug.Log("herel");
+                StateManager.ChangeState(new CharacterSelectionState(this));
+            }
         } 
     }
 

@@ -174,6 +174,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2576376844885934390, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
+      propertyPath: slotNumber
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2576376844885934390, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
       propertyPath: defaultLeftNavButton
       value: 
       objectReference: {fileID: 1109068858}
@@ -2661,6 +2666,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1988288430}
     m_Modifications:
+    - target: {fileID: 2576376844885934390, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: slotNumber
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 2576376844885934390, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
       propertyPath: defaultLeftNavButton
@@ -5208,6 +5218,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2576376844885934390, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
+      propertyPath: slotNumber
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2576376844885934390, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
       propertyPath: defaultLeftNavButton
       value: 
       objectReference: {fileID: 1109068858}
@@ -7272,6 +7287,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2576376844885934390, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
+      propertyPath: slotNumber
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2576376844885934390, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
       propertyPath: defaultLeftNavButton
       value: 
       objectReference: {fileID: 1109068858}
@@ -8302,6 +8322,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2576376844885934390, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
+      propertyPath: slotNumber
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 2576376844885934390, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
       propertyPath: defaultLeftNavButton
       value: 
       objectReference: {fileID: 1109068858}
@@ -8661,6 +8686,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1988288430}
     m_Modifications:
+    - target: {fileID: 2576376844885934390, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: slotNumber
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 2576376844885934390, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
       propertyPath: defaultLeftNavButton
@@ -9306,6 +9336,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2576376844885934390, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
+      propertyPath: slotNumber
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2576376844885934390, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
       propertyPath: defaultLeftNavButton
       value: 
       objectReference: {fileID: 1109068858}
@@ -9586,6 +9621,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1988288430}
     m_Modifications:
+    - target: {fileID: 2576376844885934390, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: slotNumber
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 2576376844885934390, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
       propertyPath: defaultLeftNavButton
@@ -10402,6 +10442,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1988288430}
     m_Modifications:
+    - target: {fileID: 2576376844885934390, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: slotNumber
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2576376844885934390, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
       propertyPath: defaultLeftNavButton
@@ -12757,6 +12802,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1988288430}
     m_Modifications:
+    - target: {fileID: 2576376844885934390, guid: 244e3febeba56354a94563c2173b3f69,
+        type: 3}
+      propertyPath: slotNumber
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2576376844885934390, guid: 244e3febeba56354a94563c2173b3f69,
         type: 3}
       propertyPath: defaultLeftNavButton

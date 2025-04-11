@@ -11,7 +11,11 @@ public class ActionSlot : MonoBehaviour {
         }
     }
 
-    private Button actionSlotButton;
+    [SerializeField] int slotNumber; 
+    public int SlotNumber { get => slotNumber; set { slotNumber =  value; } }
+
+    public bool IsSwapping  { get; set; } 
+
     [SerializeField] private Button defaultLeftNavButton;
 
     private BattleAction battleAction;
@@ -35,7 +39,10 @@ public class ActionSlot : MonoBehaviour {
         characterPortrait.SetActive(false);
     }
 
-    void Start() {
-        actionSlotButton = GetComponent<Button>();
+    public void SetData(BattleAction action, Sprite portrait, bool isOccupied) {
+        battleAction = action;
+        characterPortrait.GetComponent<Image>().sprite = portrait;
+        IsOccupied = isOccupied;
+        characterPortrait.SetActive(isOccupied);
     }
 }
