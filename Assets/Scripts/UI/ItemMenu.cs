@@ -11,6 +11,8 @@ public class ItemMenu : MonoBehaviour {
     public Transform contentPanel;    // Reference to the ScrollRect's content panel.
     public TextMeshProUGUI itemDescription; 
 
+    [SerializeField] ItemCategory itemCategory;
+
     private int lastButtonSelected = 0; 
  
     private List<(Button, ItemSlot)> buttonList = new();
@@ -36,7 +38,9 @@ public class ItemMenu : MonoBehaviour {
         Button currentSelectedButton = EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
         foreach (var button in buttonList) {
             if (currentSelectedButton == button.Item1) {
-                itemDescription.text = button.Item2.Item.ItemDescription;
+                if (itemDescription != null) {
+                    itemDescription.text = button.Item2.Item.ItemDescription;
+                }
             }
         }
     }
@@ -109,5 +113,6 @@ public class ItemMenu : MonoBehaviour {
         MusicManager.Instance.PlaySound("MenuConfirm");
         lastButtonSelected = buttonSelected;
         OnItemSelected?.Invoke(slot);
+        BattleEventManager.Instance.ItemSelected(slot);
     }
 }
