@@ -52,6 +52,7 @@ public class BattleSystem : MonoBehaviour {
     [SerializeField] BattleDialogBox dialogBox;
     [SerializeField] GameObject slotActionPanel;
     [SerializeField] ActionBarManager actionBarManager;
+    [SerializeField] InfoPanelManager infoPanelManager;
 
     private List<BattleUnit> playerUnits;
     private List<BattleUnit> enemyUnits;
@@ -85,6 +86,7 @@ public class BattleSystem : MonoBehaviour {
     public BattleUnit CurrentSelectedPlayerUnit { get => currentSelectedPlayerUnit; }
     public BattleAction CurrentAction { get => currentAction;  set => currentAction = value; }
     public Inventory PlayerInventory { get => playerInventory; }
+    public InfoPanelManager InfoPanelManager { get => infoPanelManager; }
 
     void Awake() {
         StartBattle(); 
