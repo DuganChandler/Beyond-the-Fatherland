@@ -18,7 +18,6 @@ public class TargetSelectionState : IBattleState {
         Debug.Log("Entering: Target Selection State");
         battleSystem.CurrentAction.Target = null;
         battleSystem.HandleTargetSelection();
-
         battleSystem.InfoPanelManager.SetText("Select a Target", true);
     }
 
