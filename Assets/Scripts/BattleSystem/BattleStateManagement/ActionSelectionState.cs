@@ -24,6 +24,8 @@ public class ActionSelectionState : IBattleState {
 
         battleSystem.CurrentSelectedPlayerUnit.Hud.ActionPanel.SetActive(true);
         battleSystem.CurrentSelectedPlayerUnit.Hud.ActionPanel.transform.GetChild(1).gameObject.GetComponent<Button>().Select();
+
+        battleSystem.InfoPanelManager.SetText("Select an Action", true);
     }
 
     public void OnExit() {

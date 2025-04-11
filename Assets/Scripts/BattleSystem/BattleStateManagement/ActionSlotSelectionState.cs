@@ -23,13 +23,28 @@ public class ActionSlotSelectionState : IBattleState {
         Debug.Log("Now Entering: Action Slot Selection State");
         // this is done since we need to run a coroutine for delay
         battleSystem.ActionBarManager.HandleActionSlotSelection(slotAction);
+        if (slotAction == SlotAction.Add) {
+            battleSystem.InfoPanelManager.SetText("Select an action slot to add an action", true);
+            return;
+        }
+
+        if (slotAction == SlotAction.Swap) {
+            battleSystem.InfoPanelManager.SetText("Select any two actions slots to swap", true);
+            return;
+        }
+
+        if (slotAction == SlotAction.Remove) {
+            battleSystem.InfoPanelManager.SetText("Select a party action slot to remove", true);
+            return;
+        }
+
     }
 
     public void OnExit(){
         Debug.Log("Now Exiting: Action Slot Selection State");
-        // battleSystem.EnableActionSlotsNav();
         battleSystem.ClearTargetIndicator();
         EventSystem.current.SetSelectedGameObject(null);
+        battleSystem.InfoPanelManager.SetText("", false);
     }
 
     public IBattleState OnBack() {

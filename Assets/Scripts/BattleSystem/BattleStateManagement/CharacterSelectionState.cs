@@ -21,6 +21,7 @@ public class CharacterSelectionState : IBattleState {
         Debug.Log("Entering: Character Selection State");
         battleSystem.PlayerPortraits[0].Select();
         battleSystem.CurrentAction.ResetBattleAction();
+        battleSystem.InfoPanelManager.SetText("Select a Character", true);
     }
 
     public void OnExit() {

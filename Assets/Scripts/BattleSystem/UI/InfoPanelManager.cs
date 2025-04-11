@@ -7,4 +7,9 @@ public class InfoPanelManager : MonoBehaviour {
 
     public GameObject Panel { get; set; } 
     public TextMeshProUGUI InfoText { get; set; } 
+
+    public void SetText(string text, bool setActive) {
+        panel.SetActive(setActive);
+        infoText.text = text;
+    }
 }

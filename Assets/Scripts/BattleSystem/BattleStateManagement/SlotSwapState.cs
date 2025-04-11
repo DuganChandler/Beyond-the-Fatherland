@@ -19,7 +19,7 @@ public class SlotSwapState : IBattleState {
     }
 
     public void OnEnter() {
-        Debug.Log("Entering: Slot Swap State");
+        battleSystem.InfoPanelManager.SetText("Select any two slots to swap", true);
         battleSystem.ActionBarManager.HandleActionSlotSelection(SlotAction.Swap);
     }
 
@@ -27,6 +27,7 @@ public class SlotSwapState : IBattleState {
         Debug.Log("Exiting: Slot Swap Selection State");
         battleSystem.ClearTargetIndicator();
         EventSystem.current.SetSelectedGameObject(null);
+        battleSystem.InfoPanelManager.SetText("", false);
     }
 
     public IBattleState OnBack() {
