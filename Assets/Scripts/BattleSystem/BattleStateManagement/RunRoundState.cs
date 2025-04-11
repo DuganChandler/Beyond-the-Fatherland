@@ -20,6 +20,7 @@ public class RunRoundState : IBattleState {
     public void OnEnter() {
         Debug.Log("Entering: Run Round State");
         battleSystem.HandleRunRound();
+        battleSystem.InfoPanelManager.SetText("", false);
     }
 
     public void OnExit() {
