@@ -21,6 +21,7 @@ public class AbilitySelectionState : IBattleState {
         battleSystem.CurrentAction.AbilityBase = null;
         battleSystem.AbilityMenu.PopulateAbilities(battleSystem.CurrentSelectedPlayerUnit.Character.Abilities);
         battleSystem.AbilityPanel.SetActive(true);
+        Debug.Log(EventSystem.current.currentSelectedGameObject);
     }
 
     public void OnExit() {
