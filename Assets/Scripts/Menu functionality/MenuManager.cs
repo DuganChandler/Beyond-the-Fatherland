@@ -52,7 +52,7 @@ public class MenuManager : MonoBehaviour {
 
     private Stack<BagMenuStateObject> menuStates;
 
-    private ItemSlot itemToUse = new();
+    private static ItemSlot itemToUse = new();
     // ability
 
     public GameObject Background;
@@ -81,7 +81,6 @@ public class MenuManager : MonoBehaviour {
 
     public GameObject StoriesMenuUI;
     public GameObject FirstStory;
-
 
     void OnEnable() {
         items.GetComponent<ItemMenu>().OnItemSelected += HandleItemSelection;
@@ -200,6 +199,8 @@ public class MenuManager : MonoBehaviour {
     }
 
     void CheckReversUsingState() {
+        if (menuStates.Count < 1) return; 
+
         if (menuStates.Peek().State == BagMenuState.Using) {
             if(itemToUse.Item != null && itemToUse.Item.ItemCategory == ItemCategory.Combat) {
                 menuStates.Pop();
@@ -256,7 +257,8 @@ public class MenuManager : MonoBehaviour {
         }
 
         playerInventory.RemoveItem(item);
-        itemToUse.Item = null;
+
+        itemToUse = null;
 
         yield return new WaitForEndOfFrame();
 
