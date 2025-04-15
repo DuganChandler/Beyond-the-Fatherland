@@ -16,11 +16,10 @@ MonoBehaviour:
   description: 
   element: 0
   power: 0
-  actionCost: 0
+  cost: 10
   target: 1
   isAOE: 0
   category: 0
   sound: {fileID: 0}
   effects:
   - {fileID: 11400000, guid: 4544351f4e4d5ae4185f679784889df4, type: 2}
-  - {fileID: 11400000, guid: 5ec9d3be7ce248f48978955dfb1410b6, type: 2}

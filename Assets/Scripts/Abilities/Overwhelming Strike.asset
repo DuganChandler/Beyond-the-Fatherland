@@ -16,7 +16,7 @@ MonoBehaviour:
   description: 
   element: 0
   power: 0
-  cost: 500
+  cost: 10
   target: 0
   isAOE: 0
   category: 0
