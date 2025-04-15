@@ -18,7 +18,7 @@ public class ActionSelectionState : IBattleState {
 
     public void OnEnter() {
         Debug.Log("Entering: Action Selection State");
-        battleSystem.ActionButtonManager.SetButtonText("Slot Actions", "Attack", "Escape", "Abilities");
+        battleSystem.ActionButtonManager.SetButtonText("Slot Actions", "Attack", "Escape", "Abilities", true);
         battleSystem.CurrentAction.ResetBattleAction();
 
         battleSystem.DelayInput();

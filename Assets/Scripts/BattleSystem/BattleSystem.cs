@@ -44,7 +44,6 @@ public class BattleSystem : MonoBehaviour {
     [SerializeField] Material enemyOutline;
     [SerializeField] TextMeshProUGUI actionPointText;
     [SerializeField] PointerManager pointerManager;
-    [SerializeField] UIPointerManager uIPointerManager;
     [SerializeField] ItemMenu itemMenu;
     [SerializeField] GameObject itemPanel;
     [SerializeField] GameObject abilityPanel;
@@ -152,7 +151,6 @@ public class BattleSystem : MonoBehaviour {
         }
 
         LoadEnemyActionSlots();
-        uIPointerManager.LastSelected = null;
         EventSystem.current.SetSelectedGameObject(null);
         StateManager.ChangeState(new ActionSelectionState(this));
     }
@@ -251,7 +249,6 @@ public class BattleSystem : MonoBehaviour {
         if (!context.started) return;
 
         if (StateManager.CurrentState.State != BattleState.ActionSelection) {
-            uIPointerManager.LastSelected = null;
             StateManager.Back();
         } else {
             if (actionPoints <= 0) {
@@ -334,7 +331,6 @@ public class BattleSystem : MonoBehaviour {
 
             currentAction.Target = currentList[currentTargetIndex]; 
 
-            uIPointerManager.LastSelected = null;
             StateManager.ChangeState(new ActionSlotSelectionState(this));
         }
     }
@@ -433,7 +429,6 @@ public class BattleSystem : MonoBehaviour {
 
         if (StateManager.CurrentState.State != BattleState.BattleOver) {
             CleanUp();
-            uIPointerManager.LastSelected = null;
             StateManager.ChangeState(new ActionSelectionState(this));
         }
 
@@ -671,7 +666,6 @@ public class BattleSystem : MonoBehaviour {
 
     void HandleAbilitySelection(AbilityBase selectedAbility){
         currentAction.AbilityBase = selectedAbility;
-        uIPointerManager.LastSelected = null;
         StateManager.ChangeState(new TargetSelectionState(this));
     }
 
@@ -755,8 +749,6 @@ public class BattleSystem : MonoBehaviour {
         currentAction.User = currentSelectedPlayerUnit;
 
         MusicManager.Instance.PlaySound("MenuConfirm");
-
-        uIPointerManager.LastSelected = null;
 
         switch (currentAction.Type) {
             case ActionType.Attack:

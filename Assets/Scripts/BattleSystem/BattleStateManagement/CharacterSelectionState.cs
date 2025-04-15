@@ -20,7 +20,7 @@ public class CharacterSelectionState : IBattleState {
 
     public void OnEnter() {
         Debug.Log("Entering: Character Selection State");
-        battleSystem.ActionButtonManager.SetButtonText("", "Select", "Back", "");
+        battleSystem.ActionButtonManager.SetButtonText("", "Select", "Back", "", false);
         battleSystem.PlayerPortraits[0].Select();
 
         battleSystem.CurrentAction.User = null;
