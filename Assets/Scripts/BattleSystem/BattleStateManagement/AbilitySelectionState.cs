@@ -31,6 +31,6 @@ public class AbilitySelectionState : IBattleState {
     }
 
     public IBattleState OnBack() {
-        return new ActionSelectionState(battleSystem);
+        return new CharacterSelectionState(battleSystem);
     }
 }

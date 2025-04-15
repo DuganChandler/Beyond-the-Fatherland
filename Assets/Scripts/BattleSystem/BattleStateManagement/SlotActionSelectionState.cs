@@ -29,6 +29,6 @@ public class SlotActionSelectionState : IBattleState {
 
     public IBattleState OnBack() {
         Debug.Log("Slot Action Selection State: Back -> Character Selection State");
-        return new CharacterSelectionState(battleSystem);
+        return new ActionSelectionState(battleSystem);
     }
 }

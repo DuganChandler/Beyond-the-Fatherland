@@ -53,6 +53,9 @@ public class BattleSystem : MonoBehaviour {
     [SerializeField] GameObject slotActionPanel;
     [SerializeField] ActionBarManager actionBarManager;
     [SerializeField] InfoPanelManager infoPanelManager;
+    [SerializeField] ActionButtonManager actionButtonManager;
+
+    [SerializeField] BattleStateManager stateManager;
 
     private List<BattleUnit> playerUnits;
     private List<BattleUnit> enemyUnits;
@@ -75,7 +78,7 @@ public class BattleSystem : MonoBehaviour {
 
     private int numEscapeAttempts;
 
-    public BattleStateManager StateManager { get; private set; } = new();
+    public BattleStateManager StateManager { get => stateManager; }
     public List<Button> PlayerPortraits { get => playerPortraits; }
     public GameObject AbilityPanel { get => abilityPanel; }
     public GameObject ItemPanel{ get => itemPanel; }
@@ -87,6 +90,7 @@ public class BattleSystem : MonoBehaviour {
     public BattleAction CurrentAction { get => currentAction;  set => currentAction = value; }
     public Inventory PlayerInventory { get => playerInventory; }
     public InfoPanelManager InfoPanelManager { get => infoPanelManager; }
+    public ActionButtonManager ActionButtonManager { get => actionButtonManager; } 
 
     void Awake() {
         StartBattle(); 
@@ -149,7 +153,8 @@ public class BattleSystem : MonoBehaviour {
 
         LoadEnemyActionSlots();
         uIPointerManager.LastSelected = null;
-        StateManager.ChangeState(new CharacterSelectionState(this));
+        EventSystem.current.SetSelectedGameObject(null);
+        StateManager.ChangeState(new ActionSelectionState(this));
     }
 
     void LoadEnemyActionSlots() {
@@ -243,73 +248,26 @@ public class BattleSystem : MonoBehaviour {
 
     // Callback for player input (B key or B on C Xbox)
     public void OnBackSelected(InputAction.CallbackContext context) {
-        if (!context.started) {
-            return;
-        }
+        if (!context.started) return;
 
-        Debug.Log($"The Current State is: {StateManager.CurrentState.State}");
-
-        if (StateManager.CurrentState.State != BattleState.CharacterSelect) {
+        if (StateManager.CurrentState.State != BattleState.ActionSelection) {
             uIPointerManager.LastSelected = null;
             StateManager.Back();
         } else {
-            StateManager.ChangeState(new SlotActionSelectionState(this));
+            if (actionPoints <= 0) {
+                Debug.Log("No action points available!");
+                return;
+            }
+
+            MusicManager.Instance.PlaySound("MenuConfirm");
+            currentAction.Type = ActionType.Run;
+            StateManager.ChangeState(new CharacterSelectionState(this));
         }
     }
 
     // Button OnClick for Character Select State
-    public void OnCharacterSelect(int playerCharacterIndex) {
-        if (StateManager.CurrentState.State != BattleState.CharacterSelect) {
-            Debug.Log("Not in the character select state brother");
-            return;
-        }
-
-        if (actionPoints <= 0) {
-            Debug.Log("No action points available!");
-            return;
-        }
-
-        currentSelectedPlayerUnit = playerUnits[playerCharacterIndex];
-        if (!currentSelectedPlayerUnit.Character.IsAlive) {
-            Debug.Log("Charcter is not alife!");
-            currentSelectedPlayerUnit = null;
-            return;
-        }
-
-        MusicManager.Instance.PlaySound("MenuConfirm");
-        uIPointerManager.LastSelected = null;
-        currentAction.User = currentSelectedPlayerUnit;
-        StateManager.ChangeState(new ActionSelectionState(this));
-    }    
 
     // Button OnClick for Action Selection State
-    public void OnActionSelection(string actionType) {
-        MusicManager.Instance.PlaySound("MenuConfirm");
-        currentAction.User = currentSelectedPlayerUnit;
-
-        switch (actionType) {
-            case "attack":
-                currentAction.Type = ActionType.Attack;
-                uIPointerManager.LastSelected = null;
-                StateManager.ChangeState(new TargetSelectionState(this));
-                break; 
-            case "run":
-                currentAction.Type = ActionType.Run;
-                uIPointerManager.LastSelected = null;
-                StateManager.ChangeState(new ActionSlotSelectionState(this));
-                break;
-            case "item":
-                currentAction.Type = ActionType.Item;
-                uIPointerManager.LastSelected = null;
-                StateManager.ChangeState(new ItemSelectionState(this));
-                break;
-            case "ability":
-                currentAction.Type = ActionType.Ability;
-                uIPointerManager.LastSelected = null;
-                StateManager.ChangeState(new AbilitySelectionState(this));
-                break;
-        }
-    }
 
     // Player input call back for navigating Target selection
     public void OnTargetNavigate(InputAction.CallbackContext context) {
@@ -399,7 +357,7 @@ public class BattleSystem : MonoBehaviour {
         actionPoints--;
         actionPointText.text = $"{actionPoints}";
         
-        StateManager.ChangeState(new CharacterSelectionState(this));
+        StateManager.ChangeState(new ActionSelectionState(this));
     }
 
     // Removes player from action slot
@@ -418,7 +376,7 @@ public class BattleSystem : MonoBehaviour {
         actionPoints++;
         actionPointText.text = $"{actionPoints}";
 
-        StateManager.ChangeState(new CharacterSelectionState(this));
+        StateManager.ChangeState(new ActionSelectionState(this));
     }
 
 
@@ -430,7 +388,7 @@ public class BattleSystem : MonoBehaviour {
                 return;
             }
 
-            if (StateManager.CurrentState.State != BattleState.CharacterSelect) {
+            if (StateManager.CurrentState.State != BattleState.ActionSelection) {
                 Debug.Log("Currently cannot activate a round");
                 return;
             }
@@ -476,7 +434,7 @@ public class BattleSystem : MonoBehaviour {
         if (StateManager.CurrentState.State != BattleState.BattleOver) {
             CleanUp();
             uIPointerManager.LastSelected = null;
-            StateManager.ChangeState(new CharacterSelectionState(this));
+            StateManager.ChangeState(new ActionSelectionState(this));
         }
 
         yield return null;
@@ -705,8 +663,7 @@ public class BattleSystem : MonoBehaviour {
             if (!swapped) {
                 StateManager.ChangeState(new SlotSwapState(this));
             } else if (swapped) {
-                Debug.Log("herel");
-                StateManager.ChangeState(new CharacterSelectionState(this));
+                StateManager.ChangeState(new ActionSelectionState(this));
             }
         } 
     }
@@ -727,5 +684,101 @@ public class BattleSystem : MonoBehaviour {
         playerInventory.RemoveItem(selectedSlot.Item);
 
         StateManager.ChangeState(new TargetSelectionState(this));
+    }
+
+    public void OnAttackSelected(InputAction.CallbackContext context) {
+        if (!context.started) return;
+        if (StateManager.CurrentState.State != BattleState.ActionSelection) return;
+        if (actionPoints <= 0) {
+            Debug.Log("No action points available!");
+            return;
+        }
+
+        MusicManager.Instance.PlaySound("MenuConfirm");
+        currentAction.Type = ActionType.Attack;
+        StateManager.ChangeState(new CharacterSelectionState(this));
+    }
+
+    public void OnAbilitiesSelected(InputAction.CallbackContext context) {
+        if (!context.started) return;
+        if (StateManager.CurrentState.State != BattleState.ActionSelection) return;
+        if (actionPoints <= 0) {
+            Debug.Log("No action points available!");
+            return;
+        }
+
+        MusicManager.Instance.PlaySound("MenuConfirm");
+        currentAction.Type = ActionType.Ability;
+        StateManager.ChangeState(new CharacterSelectionState(this));
+    }
+
+    public void OnSlotActionsSelected(InputAction.CallbackContext context) {
+        if (!context.started) return;
+        if (StateManager.CurrentState.State != BattleState.ActionSelection) return;
+
+        MusicManager.Instance.PlaySound("MenuConfirm");
+        StateManager.ChangeState(new SlotActionSelectionState(this));
+    }
+
+    public void OnEscapeSelected(InputAction.CallbackContext context) {
+        if (!context.started) return;
+        return;
+    }
+
+    public void OnItemsSelected(InputAction.CallbackContext context) {
+        if (!context.started) return;
+        if (StateManager.CurrentState.State != BattleState.ActionSelection) return;
+        if (actionPoints <= 0) {
+            Debug.Log("No action points available!");
+            return;
+        }
+
+        MusicManager.Instance.PlaySound("MenuConfirm");
+        currentAction.Type = ActionType.Item;
+        StateManager.ChangeState(new CharacterSelectionState(this));
+    }
+
+    public void OnCharacterSelect(int playerCharacterIndex) {
+        if (StateManager.CurrentState.State != BattleState.CharacterSelect) {
+            Debug.Log("Not in the character select state brother");
+            return;
+        }
+
+        currentSelectedPlayerUnit = playerUnits[playerCharacterIndex];
+
+        if (!currentSelectedPlayerUnit.Character.IsAlive) {
+            Debug.Log("Charcter is not alife!");
+            currentSelectedPlayerUnit = null;
+            return;
+        }
+
+        currentAction.User = currentSelectedPlayerUnit;
+
+        MusicManager.Instance.PlaySound("MenuConfirm");
+
+        uIPointerManager.LastSelected = null;
+
+        switch (currentAction.Type) {
+            case ActionType.Attack:
+                StateManager.ChangeState(new TargetSelectionState(this));
+                break; 
+            case ActionType.Run:
+                StateManager.ChangeState(new ActionSlotSelectionState(this));
+                break;
+            case ActionType.Item:
+                StateManager.ChangeState(new ItemSelectionState(this));
+                break;
+            case ActionType.Ability:
+                StateManager.ChangeState(new AbilitySelectionState(this));
+                break;
+        }
+    }    
+
+    public void DelayInput() {
+        StartCoroutine(Delay());
+    }
+
+    IEnumerator Delay() {
+        yield return new WaitForEndOfFrame();
     }
 }

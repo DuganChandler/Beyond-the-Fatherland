@@ -29,6 +29,6 @@ public class ItemSelectionState : IBattleState {
     }
 
     public IBattleState OnBack() {
-        return new ActionSelectionState(battleSystem);
+        return new CharacterSelectionState(battleSystem);
     }
 }
