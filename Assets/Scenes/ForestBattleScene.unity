@@ -2928,6 +2928,7 @@ GameObject:
   - component: {fileID: 558221360}
   - component: {fileID: 558221359}
   - component: {fileID: 558221358}
+  - component: {fileID: 558221361}
   m_Layer: 0
   m_Name: EnemyPos3
   m_TagString: Untagged
@@ -3021,6 +3022,19 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 558221356}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &558221361
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 558221356}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d55f043bafe321c4db2d0ee59d74c472, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  position: {fileID: 558221356}
 --- !u!1 &576734540
 GameObject:
   m_ObjectHideFlags: 0
@@ -3303,6 +3317,7 @@ GameObject:
   - component: {fileID: 617436484}
   - component: {fileID: 617436483}
   - component: {fileID: 617436482}
+  - component: {fileID: 617436485}
   m_Layer: 0
   m_Name: PlayerPos1
   m_TagString: Untagged
@@ -3396,6 +3411,19 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 617436480}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &617436485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 617436480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d55f043bafe321c4db2d0ee59d74c472, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  position: {fileID: 617436480}
 --- !u!4 &630287201 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6169887348454325903, guid: 037dafb32e5a1094b953cfa0bc1fc43f,
@@ -6810,6 +6838,7 @@ GameObject:
   - component: {fileID: 1073372126}
   - component: {fileID: 1073372125}
   - component: {fileID: 1073372124}
+  - component: {fileID: 1073372127}
   m_Layer: 0
   m_Name: PlayerPos2
   m_TagString: Untagged
@@ -6903,6 +6932,19 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1073372122}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1073372127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1073372122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d55f043bafe321c4db2d0ee59d74c472, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  position: {fileID: 1073372122}
 --- !u!1 &1093136807
 GameObject:
   m_ObjectHideFlags: 0
@@ -7922,6 +7964,7 @@ GameObject:
   - component: {fileID: 1218607549}
   - component: {fileID: 1218607550}
   - component: {fileID: 1218607551}
+  - component: {fileID: 1218607552}
   m_Layer: 0
   m_Name: BattleSystem
   m_TagString: Untagged
@@ -7959,16 +8002,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   partyPositions:
-  - {fileID: 617436480}
-  - {fileID: 1073372122}
-  - {fileID: 1255908178}
+  - {fileID: 617436485}
+  - {fileID: 1073372127}
+  - {fileID: 1255908183}
   encounterPositions:
-  - {fileID: 2048566368}
-  - {fileID: 1573946312}
-  - {fileID: 558221356}
-  - {fileID: 1319281045}
+  - {fileID: 2048566373}
+  - {fileID: 1573946317}
+  - {fileID: 558221361}
+  - {fileID: 1319281050}
   actionPoints: 0
   itemUser: {fileID: 1218607549}
+  abilityExecutor: {fileID: 1218607552}
   playerPortraits:
   - {fileID: 776021402}
   - {fileID: 2123452946}
@@ -8215,6 +8259,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68d8db498cee83443b6a3f1aa4bb7b13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1218607552
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1218607543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 981ae18efbc2f5b42b328fbb29a66f9c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1221293487
 GameObject:
   m_ObjectHideFlags: 0
@@ -8413,6 +8469,7 @@ GameObject:
   - component: {fileID: 1255908182}
   - component: {fileID: 1255908181}
   - component: {fileID: 1255908180}
+  - component: {fileID: 1255908183}
   m_Layer: 0
   m_Name: PlayerPos3
   m_TagString: Untagged
@@ -8506,6 +8563,19 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1255908178}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1255908183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1255908178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d55f043bafe321c4db2d0ee59d74c472, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  position: {fileID: 1255908178}
 --- !u!1001 &1263621667
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9071,6 +9141,7 @@ GameObject:
   - component: {fileID: 1319281049}
   - component: {fileID: 1319281048}
   - component: {fileID: 1319281047}
+  - component: {fileID: 1319281050}
   m_Layer: 0
   m_Name: EnemyPos4
   m_TagString: Untagged
@@ -9164,6 +9235,19 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1319281045}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1319281050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1319281045}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d55f043bafe321c4db2d0ee59d74c472, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  position: {fileID: 1319281045}
 --- !u!1 &1337785099
 GameObject:
   m_ObjectHideFlags: 0
@@ -10703,6 +10787,7 @@ GameObject:
   - component: {fileID: 1573946316}
   - component: {fileID: 1573946315}
   - component: {fileID: 1573946314}
+  - component: {fileID: 1573946317}
   m_Layer: 0
   m_Name: EnemyPos2
   m_TagString: Untagged
@@ -10796,6 +10881,19 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1573946312}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1573946317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1573946312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d55f043bafe321c4db2d0ee59d74c472, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  position: {fileID: 1573946312}
 --- !u!1001 &1604520063
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12770,6 +12868,7 @@ GameObject:
   - component: {fileID: 2048566372}
   - component: {fileID: 2048566371}
   - component: {fileID: 2048566370}
+  - component: {fileID: 2048566373}
   m_Layer: 0
   m_Name: EnemyPos1
   m_TagString: Untagged
@@ -12863,6 +12962,19 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2048566368}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &2048566373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2048566368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d55f043bafe321c4db2d0ee59d74c472, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  position: {fileID: 2048566368}
 --- !u!1001 &2057952112
 PrefabInstance:
   m_ObjectHideFlags: 0

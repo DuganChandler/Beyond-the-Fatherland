@@ -6,7 +6,7 @@ public class ItemUser : MonoBehaviour {
     public IEnumerator UseItem(CombatItemData item, Character user, Character target) {
         List<EffectInfo> effectInfoList = new();
         foreach (ItemEffectBase effect in item.effects) {
-            effectInfoList.Add(effect.ApplyEffect(user, target));
+            effectInfoList.Add(effect.ApplyEffectToCharacter(user, target));
         }
         yield return new WaitForEndOfFrame();
     }
