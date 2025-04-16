@@ -17,6 +17,6 @@ public class SummonAddsEffect : AbilityEffectBase{
                 }
             }
         }
-        yield return null;
+        yield return new WaitForEndOfFrame();
     }
 }

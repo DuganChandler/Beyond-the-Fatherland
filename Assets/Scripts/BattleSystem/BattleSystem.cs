@@ -511,7 +511,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
             StateManager.ChangeState(new BattleOverState(this));
         }
 
-        yield return null;
+        yield return new WaitForEndOfFrame();
     }
 
     // ability -> calculate damage, check for status effects, check if you can cast
@@ -599,7 +599,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
                 }
             }
         } else {
-            dyingUnit.CurrentModelInstance.transform.GetChild(2).GetComponent<SkinnedMeshRenderer>().materials[0].color = Color.red;
+            // dyingUnit.CurrentModelInstance.transform.GetChild(2).GetComponent<SkinnedMeshRenderer>().materials[0].color = Color.red;
             foreach(var playerUnit in playerUnits) {
                 if(playerUnit == dyingUnit) {
                     // playerUnits.Remove(playerUnit);
@@ -625,6 +625,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
                 numDead++;
             }
         }
+        Debug.Log(numDead);
 
         return numDead == 3;
     }
