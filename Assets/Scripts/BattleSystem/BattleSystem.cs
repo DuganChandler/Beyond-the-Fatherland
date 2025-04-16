@@ -131,7 +131,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         actionPointText.text = $"{actionPoints}";
 
         numEscapeAttempts = 0;
-        currentRound = 1;
+        // currentRound = 1;
     }
 
     public IEnumerator SetupBattle() {
