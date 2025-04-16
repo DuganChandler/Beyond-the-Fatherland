@@ -416,6 +416,8 @@ public class BattleSystem : MonoBehaviour {
                 continue;
             }
 
+            
+
             switch (slot.BattleAction.Type) {
                 case ActionType.Attack:
                     yield return StartCoroutine(RunAttack(slot));
