@@ -131,6 +131,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         actionPointText.text = $"{actionPoints}";
 
         numEscapeAttempts = 0;
+        currentRound = 1;
     }
 
     public IEnumerator SetupBattle() {
@@ -526,8 +527,6 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         } else {
             Debug.Log("Missed");
         }
-
-        yield return new WaitForSeconds(1f);
 
         if (actionSlot.BattleAction.Target != null) {
             if (actionSlot.BattleAction.Target.Character.HP <= 0) {

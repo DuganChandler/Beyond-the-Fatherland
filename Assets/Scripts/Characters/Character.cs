@@ -25,6 +25,13 @@ public class Character  {
 
     public Stat PrimaryStat { get; set; }
     public Stats Stats { get; set; }
+    public float strengthBuffs {get; set;}
+    public float magicBuffs {get; set;}
+    public float defenseBuffs {get; set;}
+    public float strengthDebuffs {get; set;}
+    public float magicDebuffs {get; set;}
+    public float defenseDebuffs {get; set;}
+    
 
     public int Level {
         get {
