@@ -9,7 +9,9 @@ public class MainMenuController : MonoBehaviour {
     }
 
     void Start() {
-        MusicManager.Instance.PlayMusicNoFade("TitleTheme"); 
+        if (MusicManager.Instance != null) {
+            MusicManager.Instance.PlayMusicNoFade("TitleTheme"); 
+        }
     }
 
     public void OnQuitGame() {
@@ -19,5 +21,13 @@ public class MainMenuController : MonoBehaviour {
     public void OnStartGame() {
         MusicManager.Instance.PlayMusicNoFade("ForestTheme"); 
         SceneHelper.LoadScene("ArborynForestV2", false, true);
+    }
+
+    public void OnMainMenu() {
+        if (MusicManager.Instance != null) {
+            MusicManager.Instance.PlayMusicNoFade("TitleTheme"); 
+        }
+
+        SceneHelper.LoadScene("MainMenu", false, true);
     }
 }
