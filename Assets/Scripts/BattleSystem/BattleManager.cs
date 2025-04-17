@@ -32,15 +32,10 @@ public class BattleManager : MonoBehaviour
     public BattleState BattleState { get; set; }
 
     public IEnumerator StartBattle() {
-        foreach (var character in PlayerPartyList) {
-            if (!character.IsAlive) {
-                character.IncreaseHP(1);
-                character.IsAlive = true;
-            }
-        }
         GameManager.Instance.GameState = GameState.Battle;
 
         yield return StartCoroutine(SceneHelper.LoadSceneWithTransition("ForestBattleScene", true, true, null, () => {
+            MusicManager.Instance.PauseMusic();
             CircleFadeTransition circleFade = FindObjectOfType<CircleFadeTransition>();
             if (circleFade != null) {
                 circleFade.onTransitionComplete = () => {
@@ -60,6 +55,13 @@ public class BattleManager : MonoBehaviour
         MusicManager.Instance.StopMusic();
 
         MusicManager.Instance.PlayMusicNoFade("ForestTheme"); 
+
+        foreach (var character in PlayerPartyList) {
+            if (!character.IsAlive) {
+                character.IncreaseHP(1);
+                character.IsAlive = true;
+            }
+        }
 
         SceneHelper.UnloadScene("ForestBattleScene");
         CallAfterDelay.Create(1.0f, () => {

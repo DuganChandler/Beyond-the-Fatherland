@@ -51,6 +51,7 @@ public class AbilityMenu : MonoBehaviour {
                 
 
                 abilityButton.AbilityName.text = currentAbility.AbilityName;
+                // abilityButton.AbilityCost.text = "MP: " + currentAbility.Cost;
                 //abilityButton.ItemCount.text = $"{currentSlot.Count}x";
 
                 // Add a listener that calls OnItemButtonClicked with the current item slot.
@@ -94,5 +95,6 @@ public class AbilityMenu : MonoBehaviour {
     void OnAbilityButtonClicked(AbilityBase ability, int buttonSelected) {
         lastButtonSelected = buttonSelected;
         OnAbilitySelected?.Invoke(ability);
+        BattleEventManager.Instance.AbilitySelected(ability);
     }
 }

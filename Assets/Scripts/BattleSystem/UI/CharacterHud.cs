@@ -1,24 +1,21 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CharacterHud : MonoBehaviour {
     [SerializeField] TextMeshProUGUI nameText;
     [SerializeField] TextMeshProUGUI levelText;
+    [SerializeField] TextMeshProUGUI hpValueText;
+    [SerializeField] TextMeshProUGUI mpValueText;
     [SerializeField] InfoBar hpBar;
     [SerializeField] InfoBar mpBar;
-    [SerializeField] GameObject actionPanel;
+    [SerializeField] Image characterPortrait;
 
     private Character _character;
     
     public bool IsAlive {
         get {
             return _character.IsAlive;
-        }
-    }
-
-    public GameObject ActionPanel {
-        get {
-            return actionPanel;
         }
     }
 
@@ -31,9 +28,14 @@ public class CharacterHud : MonoBehaviour {
         
         nameText.text = character.CharacterData.name;
         levelText.text = $"Lv. {character.Level}";
+        characterPortrait.sprite = character.CharacterData.CharacterPortrait;
+
 
         hpBar.SetResource((float)character.HP / character.MaxHP);
         mpBar.SetResource((float)character.MP / character.MaxMP);
+
+        hpValueText.text = $"{character.HP}"; 
+        mpValueText.text = $"{character.MP}"; 
 
         _character.OnHpChange += UpdateHP;
         _character.OnMpChange += UpdateMP;
@@ -41,6 +43,7 @@ public class CharacterHud : MonoBehaviour {
 
     public void UpdateHP() {
         hpBar.SetResource((float) _character.HP / _character.MaxHP);
+        hpValueText.text = $"{_character.HP}"; 
         // StartCoroutine(UpdateHPAsync());
     }
 
@@ -50,6 +53,7 @@ public class CharacterHud : MonoBehaviour {
 
     public void UpdateMP() {
         mpBar.SetResource((float) _character.MP / _character.MaxMP);
+        mpValueText.text = $"{_character.MP}"; 
         // StartCoroutine(UpdateMPAsync());
     }
 

@@ -4,6 +4,7 @@ using System.IO;
 using System.Collections;
 using UnityEngine.Networking;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
 
 public class BookReader : MonoBehaviour {
     [Header("Library & Book Selection")]
@@ -24,6 +25,8 @@ public class BookReader : MonoBehaviour {
     private Vector2 playerInput;
 
     private bool canNavigate = true;
+
+    private const float heightTolerance = 5f;
 
     void Start() {
         // Option 1: Load a book by an index from the library.
@@ -104,34 +107,28 @@ public class BookReader : MonoBehaviour {
     /// Loads the book file asynchronously.
     /// </summary>
     IEnumerator LoadBookCoroutine(BookEntry entry) {
-        // Build the full path: StreamingAssets + relative file path
-        string path = Path.Combine(Application.streamingAssetsPath, "Books", entry.fileName);
+        string path = System.IO.Path.Combine(Application.streamingAssetsPath, "Books", entry.fileName);
         string fileContent = "";
 
-        // On some platforms (like Android) use UnityWebRequest
         if (path.Contains("://") || path.Contains(":///")) {
-            using (UnityWebRequest www = UnityWebRequest.Get(path)) {
+            using (UnityEngine.Networking.UnityWebRequest www = UnityEngine.Networking.UnityWebRequest.Get(path)) {
                 yield return www.SendWebRequest();
 
-                if (www.result != UnityWebRequest.Result.Success) {
+                if (www.result != UnityEngine.Networking.UnityWebRequest.Result.Success) {
                     Debug.LogError("Error loading file: " + www.error);
                     yield break;
                 }
-
                 fileContent = www.downloadHandler.text;
             }
         } else {
-            fileContent = File.ReadAllText(path);
+            fileContent = System.IO.File.ReadAllText(path);
         }
 
-        // Split the content into pages using a delimiter.
-        // For example, in your text file separate pages with "---PAGE BREAK---"
-        pages = fileContent.Split(new string[] { "---PAGE BREAK---" }, System.StringSplitOptions.None);
+        // Combine manual page breaks with auto-pagination:
+        pages = ProcessBookText(fileContent);
         currentPageIndex = 0;
         DisplayPages();
     }
-
-    /// <summary>
     /// Displays two pages (left and right) based on the currentPageIndex.
     /// </summary>
     void DisplayPages() {
@@ -149,6 +146,8 @@ public class BookReader : MonoBehaviour {
     /// Advances to the next two pages.
     /// </summary>
     public void NextPage() {
+        if (pages == null) return;
+
         currentPageIndex += 2;
         if (currentPageIndex >= pages.Length) {
             // Clamp to the last valid pair of pages
@@ -164,9 +163,129 @@ public class BookReader : MonoBehaviour {
     /// Goes back to the previous two pages.
     /// </summary>
     public void PreviousPage() {
+        if (pages == null) return;
+
         currentPageIndex -= 2;
         if (currentPageIndex < 0)
             currentPageIndex = 0;
         DisplayPages();
+    }
+
+    List<string> AutoPaginateText(string text, TextMeshProUGUI textComponent) {
+        List<string> pages = new List<string>();
+        string[] words = text.Split(' ');
+        string currentPage = "";
+
+        // Retrieve the dimensions of the text area.
+        RectTransform rectTransform = textComponent.rectTransform;
+        float maxHeight = rectTransform.rect.height;
+        float maxWidth = rectTransform.rect.width;
+
+        foreach (string word in words) {
+            // Build tentative page text with the new word.
+            string testPage = string.IsNullOrEmpty(currentPage) ? word : currentPage + " " + word;
+            
+            // Set the text and force an update to ensure accurate measurement.
+            textComponent.text = testPage;
+            textComponent.ForceMeshUpdate();
+            
+            // Measure based on available width.
+            Vector2 preferredSize = textComponent.GetPreferredValues(testPage, maxWidth, float.PositiveInfinity);
+            
+            // Uncomment the following line for debugging:
+            // Debug.Log($"Test Page: \"{testPage}\" | Preferred Height: {preferredSize.y}, Max Height: {maxHeight}");
+
+            // Check if adding this word exceeds the maximum allowed height.
+            if (preferredSize.y > maxHeight && !string.IsNullOrEmpty(currentPage)) {
+                // If yes, commit the current page and start a new one.
+                pages.Add(currentPage.Trim());
+                currentPage = word; // Start new page with the current word.
+            } else {
+                // Otherwise, update the current page.
+                currentPage = testPage;
+            }
+        }
+        
+        // Add any remaining text as a final page.
+        if (!string.IsNullOrEmpty(currentPage))
+            pages.Add(currentPage.Trim());
+        
+        return pages;
+    }
+
+    /// <summary>
+    /// Processes the book text by first splitting at manual page breaks,
+    /// then further auto-splitting each manual chunk if necessary.
+    /// </summary>
+    private string[] ProcessBookText(string fileContent) {
+        // Split by manual delimiter
+        string[] manualChunks = fileContent.Split(
+            new string[] { "---PAGE BREAK---" },
+            System.StringSplitOptions.None
+        );
+
+        List<string> finalPages = new List<string>();
+
+        foreach (string chunk in manualChunks) {
+            string trimmedChunk = chunk.Trim();
+            if (string.IsNullOrEmpty(trimmedChunk))
+                continue;
+
+            // Use binary search based auto-pagination for each chunk.
+            List<string> autoPaginated = AutoPaginateTextBinary(trimmedChunk, leftPageText);
+            finalPages.AddRange(autoPaginated);
+        }
+        return finalPages.ToArray();
+    }
+
+    List<string> AutoPaginateTextBinary(string text, TextMeshProUGUI textComponent) {
+        List<string> pages = new List<string>();
+        RectTransform rectTransform = textComponent.rectTransform;
+        float maxWidth = rectTransform.rect.width;
+        float maxHeight = rectTransform.rect.height;
+
+        int currentIndex = 0;
+        while (currentIndex < text.Length) {
+            int pageLength = FindMaxLengthThatFits(text, currentIndex, textComponent, maxWidth, maxHeight);
+            if (pageLength == 0) break; // safeguard
+
+            // To avoid breaking words, backtrack to the last space.
+            int breakIndex = currentIndex + pageLength;
+            if (breakIndex < text.Length) {
+                int lastSpace = text.LastIndexOf(' ', breakIndex);
+                if (lastSpace > currentIndex)
+                    breakIndex = lastSpace;
+            }
+            
+            string pageText = text.Substring(currentIndex, breakIndex - currentIndex).Trim();
+            pages.Add(pageText);
+            currentIndex = breakIndex;
+            // Skip any whitespace for the next page.
+            while (currentIndex < text.Length && char.IsWhiteSpace(text[currentIndex]))
+                currentIndex++;
+        }
+        return pages;
+    }
+
+    int FindMaxLengthThatFits(string text, int start, TextMeshProUGUI textComponent, float maxWidth, float maxHeight) {
+        int low = 1;
+        int high = text.Length - start;
+        int best = 0;
+        while (low <= high) {
+            int mid = (low + high) / 2;
+            string candidate = text.Substring(start, mid);
+            textComponent.text = candidate;
+            textComponent.ForceMeshUpdate();
+            Vector2 preferredSize = textComponent.GetPreferredValues(candidate, maxWidth, float.PositiveInfinity);
+
+            // Allowing a small tolerance to account for rounding/margins.
+            if (preferredSize.y <= maxHeight + heightTolerance) {
+                best = mid;
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+        return best;
     }
 }

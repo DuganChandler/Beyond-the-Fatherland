@@ -22,14 +22,14 @@ public class UIPointerManager : MonoBehaviour {
     void Update() {
         GameObject selectedObj = EventSystem.current.currentSelectedGameObject;
         if (selectedObj != null && selectedObj != lastSelected) {
-            RectTransform selectedRect = selectedObj.GetComponent<RectTransform>();
-            if (selectedRect != null) {
+            if (selectedObj.TryGetComponent<RectTransform>(out var selectedRect)) {
                 // If there's no pointer yet, create one.
                 if (activePointer == null) {
                     activePointer = Instantiate(pointerPrefab, canvas.transform);
                 }
 
                 activePointer.position = selectedRect.Find("PointerPosition").transform.position;
+                Debug.Log(selectedRect.Find("PointerPosition").transform.position);
 
                 if (lastSelected != null) {
                     MusicManager.Instance.PlaySound("MenuScroll");

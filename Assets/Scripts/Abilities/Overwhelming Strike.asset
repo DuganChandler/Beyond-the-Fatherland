@@ -13,14 +13,13 @@ MonoBehaviour:
   m_Name: Overwhelming Strike
   m_EditorClassIdentifier: 
   name: Overwhelming Strike
-  description: 
+  description: Slams an enemy with extreme force.
   element: 0
-  power: 0
+  power: 10
   actionCost: 0
   target: 0
-  isAOE: 0
   category: 0
+  isAOE: 0
   sound: {fileID: 0}
   effects:
   - {fileID: 11400000, guid: 69d8024c464dedb4e89cbe136e843f20, type: 2}
-  - {fileID: 11400000, guid: 43b50c9fdc72f314ea30b436073cad21, type: 2}

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -20,6 +18,16 @@ public class ItemButton : MonoBehaviour {
             return itemCount;
         } set {
             itemCount = value;
+        }
+    }
+
+    void Update() {
+        if (GameManager.Instance.GameState == GameState.Battle) {
+            itemName.color = Color.white;
+            itemCount.color = Color.white;
+        } else {
+            itemName.color = Color.black;
+            itemCount.color = Color.black;
         }
     }
 }

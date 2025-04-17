@@ -252,7 +252,7 @@ PrefabInstance:
     - target: {fileID: 2362042911826699093, guid: 2227a1bda8104854caa9d09fe17df23c,
         type: 3}
       propertyPath: m_Volume
-      value: 0.25
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6737773583297404540, guid: 2227a1bda8104854caa9d09fe17df23c,
         type: 3}
@@ -359,6 +359,8 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 1583e74c21775aa4c81d40994b0efcb8, type: 3}
   - soundName: MenuScroll
     clip: {fileID: 8300000, guid: 5a97d54a8fcb6ae4cb5a27bc5271153b, type: 3}
+  - soundName: Wrong
+    clip: {fileID: 8300000, guid: ae2e70a0245134a44863f018e4614dbe, type: 3}
 --- !u!1 &609936915
 GameObject:
   m_ObjectHideFlags: 0
