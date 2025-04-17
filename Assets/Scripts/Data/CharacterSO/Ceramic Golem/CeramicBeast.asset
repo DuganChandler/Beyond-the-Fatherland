@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: CeramicBeast
   description: A golem who lives in the forests of Arboryn...
-  characterPrefab: {fileID: 3562664659942509883, guid: d237debc9fd16e24aaee9e19dd2f3952,
+  characterPrefab: {fileID: 7099203503838928685, guid: 87297a5a94c1db94b88180c6839dd7a8,
     type: 3}
   characterPortrait: {fileID: 21300000, guid: 7ddb5c7a5af14a6429424f1ddbefed3a, type: 3}
   characerType: 2
