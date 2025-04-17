@@ -6,8 +6,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Buff Effect", menuName = "Abilities/Effects/Buff")]
 public class AbilityBuffEffect : AbilityEffectBase {
     [SerializeField] private int abilityBuffAmount;
-    private BattleSystem battleSystem;
-    private int initailRound = 0;
     [SerializeField] private int duration;
     [SerializeField] private string stat;
 

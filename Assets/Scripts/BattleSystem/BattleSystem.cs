@@ -136,7 +136,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
 
     public IEnumerator SetupBattle() {
         yield return new WaitForEndOfFrame(); 
-        MusicManager.Instance.PlayMusic("BattleTheme");
+        MusicManager.Instance.PlayMusicNoFade("BattleTheme");
 
         for (int i = 0; i < playerCharacters.Count; i++) {
             BattleUnit unit = new(playerCharacters[i], partyPositions[i], characterHudList[i]); 
@@ -407,8 +407,8 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
 
     // Player input callback for running a round
     public void OnRoundRunSelected(InputAction.CallbackContext context) {
-        if (context.started) {
-            if (!canRunRound && StateManager.CurrentState.State == BattleState.CharacterSelect) {
+        if (context.performed) {
+            if (!canRunRound && StateManager.CurrentState.State == BattleState.ActionSelection) {
                 Debug.Log("no actions in the action bar");
                 return;
             }
@@ -456,12 +456,15 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
             }
         }
 
+        yield return new WaitForEndOfFrame();
+
         if (StateManager.CurrentState.State != BattleState.BattleOver) {
             CleanUp();
             StateManager.ChangeState(new ActionSelectionState(this));
         }
 
         yield return null;
+
     }
 
     IEnumerator RunAttack(ActionSlot actionSlot) {
