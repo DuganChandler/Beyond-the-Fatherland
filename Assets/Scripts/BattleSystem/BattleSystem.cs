@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using TMPro;
+using Cinemachine;
 using UnityEditor.Animations;
 
 public enum BattleState {
@@ -55,6 +56,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
     [SerializeField] ActionBarManager actionBarManager;
     [SerializeField] InfoPanelManager infoPanelManager;
     [SerializeField] ActionButtonManager actionButtonManager;
+    [SerializeField] LevelUpSummaryManager levelUpSummaryManager;
 
     [SerializeField] BattleStateManager stateManager;
 
@@ -76,6 +78,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
     private bool hasRoundPassed = false;
     private bool canNavigate = true;
     private bool canRunRound = false;
+    private bool closeSummary = false;
 
     private int numEscapeAttempts;
 
@@ -132,12 +135,12 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         actionPointText.text = $"{actionPoints}";
 
         numEscapeAttempts = 0;
-        currentRound = 1;
+        // currentRound = 1;
     }
 
     public IEnumerator SetupBattle() {
         yield return new WaitForEndOfFrame(); 
-        MusicManager.Instance.PlayMusic("BattleTheme");
+        MusicManager.Instance.PlayMusicNoFade("BattleTheme");
 
         for (int i = 0; i < playerCharacters.Count; i++) {
             BattleUnit unit = new(playerCharacters[i], partyPositions[i], characterHudList[i]); 
@@ -249,27 +252,45 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         StateManager.ChangeState(new BattleOverState(this));
         
         if (won) {
-            foreach(var unit in playerUnits) {
-                if (unit.Character.IsAlive) {
-                    yield return GiveEXP(unit.Character, 100); 
-                }
-            }
+            yield return GiveEXP(playerUnits, CalculateEXP(enemyUnits));
+            yield return ShowInfoBox(levelUpSummaryManager.gameObject);
         }
         
         foreach(var playerUnit in playerUnits) {
             Destroy(playerUnit.CurrentModelInstance);
         }
 
+        levelUpSummaryManager.gameObject.SetActive(false);
+
         BattleManager.Instance.EndBattle();
     }
 
-    IEnumerator GiveEXP(Character character, int expAmount) {
-        character.EXP += expAmount;     
-        yield return dialogBox.TypeDialog($"{character.CharacterData.name} has gained {expAmount} EXP!");
+    private IEnumerator WaitForSummaryInput() {
+        yield return new WaitUntil(() => closeSummary);
+        closeSummary = false;
+    }
 
-        while (character.CheckForLevelUp()) {
-            yield return dialogBox.TypeDialog($"{character.CharacterData.name} has leveled up to {character.Level}");
+    public IEnumerator ShowInfoBox(GameObject objectToShow) {
+        objectToShow.SetActive(true);
+
+        yield return WaitForSummaryInput();
+
+        objectToShow.SetActive(false);
+    }
+
+    private int CalculateEXP(List<BattleUnit> enemyUnits) {
+        return 75;
+    }
+
+    IEnumerator GiveEXP(List<BattleUnit> playerUnits, int expAmount) {
+        foreach(var unit in playerUnits) {
+            if (unit.Character.IsAlive) {
+                unit.Character.EXP += expAmount;     
+                unit.Character.CheckForLevelUp();
+            }
         }
+
+        levelUpSummaryManager.SetSummaryUI(playerUnits, expAmount);
 
         yield return new WaitForSeconds(1);
     }
@@ -408,8 +429,8 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
 
     // Player input callback for running a round
     public void OnRoundRunSelected(InputAction.CallbackContext context) {
-        if (context.started) {
-            if (!canRunRound && StateManager.CurrentState.State == BattleState.CharacterSelect) {
+        if (context.performed) {
+            if (!canRunRound && StateManager.CurrentState.State == BattleState.ActionSelection) {
                 Debug.Log("no actions in the action bar");
                 return;
             }
@@ -459,12 +480,15 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
             }
         }
 
+        yield return new WaitForEndOfFrame();
+
         if (StateManager.CurrentState.State != BattleState.BattleOver) {
             CleanUp();
             StateManager.ChangeState(new ActionSelectionState(this));
         }
 
         yield return null;
+
     }
 
     IEnumerator RunAttack(ActionSlot actionSlot) {
@@ -716,15 +740,20 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
 
     public void OnAttackSelected(InputAction.CallbackContext context) {
         if (!context.started) return;
-        if (StateManager.CurrentState.State != BattleState.ActionSelection) return;
-        if (actionPoints <= 0) {
-            Debug.Log("No action points available!");
+        if (StateManager.CurrentState.State == BattleState.ActionSelection) {
+            if (actionPoints <= 0) {
+                Debug.Log("No action points available!");
+                return;
+            }
+
+            MusicManager.Instance.PlaySound("MenuConfirm");
+            currentAction.Type = ActionType.Attack;
+            StateManager.ChangeState(new CharacterSelectionState(this));
+        } else if (StateManager.CurrentState.State == BattleState.BattleOver) {
+            closeSummary = true;
+        } else {
             return;
         }
-
-        MusicManager.Instance.PlaySound("MenuConfirm");
-        currentAction.Type = ActionType.Attack;
-        StateManager.ChangeState(new CharacterSelectionState(this));
     }
 
     public void OnAbilitiesSelected(InputAction.CallbackContext context) {

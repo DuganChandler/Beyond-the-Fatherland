@@ -31,7 +31,8 @@ public class Character  {
     public float strengthDebuffs {get; set;}
     public float magicDebuffs {get; set;}
     public float defenseDebuffs {get; set;}
-    
+
+    public bool LeveledUp { get; set; } = false;
 
     public int Level {
         get {
@@ -104,21 +105,31 @@ public class Character  {
 
     public void CalculateStats() {
         int oldMaxHP = MaxHP;
+        int oldMaxMP = MaxMP;
+        Stats = characterData.GetStatsAtLevel(level);
+
         MaxHP = characterData.GetHpAtLevel(level);
+        MaxMP = characterData.GetMpAtLevel(level);        
+        Debug.Log(MaxHP);
 
         if (oldMaxHP != 0) {
             HP += MaxHP - oldMaxHP;
+            MP += MaxMP - oldMaxMP;
         }
+
+        OnHpChange?.Invoke();
+        OnMpChange?.Invoke(); 
     }
 
-    public bool CheckForLevelUp() {
-        if (EXP >= 90) {
+    public void CheckForLevelUp() {
+        if (EXP >= 75) {
             ++level;
-            // calculate stats
-            EXP -= 90;
-            return true;
+            EXP -= 75;
+            LeveledUp = true;
+            CalculateStats();
+            return;
         }
-        return false;
+        LeveledUp = false;
     }
 
     public List<AbilityBase> Abilities{

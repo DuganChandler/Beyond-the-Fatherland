@@ -51,7 +51,7 @@ public class AbilityMenu : MonoBehaviour {
                 
 
                 abilityButton.AbilityName.text = currentAbility.AbilityName;
-                abilityButton.AbilityCost.text = "MP: " + currentAbility.Cost;
+                // abilityButton.AbilityCost.text = "MP: " + currentAbility.Cost;
                 //abilityButton.ItemCount.text = $"{currentSlot.Count}x";
 
                 // Add a listener that calls OnItemButtonClicked with the current item slot.
