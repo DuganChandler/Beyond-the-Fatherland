@@ -31,12 +31,13 @@ public enum ActionType {
     None
 } 
 
-public class BattleSystem : MonoBehaviour {
+public class BattleSystem : MonoBehaviour, IBattleActions {
     [Header("Battle Setup")]
-    [SerializeField] private List<GameObject> partyPositions;
-    [SerializeField] private List<GameObject> encounterPositions;
+    [SerializeField] private List<BattlePosition> partyPositions;
+    [SerializeField] private List<BattlePosition> encounterPositions;
     [SerializeField] private int actionPoints;
     [SerializeField] private ItemUser itemUser;
+    [SerializeField] private AbilityExecutor abilityExecutor;
 
     [Header("Battle UI")]
     [SerializeField] List<Button> playerPortraits; 
@@ -45,7 +46,6 @@ public class BattleSystem : MonoBehaviour {
     [SerializeField] Material enemyOutline;
     [SerializeField] TextMeshProUGUI actionPointText;
     [SerializeField] PointerManager pointerManager;
-    [SerializeField] UIPointerManager uIPointerManager;
     [SerializeField] ItemMenu itemMenu;
     [SerializeField] GameObject itemPanel;
     [SerializeField] GameObject abilityPanel;
@@ -92,6 +92,8 @@ public class BattleSystem : MonoBehaviour {
     public Inventory PlayerInventory { get => playerInventory; }
     public InfoPanelManager InfoPanelManager { get => infoPanelManager; }
     public ActionButtonManager ActionButtonManager { get => actionButtonManager; } 
+    public List<BattlePosition> EncounterPositions { get => encounterPositions; } 
+    public List<BattleUnit> EnemyUnits { get => enemyUnits; }
 
     void Awake() {
         StartBattle(); 
@@ -102,7 +104,6 @@ public class BattleSystem : MonoBehaviour {
         BattleEventManager.Instance.OnAbilitySelected += HandleAbilitySelection;
         BattleEventManager.Instance.OnSlotActionSelected += HandleSlotActionSelected;
         BattleEventManager.Instance.OnSlotSelected += HandleActionSlotSelected;
-
     }
 
     void OnDisable() {
@@ -131,6 +132,7 @@ public class BattleSystem : MonoBehaviour {
         actionPointText.text = $"{actionPoints}";
 
         numEscapeAttempts = 0;
+        currentRound = 1;
     }
 
     public IEnumerator SetupBattle() {
@@ -138,22 +140,22 @@ public class BattleSystem : MonoBehaviour {
         MusicManager.Instance.PlayMusic("BattleTheme");
 
         for (int i = 0; i < playerCharacters.Count; i++) {
-            BattleUnit unit = new(playerCharacters[i], characterHudList[i]); 
+            BattleUnit unit = new(playerCharacters[i], partyPositions[i], characterHudList[i]); 
             unit.Setup();
             unit.CurrentModelInstance = Instantiate(unit.Character.CharacterData.CharacterPrefab, partyPositions[i].transform);
+
             playerUnits.Add(unit);
         }
 
         for (int i = 0; i < enemyCharacters.Count; i++) {
-            enemyCharacters[i].Init();
-            BattleUnit unit = new(enemyCharacters[i]); 
+            BattleUnit unit = new(enemyCharacters[i], encounterPositions[i]); 
             unit.Setup();
             unit.CurrentModelInstance = Instantiate(unit.Character.CharacterData.CharacterPrefab, encounterPositions[i].transform);
+
             enemyUnits.Add(unit);
         }
 
         LoadEnemyActionSlots();
-        uIPointerManager.LastSelected = null;
         EventSystem.current.SetSelectedGameObject(null);
         StateManager.ChangeState(new ActionSelectionState(this));
     }
@@ -168,6 +170,7 @@ public class BattleSystem : MonoBehaviour {
         }
 
         foreach (var enemyUnit in enemyUnits) {
+            int randomNum = Random.Range(0, 2); 
             List<BattleUnit> validTargets = new();
             foreach (var playerUnit in playerUnits) {
                 if (playerUnit.Character.IsAlive) {
@@ -180,6 +183,30 @@ public class BattleSystem : MonoBehaviour {
                 break;
             }
 
+            if (enemyUnit.Character.CharacterData.CharacerType == CharacerType.Boss) {
+                int numberOfEnemies = 0;
+                foreach (var positon in encounterPositions) {
+                    if (positon.Occupied) {
+                        numberOfEnemies++;
+                    }
+                }
+
+                if (numberOfEnemies < 2) {
+                    int randomListIndex = Random.Range(0, availableIndecies.Count);
+                    int slotIndex = availableIndecies[randomListIndex];
+                    BattleAction action = new(ActionType.Ability, enemyUnit, enemyUnit, null, enemyUnit.Character.CharacterData.Abilities[0]);
+                    ActionSlot actionSlot = actionBarManager.ActionSLots[slotIndex];
+                    actionSlot.CharacterPortrait.GetComponent<Image>().sprite = enemyUnit.Character.CharacterData.CharacterPortrait;
+                    actionSlot.CharacterPortrait.SetActive(true);
+                    actionSlot.BattleAction = action;
+                    actionSlot.IsOccupied = true;
+
+                    availableIndecies.RemoveAt(randomListIndex);
+                    continue;
+                }
+
+            }
+            
             if (availableIndecies.Count > 0) {
                 int randomListIndex = Random.Range(0, availableIndecies.Count);
                 int slotIndex = availableIndecies[randomListIndex];
@@ -252,7 +279,6 @@ public class BattleSystem : MonoBehaviour {
         if (!context.started) return;
 
         if (StateManager.CurrentState.State != BattleState.ActionSelection) {
-            uIPointerManager.LastSelected = null;
             StateManager.Back();
         } else {
             if (actionPoints <= 0) {
@@ -335,7 +361,6 @@ public class BattleSystem : MonoBehaviour {
 
             currentAction.Target = currentList[currentTargetIndex]; 
 
-            uIPointerManager.LastSelected = null;
             StateManager.ChangeState(new ActionSlotSelectionState(this));
         }
     }
@@ -436,7 +461,6 @@ public class BattleSystem : MonoBehaviour {
 
         if (StateManager.CurrentState.State != BattleState.BattleOver) {
             CleanUp();
-            uIPointerManager.LastSelected = null;
             StateManager.ChangeState(new ActionSelectionState(this));
         }
 
@@ -448,11 +472,13 @@ public class BattleSystem : MonoBehaviour {
         BattleUnit target = actionSlot.BattleAction.Target;
 
         if (!target.Character.IsAlive) {
-            foreach (var unit in enemyUnits) {
-                if (unit.Character.IsAlive) {
-                    target = unit;
-                }
-            }
+            // foreach (var unit in enemyUnits) {
+            //     if (unit.Character.IsAlive) {
+            //         target = unit;
+            //     }
+            // }
+            Debug.Log("Missed Attack");
+            yield return new WaitForEndOfFrame();
         }
 
         int totalDamage = CalculateAttackDamage(user.Character, target.Character); 
@@ -508,55 +534,31 @@ public class BattleSystem : MonoBehaviour {
             StateManager.ChangeState(new BattleOverState(this));
         }
 
-        yield return null;
+        yield return new WaitForEndOfFrame();
     }
 
     // ability -> calculate damage, check for status effects, check if you can cast
     IEnumerator RunAbility(ActionSlot actionSlot){
-        BattleUnit target = actionSlot.BattleAction.Target;
-        BattleUnit user = actionSlot.BattleAction.User;
         AbilityBase currentAbility = actionSlot.BattleAction.AbilityBase;
+        BattleUnit target = actionSlot.BattleAction.Target; 
 
-        BattleUnit newTarget = null;
+        if (actionSlot.BattleAction.AbilityBase.AbilityTarget == AbilityTarget.Battle) {
+            yield return StartCoroutine(abilityExecutor.ExecuteAbility(currentAbility, actionSlot.BattleAction.User, actionSlot.BattleAction.Target, this));
+        } else if (target.Character.IsAlive) {
+            yield return StartCoroutine(abilityExecutor.ExecuteAbility(currentAbility, actionSlot.BattleAction.User, actionSlot.BattleAction.Target, this));
+        } else {
+            Debug.Log("Missed");
+        }
 
-        if (!target.Character.IsAlive && currentAbility.AbilityTarget == AbilityTarget.Player) {
-            newTarget = user;
-        } else if (!target.Character.IsAlive && currentAbility.AbilityTarget == AbilityTarget.Enemy) {
-            foreach(var enemy in enemyUnits) {
-                newTarget = enemy;
+        if (actionSlot.BattleAction.Target != null) {
+            if (actionSlot.BattleAction.Target.Character.HP <= 0) {
+                yield return StartCoroutine(OnCharacterDeath(actionSlot));
             }
-        }else{
-            newTarget = target;
-        }
-
-        GameObject damageTextObject = newTarget.CurrentModelInstance.transform.GetChild(0).gameObject;
-        yield return StartCoroutine(UseAbility(currentAbility,user.Character,newTarget.Character,damageTextObject, actionSlot));
-    }
-
-    public IEnumerator UseAbility(AbilityBase ability, Character user, Character target, GameObject damageTextObject, ActionSlot actionSlot){
-        Character newTarget = target;
-
-        foreach (AbilityEffectBase effect in ability.Effects){
-            AbilityEffectInfo effectInfo = effect.ApplyEffect(user,target);
-            damageTextObject.SetActive(true);
-            damageTextObject.GetComponent<DamageText>().text.text = $"{effectInfo.TextInformation}";
-            damageTextObject.GetComponent<DamageText>().text.color = effectInfo.TextColor;
-
-            yield return new WaitForSeconds(1f);
-
-            damageTextObject.SetActive(false);
-        }
-        damageTextObject.GetComponent<DamageText>().text.color = Color.white;
-
-        if (target.HP <= 0) {
-            yield return StartCoroutine(OnCharacterDeath(actionSlot));
         }
 
         yield return new WaitForEndOfFrame();
-
     }
 
-    // items -> calculate value, check for any status effects
     IEnumerator RunItem(ActionSlot actionSlot) {
         BattleUnit target = actionSlot.BattleAction.Target;
         BattleUnit user = actionSlot.BattleAction.User;
@@ -583,7 +585,7 @@ public class BattleSystem : MonoBehaviour {
         Character newTarget = target;
 
         foreach (ItemEffectBase effect in item.effects) {
-            EffectInfo effectInfo = effect.ApplyEffect(user, newTarget);
+            EffectInfo effectInfo = effect.ApplyEffectToCharacter(user, newTarget);
             damageTextObject.SetActive(true);
             damageTextObject.GetComponent<DamageText>().text.text = $"{effectInfo.TextInformation}";
             damageTextObject.GetComponent<DamageText>().text.color = effectInfo.TextColor;
@@ -606,7 +608,11 @@ public class BattleSystem : MonoBehaviour {
         // remove model from instanceList or mark as dead and skip over;
         BattleUnit dyingUnit = actionSlot.BattleAction.Target;
         if (dyingUnit.Character.CharacterData.CharacerType == CharacerType.Enemy) {
-            dyingUnit.CurrentModelInstance.GetComponent<MeshRenderer>().materials[0].color = Color.red;
+            // dyingUnit.CurrentModelInstance.GetComponent<MeshRenderer>().materials[0].color = Color.red;
+
+            dyingUnit.BattlePosition.Occupied = false;
+            Destroy(dyingUnit.CurrentModelInstance);
+
             foreach(var enemyUnit in enemyUnits) {
                 if(enemyUnit == dyingUnit) {
                     enemyUnits.Remove(enemyUnit);
@@ -614,7 +620,7 @@ public class BattleSystem : MonoBehaviour {
                 }
             }
         } else {
-            dyingUnit.CurrentModelInstance.transform.GetChild(2).GetComponent<SkinnedMeshRenderer>().materials[0].color = Color.red;
+            // dyingUnit.CurrentModelInstance.transform.GetChild(2).GetComponent<SkinnedMeshRenderer>().materials[0].color = Color.red;
             foreach(var playerUnit in playerUnits) {
                 if(playerUnit == dyingUnit) {
                     // playerUnits.Remove(playerUnit);
@@ -640,6 +646,7 @@ public class BattleSystem : MonoBehaviour {
                 numDead++;
             }
         }
+        Debug.Log(numDead);
 
         return numDead == 3;
     }
@@ -693,7 +700,6 @@ public class BattleSystem : MonoBehaviour {
 
     void HandleAbilitySelection(AbilityBase selectedAbility){
         currentAction.AbilityBase = selectedAbility;
-        uIPointerManager.LastSelected = null;
         StateManager.ChangeState(new TargetSelectionState(this));
     }
 
@@ -778,8 +784,6 @@ public class BattleSystem : MonoBehaviour {
 
         MusicManager.Instance.PlaySound("MenuConfirm");
 
-        uIPointerManager.LastSelected = null;
-
         switch (currentAction.Type) {
             case ActionType.Attack:
                 StateManager.ChangeState(new TargetSelectionState(this));
@@ -802,5 +806,19 @@ public class BattleSystem : MonoBehaviour {
 
     IEnumerator Delay() {
         yield return new WaitForEndOfFrame();
+    }
+
+    public bool TrySummonEnemy(Character enemy) {
+        for (int i = 0; i < EncounterPositions.Count; i++) {
+            BattlePosition position = EncounterPositions[i];
+            if (!position.Occupied) {
+                BattleUnit unit = new BattleUnit(enemy, position);
+                unit.Setup();
+                unit.CurrentModelInstance = Instantiate(enemy.CharacterData.CharacterPrefab, position.transform);
+                EnemyUnits.Add(unit);
+                return true;
+            }
+        }
+        return false;
     }
 }

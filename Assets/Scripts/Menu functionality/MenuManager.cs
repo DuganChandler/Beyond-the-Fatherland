@@ -227,7 +227,7 @@ public class MenuManager : MonoBehaviour {
 
     public IEnumerator UseItem(CombatItemData item, Character target) {
         foreach (ItemEffectBase effect in item.effects) {
-            EffectInfo effectInfo = effect.ApplyEffect(null, target);
+            EffectInfo effectInfo = effect.ApplyEffectToCharacter(null, target);
             Debug.Log(effectInfo.TextInformation);
         }
 
