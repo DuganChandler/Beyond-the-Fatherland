@@ -44,7 +44,9 @@ public class BattleUnit {
 
 
     public void Setup() {
-        _character?.Init();
+        if (_character.CharacterData.CharacerType != CharacerType.PartyMember) {
+            _character?.Init();
+        }
 
         if (_hud) {
             _hud.SetData(_character);

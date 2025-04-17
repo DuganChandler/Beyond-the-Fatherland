@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using TMPro;
+using Cinemachine;
 
 public enum BattleState {
     Start,
@@ -54,6 +55,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
     [SerializeField] ActionBarManager actionBarManager;
     [SerializeField] InfoPanelManager infoPanelManager;
     [SerializeField] ActionButtonManager actionButtonManager;
+    [SerializeField] LevelUpSummaryManager levelUpSummaryManager;
 
     [SerializeField] BattleStateManager stateManager;
 
@@ -75,6 +77,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
     private bool hasRoundPassed = false;
     private bool canNavigate = true;
     private bool canRunRound = false;
+    private bool closeSummary = false;
 
     private int numEscapeAttempts;
 
@@ -248,27 +251,45 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         StateManager.ChangeState(new BattleOverState(this));
         
         if (won) {
-            foreach(var unit in playerUnits) {
-                if (unit.Character.IsAlive) {
-                    yield return GiveEXP(unit.Character, 100); 
-                }
-            }
+            yield return GiveEXP(playerUnits, CalculateEXP(enemyUnits));
+            yield return ShowInfoBox(levelUpSummaryManager.gameObject);
         }
         
         foreach(var playerUnit in playerUnits) {
             Destroy(playerUnit.CurrentModelInstance);
         }
 
+        levelUpSummaryManager.gameObject.SetActive(false);
+
         BattleManager.Instance.EndBattle();
     }
 
-    IEnumerator GiveEXP(Character character, int expAmount) {
-        character.EXP += expAmount;     
-        yield return dialogBox.TypeDialog($"{character.CharacterData.name} has gained {expAmount} EXP!");
+    private IEnumerator WaitForSummaryInput() {
+        yield return new WaitUntil(() => closeSummary);
+        closeSummary = false;
+    }
 
-        while (character.CheckForLevelUp()) {
-            yield return dialogBox.TypeDialog($"{character.CharacterData.name} has leveled up to {character.Level}");
+    public IEnumerator ShowInfoBox(GameObject objectToShow) {
+        objectToShow.SetActive(true);
+
+        yield return WaitForSummaryInput();
+
+        objectToShow.SetActive(false);
+    }
+
+    private int CalculateEXP(List<BattleUnit> enemyUnits) {
+        return 75;
+    }
+
+    IEnumerator GiveEXP(List<BattleUnit> playerUnits, int expAmount) {
+        foreach(var unit in playerUnits) {
+            if (unit.Character.IsAlive) {
+                unit.Character.EXP += expAmount;     
+                unit.Character.CheckForLevelUp();
+            }
         }
+
+        levelUpSummaryManager.SetSummaryUI(playerUnits, expAmount);
 
         yield return new WaitForSeconds(1);
     }
@@ -697,15 +718,20 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
 
     public void OnAttackSelected(InputAction.CallbackContext context) {
         if (!context.started) return;
-        if (StateManager.CurrentState.State != BattleState.ActionSelection) return;
-        if (actionPoints <= 0) {
-            Debug.Log("No action points available!");
+        if (StateManager.CurrentState.State == BattleState.ActionSelection) {
+            if (actionPoints <= 0) {
+                Debug.Log("No action points available!");
+                return;
+            }
+
+            MusicManager.Instance.PlaySound("MenuConfirm");
+            currentAction.Type = ActionType.Attack;
+            StateManager.ChangeState(new CharacterSelectionState(this));
+        } else if (StateManager.CurrentState.State == BattleState.BattleOver) {
+            closeSummary = true;
+        } else {
             return;
         }
-
-        MusicManager.Instance.PlaySound("MenuConfirm");
-        currentAction.Type = ActionType.Attack;
-        StateManager.ChangeState(new CharacterSelectionState(this));
     }
 
     public void OnAbilitiesSelected(InputAction.CallbackContext context) {
