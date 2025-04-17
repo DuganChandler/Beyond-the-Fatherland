@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using TMPro;
 using Cinemachine;
+using UnityEditor.Animations;
 
 public enum BattleState {
     Start,
@@ -461,6 +462,8 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
                 continue;
             }
 
+            
+
             switch (slot.BattleAction.Type) {
                 case ActionType.Attack:
                     yield return StartCoroutine(RunAttack(slot));
@@ -505,6 +508,19 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         int totalDamage = CalculateAttackDamage(user.Character, target.Character); 
         target.Character.DecreaseHP(totalDamage);
 
+        Animator animator = user.CurrentModelInstance.GetComponent<Animator>();
+        if( animator != null) {
+            /*Debug.Log(animator.gameObject.activeSelf);
+            Debug.Log(animator.enabled);
+            Debug.Log("initialized: " + animator.isInitialized);
+            animator.Rebind();*/
+            yield return StartCoroutine(PlayAnimation(animator));
+            Debug.Log(animator.GetComponent<AnimatorController>() + "hi");
+            Debug.Log("initialized: " + animator.isInitialized);
+            //animator.SetBool("attack",false);
+            
+        }
+
         GameObject damageTextObject = target.CurrentModelInstance.transform.GetChild(0).gameObject;
         damageTextObject.SetActive(true);
         damageTextObject.GetComponent<DamageText>().text.text = $"{totalDamage}";
@@ -518,6 +534,12 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         }
 
         yield return new WaitForEndOfFrame();
+    }
+
+    IEnumerator PlayAnimation(Animator animator) {
+        animator.SetTrigger("Attack");
+        //animator.SetBool("attack",true);
+        yield return null;
     }
 
     int CalculateAttackDamage(Character user, Character target) {

@@ -153,6 +153,11 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 4231cd3fe26f9154e93d02b1d3e5e4ae,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: f4ee88acadf5ca34895fc498aa250bb6, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -322,6 +327,14 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: ad9ae823-db70-4ccd-8987-7c3bee0a85ca
     m_ActionName: Player/Interact[/Keyboard/enter]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: f26889b0-0a65-400a-8f3e-af6e5b2c9fa4
+    m_ActionName: Player/SlotActions
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 2e5a366b-8b72-4d97-acb8-0c6173d59c0e
+    m_ActionName: Player/Abilities
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
