@@ -29,10 +29,11 @@ public class UIPointerManager : MonoBehaviour {
                 }
 
                 activePointer.position = selectedRect.Find("PointerPosition").transform.position;
-                Debug.Log(selectedRect.Find("PointerPosition").transform.position);
 
                 if (lastSelected != null) {
-                    MusicManager.Instance.PlaySound("MenuScroll");
+                    if (MusicManager.Instance != null) {
+                        MusicManager.Instance.PlaySound("MenuScroll");
+                    }
                 }
 
                 lastSelected = selectedObj;

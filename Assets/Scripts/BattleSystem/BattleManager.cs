@@ -2,8 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BattleManager : MonoBehaviour
-{
+public enum BattleType {
+    Random,
+    Boss,
+}
+
+public class BattleManager : MonoBehaviour {
     private static BattleManager _Instance;
     public static BattleManager Instance { 
         get { 
@@ -30,6 +34,7 @@ public class BattleManager : MonoBehaviour
     public List<Character> EncounterPartyList { get; set; }
     public Inventory PlayerInventory { get; set; }
     public BattleState BattleState { get; set; }
+    public BattleType BattleType { get; set; }
 
     public IEnumerator StartBattle() {
         GameManager.Instance.GameState = GameState.Battle;
@@ -58,6 +63,19 @@ public class BattleManager : MonoBehaviour
 
             SceneHelper.LoadScene("GameOver", false, true);
             GameManager.Instance.GameState = GameState.GameOver;
+            MusicManager.Instance.StopMusic();
+            return;
+        }
+
+        if (BattleType == BattleType.Boss) {
+            GameManager.Instance.GameState = GameState.Victory;
+
+            if (MusicManager.Instance != null) {
+                MusicManager.Instance.StopMusic();
+            }
+
+            SceneHelper.LoadScene("Victory", false, true);
+            return;
         }
 
         GameManager.Instance.GameState = GameState.FreeRoam;

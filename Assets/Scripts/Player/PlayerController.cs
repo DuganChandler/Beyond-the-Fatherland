@@ -91,7 +91,9 @@ public class PlayerController : MonoBehaviour {
                 BattleManager.Instance.EncounterPartyList = encounterLayer.Item2.GetComponent<EncounterMapArea>().GetRandomEncounter();
                 BattleManager.Instance.PlayerPartyList = GetComponent<PartyList>().CharacterList;
                 BattleManager.Instance.PlayerInventory = GetComponent<Inventory>();
-                Debug.Log(GetComponent<PartyList>().CharacterList);
+
+                BattleManager.Instance.BattleType = BattleType.Random;
+
                 StartCoroutine(BattleManager.Instance.StartBattle());
             }
             distanceAccumulated = 0f;
