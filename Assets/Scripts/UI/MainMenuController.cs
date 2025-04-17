@@ -18,6 +18,6 @@ public class MainMenuController : MonoBehaviour {
 
     public void OnStartGame() {
         MusicManager.Instance.PlayMusicNoFade("ForestTheme"); 
-        SceneHelper.LoadScene("ArborynForest", false, true);
+        SceneHelper.LoadScene("ArborynForestV2", false, true);
     }
 }
