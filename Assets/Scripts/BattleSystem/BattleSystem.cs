@@ -262,7 +262,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
 
         levelUpSummaryManager.gameObject.SetActive(false);
 
-        BattleManager.Instance.EndBattle();
+        BattleManager.Instance.EndBattle(won);
     }
 
     private IEnumerator WaitForSummaryInput() {

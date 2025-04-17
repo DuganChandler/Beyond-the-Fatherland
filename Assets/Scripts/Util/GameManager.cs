@@ -7,7 +7,10 @@ public enum GameState {
     Battle,
     Dialog,
     Pause,
-    Busy
+    Busy,
+    MainMenu,
+    GameOver,
+    Victory
 }
 
 public class GameManager : MonoBehaviour {

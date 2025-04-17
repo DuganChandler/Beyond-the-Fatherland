@@ -12,6 +12,7 @@ public class MainMenuController : MonoBehaviour {
         if (MusicManager.Instance != null) {
             MusicManager.Instance.PlayMusicNoFade("TitleTheme"); 
         }
+        GameManager.Instance.GameState = GameState.MainMenu;
     }
 
     public void OnQuitGame() {
@@ -20,6 +21,7 @@ public class MainMenuController : MonoBehaviour {
 
     public void OnStartGame() {
         MusicManager.Instance.PlayMusicNoFade("ForestTheme"); 
+        GameManager.Instance.GameState = GameState.FreeRoam;
         SceneHelper.LoadScene("ArborynForestV2", false, true);
     }
 

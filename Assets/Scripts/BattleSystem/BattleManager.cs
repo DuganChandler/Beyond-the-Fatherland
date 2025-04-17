@@ -50,7 +50,16 @@ public class BattleManager : MonoBehaviour
         yield return null;
     }
 
-    public void EndBattle() {
+    public void EndBattle(bool won) {
+        if (!won) {
+            if (MusicManager.Instance != null) {
+                MusicManager.Instance.PlayMusicNoFade("TitleTheme"); 
+            }
+
+            SceneHelper.LoadScene("GameOver", false, true);
+            GameManager.Instance.GameState = GameState.GameOver;
+        }
+
         GameManager.Instance.GameState = GameState.FreeRoam;
         MusicManager.Instance.StopMusic();
 
