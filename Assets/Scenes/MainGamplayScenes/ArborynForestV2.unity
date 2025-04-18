@@ -61424,6 +61424,33 @@ PrefabInstance:
       propertyPath: m_ActionEvents.Array.data[5].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: OnInteract
       objectReference: {fileID: 0}
+    - target: {fileID: 1899398096407313751, guid: b40add025be238c49a315cbdf30c7039,
+        type: 3}
+      propertyPath: combatItems.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1899398096407313751, guid: b40add025be238c49a315cbdf30c7039,
+        type: 3}
+      propertyPath: combatItems.Array.data[1].Item
+      value: 
+      objectReference: {fileID: 11400000, guid: 8b60fc8b62198964887cd6b1548b3a25,
+        type: 2}
+    - target: {fileID: 1899398096407313751, guid: b40add025be238c49a315cbdf30c7039,
+        type: 3}
+      propertyPath: combatItems.Array.data[2].Item
+      value: 
+      objectReference: {fileID: 11400000, guid: 517724607fbe9f349864e3442295dbd5,
+        type: 2}
+    - target: {fileID: 1899398096407313751, guid: b40add025be238c49a315cbdf30c7039,
+        type: 3}
+      propertyPath: combatItems.Array.data[1].Count
+      value: 99
+      objectReference: {fileID: 0}
+    - target: {fileID: 1899398096407313751, guid: b40add025be238c49a315cbdf30c7039,
+        type: 3}
+      propertyPath: combatItems.Array.data[2].Count
+      value: 99
+      objectReference: {fileID: 0}
     - target: {fileID: 4523893552268880463, guid: b40add025be238c49a315cbdf30c7039,
         type: 3}
       propertyPath: bagMenuUI

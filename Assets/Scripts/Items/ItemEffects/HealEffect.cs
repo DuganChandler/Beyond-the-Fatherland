@@ -5,8 +5,11 @@ public class HealEffect : ItemEffectBase {
     [SerializeField] private int healAmount;
 
     public override EffectInfo ApplyEffectToCharacter(Character user, Character target) {
-        target.IncreaseHP(healAmount);
-        return new EffectInfo(Color.green, $"{healAmount}");
+        if (target.IsAlive) {
+            target.IncreaseHP(healAmount);
+            return new EffectInfo(Color.green, $"{healAmount}");
+        }
+        return new EffectInfo(Color.red, "No Effect");
     }
 
 }
