@@ -27,6 +27,8 @@ public class CharacterData : ScriptableObject {
     [Header("Abilities")]
     [SerializeField] List<AbilityBase> abilities;
 
+    List<Condition> conditions;
+
     // Make sure to check if the character type is BOSS
     public Stats GetStatsAtLevel(int level) {
         if (level < 1 || level > characterStats.LevelStats.Length) {
@@ -79,6 +81,12 @@ public class CharacterData : ScriptableObject {
         }
     }
     // Create List of Abilities
+
+    public List<Condition> Conditions{
+        get{
+            return conditions;
+        }
+    }
 }
 
 public enum CharacerType {

@@ -5,9 +5,13 @@ using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Buff Effect", menuName = "Abilities/Effects/Buff")]
 public class AbilityBuffEffect : AbilityEffectBase {
-    [SerializeField] private int abilityBuffAmount;
     [SerializeField] private int duration;
     [SerializeField] private string stat;
+
+    public override IEnumerator ApplyToCharacter(AbilityContext context)
+    {
+        return base.ApplyToCharacter(context);
+    }
 
     // public override IEnumerator ApplyToCharacter(AbilityContext) {
     //     // if(initailRound == 0){

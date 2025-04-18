@@ -102,6 +102,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
     public List<BattlePosition> EncounterPositions { get => encounterPositions; } 
     public List<BattleUnit> EnemyUnits { get => enemyUnits; }
     public GameObject TutorialPanel { get => tutorialPanel; }
+    public int CurrentRound {get; set; } = 1;
 
     void Awake() {
         StartBattle(); 
@@ -142,7 +143,6 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         actionPointText.text = $"{actionPoints}";
 
         numEscapeAttempts = 0;
-        // currentRound = 1;
     }
 
     public IEnumerator SetupBattle() {
@@ -259,7 +259,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         if (currentAction.ItemSlot?.Item.ItemTarget == ItemTarget.Enemy || currentAction.Type == ActionType.Attack || (currentAction.AbilityBase != null && currentAction.AbilityBase.AbilityTarget == AbilityTarget.Enemy)) {
             isSelectingEnemy = true;
             currentTargetIndex = 0;
-        } else if (currentAction.ItemSlot?.Item.ItemTarget == ItemTarget.Player || (currentAction.AbilityBase != null && currentAction.AbilityBase.AbilityTarget == AbilityTarget.Enemy)) {
+        } else if (currentAction.ItemSlot?.Item.ItemTarget == ItemTarget.Player || (currentAction.AbilityBase != null && currentAction.AbilityBase.AbilityTarget == AbilityTarget.Player)) {
             isSelectingEnemy = false;
             currentTargetIndex = 0;
         }
@@ -550,10 +550,10 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
 
 
     int CalculateAttackDamage(Character user, Character target) {
-        int userDamage = user.CalculateBasicAttackDamage();
-        int targetDefense = target.CalculateDefense();
-        Debug.Log($"User Damage: {userDamage} Target Defense: {targetDefense}");
-        return userDamage - targetDefense;
+        int userDamage = user.CalculateBasicAttackDamage(target);
+        //int targetDefense = target.CalculateDefense();
+        //Debug.Log($"User Damage: {userDamage} Target Defense: {targetDefense}");
+        return userDamage;
     }
 
     IEnumerator TryToEscape() {
