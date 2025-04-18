@@ -140,7 +140,11 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
 
     public IEnumerator SetupBattle() {
         yield return new WaitForEndOfFrame(); 
-        MusicManager.Instance.PlayMusicNoFade("BattleTheme");
+        if (BattleManager.Instance.BattleType == BattleType.Random) {
+            MusicManager.Instance.PlayMusicNoFade("BattleTheme");
+        } else {
+            MusicManager.Instance.PlayMusicNoFade("BossTheme");
+        }
 
         for (int i = 0; i < playerCharacters.Count; i++) {
             BattleUnit unit = new(playerCharacters[i], partyPositions[i], characterHudList[i]); 

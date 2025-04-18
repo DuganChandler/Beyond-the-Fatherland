@@ -222,7 +222,7 @@ PrefabInstance:
     - target: {fileID: 1470334480135860049, guid: 2227a1bda8104854caa9d09fe17df23c,
         type: 3}
       propertyPath: tracks.Array.size
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1470334480135860049, guid: 2227a1bda8104854caa9d09fe17df23c,
         type: 3}
@@ -236,6 +236,11 @@ PrefabInstance:
       objectReference: {fileID: 8300000, guid: ea98eee4d63996d4084114e28be0f39c, type: 3}
     - target: {fileID: 1470334480135860049, guid: 2227a1bda8104854caa9d09fe17df23c,
         type: 3}
+      propertyPath: tracks.Array.data[3].clip
+      value: 
+      objectReference: {fileID: 8300000, guid: 97bb02e56cda9684695b83141f9383b3, type: 3}
+    - target: {fileID: 1470334480135860049, guid: 2227a1bda8104854caa9d09fe17df23c,
+        type: 3}
       propertyPath: tracks.Array.data[1].trackName
       value: ForestTheme
       objectReference: {fileID: 0}
@@ -243,6 +248,11 @@ PrefabInstance:
         type: 3}
       propertyPath: tracks.Array.data[2].trackName
       value: TitleTheme
+      objectReference: {fileID: 0}
+    - target: {fileID: 1470334480135860049, guid: 2227a1bda8104854caa9d09fe17df23c,
+        type: 3}
+      propertyPath: tracks.Array.data[3].trackName
+      value: BossTheme
       objectReference: {fileID: 0}
     - target: {fileID: 2362042911826699093, guid: 2227a1bda8104854caa9d09fe17df23c,
         type: 3}
