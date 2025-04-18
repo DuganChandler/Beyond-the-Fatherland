@@ -15,7 +15,7 @@ MonoBehaviour:
   levelStats:
   - Strength: 2
     Magic: 6
-    Defense: 4
+    Defense: 3
   - Strength: 2
     Magic: 7
     Defense: 5
@@ -27,21 +27,21 @@ MonoBehaviour:
     Defense: 6
   - Strength: 4
     Magic: 11
-    Defense: 8
+    Defense: 6
   - Strength: 4
     Magic: 13
-    Defense: 9
+    Defense: 7
   - Strength: 6
     Magic: 15
-    Defense: 9
+    Defense: 7
   - Strength: 7
     Magic: 16
-    Defense: 11
+    Defense: 9
   - Strength: 9
     Magic: 18
-    Defense: 13
+    Defense: 10
   - Strength: 10
     Magic: 20
-    Defense: 12
+    Defense: 13
   hpGrowth: 8
   mpGrowth: 5

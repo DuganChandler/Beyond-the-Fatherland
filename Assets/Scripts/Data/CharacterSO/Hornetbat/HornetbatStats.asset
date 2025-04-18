@@ -14,34 +14,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelStats:
   - Strength: 2
-    Magic: 3
+    Magic: 5
     Defense: 2
   - Strength: 2
-    Magic: 4
-    Defense: 3
-  - Strength: 3
-    Magic: 5
-    Defense: 3
-  - Strength: 3
     Magic: 6
-    Defense: 4
+    Defense: 3
   - Strength: 3
-    Magic: 9
+    Magic: 7
+    Defense: 3
+  - Strength: 3
+    Magic: 8
     Defense: 4
   - Strength: 3
     Magic: 11
+    Defense: 4
+  - Strength: 3
+    Magic: 12
     Defense: 5
   - Strength: 3
-    Magic: 13
+    Magic: 14
     Defense: 5
   - Strength: 4
-    Magic: 16
+    Magic: 17
     Defense: 5
   - Strength: 5
-    Magic: 16
+    Magic: 17
     Defense: 6
   - Strength: 5
-    Magic: 16
+    Magic: 18
     Defense: 7
   hpGrowth: 8
   mpGrowth: 5

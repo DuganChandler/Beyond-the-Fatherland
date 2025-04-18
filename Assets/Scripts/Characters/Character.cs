@@ -70,10 +70,14 @@ public class Character  {
     }
 
     public int CalculateBasicAttackDamage(Character target) {
+        int mod = (int)Mathf.Max((Level - target.Level) * 1.1f, 1f);
+        float targetDefense = target.Stats.Defense;
         if (PrimaryStat == Stat.Strength) {
-            return (int)Mathf.Clamp(5 * Mathf.Sqrt(Stats.Strength * 10/target.Stats.Defense) * UnityEngine.Random.Range(0.95f,1.05f), 0, 1000);
+            float strength = Stats.Strength;
+            return (int)Mathf.Clamp(5 * Mathf.Max(Mathf.Sqrt(strength/targetDefense * 10)) * mod * UnityEngine.Random.Range(0.95f,1.05f), 0, 10000);
         } else if (PrimaryStat == Stat.Magic) {
-            return (int)Mathf.Clamp(5 * Mathf.Sqrt(Stats.Strength * 10/target.Stats.Defense ) * UnityEngine.Random.Range(0.95f,1.05f), 0, 1000);
+            float magic = Stats.Magic;
+            return (int)Mathf.Clamp(5 * Mathf.Max(Mathf.Sqrt(magic/targetDefense * 10)) * mod * UnityEngine.Random.Range(0.95f,1.05f), 0, 10000);
         } 
         return 0;
     }
@@ -81,10 +85,14 @@ public class Character  {
     public int CalculateAbilityPower(int power, Character target){
         //DMG = 5 * sqrt(primary state/enemy def * ability power) * rnd
         int damage = 0;
+        float targetDefense = target.Stats.Defense;
+        int mod = (int)Mathf.Max((Level - target.Level) * 1.1f, 1f);
         if (PrimaryStat == Stat.Strength) {
-            damage = (int)Mathf.Clamp(5 * Mathf.Sqrt(Stats.Strength * power/target.Stats.Defense ) * UnityEngine.Random.Range(0.95f,1.05f), 0, 1000);
+            float strength = Stats.Strength;
+            damage = (int)Mathf.Clamp(5 * Mathf.Max(Mathf.Sqrt(strength/targetDefense * power)) * mod * UnityEngine.Random.Range(0.95f,1.05f), 0, 10000);
         }else if(PrimaryStat == Stat.Magic){
-            damage = (int)Mathf.Clamp(5 * Mathf.Sqrt(Stats.Magic * power/target.Stats.Defense ) * UnityEngine.Random.Range(0.95f,1.05f), 0, 1000);
+            float magic = Stats.Magic;
+            damage = (int)Mathf.Clamp(5 * Mathf.Max(Mathf.Sqrt(magic/targetDefense * power), 1f) * mod * UnityEngine.Random.Range(0.95f,1.05f), 0, 10000);
         }
         return damage;
         
