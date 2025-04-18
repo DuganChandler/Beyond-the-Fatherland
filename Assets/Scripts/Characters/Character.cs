@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 [System.Serializable]
@@ -74,6 +75,18 @@ public class Character  {
             return 10 * Stats.Magic;
         } 
         return 0;
+    }
+
+    public int CalculateAbilityPower(int power, Character target){
+        //DMG = 5 * sqrt(primary state/enemy def * ability power) * rnd
+        int damage = 0;
+        if (PrimaryStat == Stat.Strength) {
+            damage = (int)(5 * Mathf.Sqrt(Stats.Strength/target.Stats.Defense * power) * UnityEngine.Random.Range(0.95f,1.05f));
+        }else if(PrimaryStat == Stat.Magic){
+            damage = (int)(5 * Mathf.Sqrt(Stats.Magic/target.Stats.Defense * power) * UnityEngine.Random.Range(0.95f,1.05f));
+        }
+        return damage;
+        
     }
 
     public int CalculateDefense() {

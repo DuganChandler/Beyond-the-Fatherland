@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Damage Effect", menuName = "Abilities/Effects/Damage")]
@@ -7,8 +8,9 @@ public class AbilityDamageEffect : AbilityEffectBase {
         // calcualte damage here
         // animate target damaged
         // animate damage number here
-        context.target.Character.DecreaseHP(25);
-        Debug.Log($"{context.target.Character.CharacterData.name} took 25 Damage");
+        
+        int damage = context.user.Character.CalculateAbilityPower(context.ability.Power,context.target.Character);
+        context.target.Character.DecreaseHP(damage);
         yield return null;
     }
 

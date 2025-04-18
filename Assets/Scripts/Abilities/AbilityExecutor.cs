@@ -7,6 +7,12 @@ public class AbilityExecutor : MonoBehaviour {
         AbilityContext context = new(ability, user, target, battleSystem);
         // wait for animations right here (sudo code):
         // yield return Waitfor(user.prefab.animate)
+        Animator animator = user.CurrentModelInstance.GetComponent<Animator>();
+            if( animator != null && user.Character.CharacterData.CharacerType == CharacerType.PartyMember) {
+                animator.SetTrigger("Attack");
+                yield return new WaitUntil(() => battleSystem.IsAnimating);
+                battleSystem.IsAnimating = false;
+            }
 
         foreach (AbilityEffectBase effect in ability.Effects) {
             yield return StartCoroutine(effect.ApplyToCharacter(context));

@@ -82,7 +82,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
 
     private int numEscapeAttempts;
 
-    private bool isAnimating = false;
+    public bool IsAnimating {get; set; } = false;
 
     public BattleStateManager StateManager { get => stateManager; }
     public List<Button> PlayerPortraits { get => playerPortraits; }
@@ -501,10 +501,10 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
 
         if (target.Character.IsAlive) {
             Animator animator = user.CurrentModelInstance.GetComponent<Animator>();
-            if( animator != null /*&& user.Character.CharacterData.CharacerType == CharacerType.PartyMember*/) {
+            if( animator != null) {
                 animator.SetTrigger("Attack");
-                yield return new WaitUntil(() => isAnimating);
-                isAnimating = false;
+                yield return new WaitUntil(() => IsAnimating);
+                IsAnimating = false;
             }
 
             int totalDamage = CalculateAttackDamage(user.Character, target.Character); 
@@ -840,6 +840,8 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
                 unit.Setup();
                 unit.CurrentModelInstance = Instantiate(enemy.CharacterData.CharacterPrefab, position.transform);
                 EnemyUnits.Add(unit);
+                //purely for debug
+                enemyCharacters.Add(unit.Character);
                 return true;
             }
         }
@@ -848,7 +850,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
 
     public void HandleAnimationEnd()
     {
-        isAnimating = true;
+        IsAnimating = true;
     }
 
 }
