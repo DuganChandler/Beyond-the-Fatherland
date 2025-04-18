@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Tigermoose
   description: A tiger + moose = fuck that shit
-  characterPrefab: {fileID: 4392875892391519670, guid: 7a665b7ab6ab0fa4cafb50a143f10d6e,
+  characterPrefab: {fileID: 5883155896844355918, guid: 8741cd6c8b9fc3947999191d0c381f50,
     type: 3}
   characterPortrait: {fileID: 21300000, guid: 5e7070c29b6420140acec2c63e3badaa, type: 3}
   characerType: 1
