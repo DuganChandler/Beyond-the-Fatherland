@@ -16,6 +16,9 @@ public class EncounterTrigger : MonoBehaviour {
             BattleManager.Instance.EncounterPartyList = encounterLists[0].CharacterList;
             BattleManager.Instance.PlayerPartyList = other.GetComponent<PartyList>().CharacterList;
             BattleManager.Instance.PlayerInventory = other.GetComponent<Inventory>();
+
+            BattleManager.Instance.BattleType = BattleType.Boss;
+
             StartCoroutine(BattleManager.Instance.StartBattle());
         } 
     }

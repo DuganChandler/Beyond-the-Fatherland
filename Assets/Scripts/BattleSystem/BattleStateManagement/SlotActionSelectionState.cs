@@ -19,6 +19,7 @@ public class SlotActionSelectionState : IBattleState {
 
     public void OnEnter() {
         Debug.Log("Entering: Slot Action Selection State");
+        battleSystem.ActionButtonManager.SetButtonText("", "Select", "Back", "", false);
         battleSystem.SlotActionPanel.SetActive(true);
     }
 

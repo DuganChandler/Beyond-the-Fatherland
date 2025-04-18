@@ -35,8 +35,7 @@ public class ItemMenu : MonoBehaviour {
     }
 
     void SelectItemDescription() {
-        Button currentSelectedButton = EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
-        if (currentSelectedButton == null) {
+        if (!EventSystem.current.currentSelectedGameObject.TryGetComponent<Button>(out var currentSelectedButton)) {
             return;
         }
         
