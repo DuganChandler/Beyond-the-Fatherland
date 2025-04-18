@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Norbert
   description: I mean bro, it's norbert!
-  characterPrefab: {fileID: 8368075523850562389, guid: 93464bf7b0300e24faa855503e4de39b,
+  characterPrefab: {fileID: 71255953530312484, guid: 2e661f7197edd6f42919356b1d601be4,
     type: 3}
   characterPortrait: {fileID: 21300000, guid: d14c28cdb00cc644da064718c4817843, type: 3}
   characerType: 0

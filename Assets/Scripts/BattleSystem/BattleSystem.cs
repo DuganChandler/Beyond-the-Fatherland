@@ -649,6 +649,8 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
                 if(playerUnit == dyingUnit) {
                     // playerUnits.Remove(playerUnit);
                     playerUnit.Character.IsAlive = false;
+                    Animator animator = playerUnit.CurrentModelInstance.GetComponent<Animator>();
+                    animator.SetTrigger("Death");
                     break;
                 }
             }
