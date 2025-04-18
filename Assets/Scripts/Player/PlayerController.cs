@@ -1,8 +1,10 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Android;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour {
+[RequireComponent(typeof(Rigidbody), typeof(CapsuleCollider), typeof(Animator))]
+public class PlayerController : MonoBehaviour { 
     [SerializeField] private float walkSpeed = 10f;
 
     [Header("Encounter Settings")]
@@ -19,15 +21,28 @@ public class PlayerController : MonoBehaviour {
     private Vector3 lastPosition;
     private float distanceAccumulated = 0f;
 
+    private Animator animator;
+
     private Vector3 moveInput;
     private Rigidbody rb;
     private CapsuleCollider capsuleCollider;
 
     public static event System.Action OnDialogContinue;
 
+    private bool _isMoving = false;
+    public bool IsMoving {
+        get {
+            return _isMoving;
+        } private set {
+            _isMoving = value;
+            animator.SetBool("Moving", value);
+        }
+    }
+
     void Start() {
         rb = GetComponent<Rigidbody>();
         capsuleCollider = GetComponent<CapsuleCollider>(); 
+        animator = GetComponent<Animator>();
 
         lastPosition = transform.position;
     }
@@ -35,18 +50,6 @@ public class PlayerController : MonoBehaviour {
     void Update() {
         CalculateDistanceTraveled();
         CheckRandomEncounter();
-        // if (Input.GetKeyDown(KeyCode.B)) {
-        //     CircleFadeTransition shatterEffect = FindObjectOfType<CircleFadeTransition>();
-        //     if (shatterEffect != null) {
-        //         // Start the shatter effect and load the battle scene in its callback.
-        //         StartCoroutine(shatterEffect.TriggerTransition());
-        //         shatterEffect.onTransitionComplete = () => {
-        //             // Load the battle scene additively once the shatter is done.
-        //             BattleManager.Instance.StartBattle();
-        //             // SceneHelper.LoadScene("ForestBattleScene", true, true);
-        //         };
-        //     }
-        // }
     }
 
     void FixedUpdate() {
@@ -60,8 +63,8 @@ public class PlayerController : MonoBehaviour {
 
     private (bool, GameObject) IsEncounterLayer() {
 
-        Debug.DrawRay(capsuleCollider.bounds.center, Vector3.down * 1f, Color.red);
-        if (Physics.Raycast(capsuleCollider.bounds.center, Vector3.down, out RaycastHit hit, 1f, encounterLayer)) {
+        Debug.DrawRay(capsuleCollider.bounds.center, Vector3.down * 1.5f, Color.red);
+        if (Physics.Raycast(capsuleCollider.bounds.center, Vector3.down, out RaycastHit hit, 1.5f, encounterLayer)) {
             return (true, hit.collider.gameObject);
         }
         return (false, null);
@@ -81,6 +84,7 @@ public class PlayerController : MonoBehaviour {
         }
 
         var encounterLayer = IsEncounterLayer();
+        Debug.Log(encounterLayer);
         if (!encounterLayer.Item1) {
             distanceAccumulated = 0f;
             return;
@@ -139,6 +143,11 @@ public class PlayerController : MonoBehaviour {
         }
         moveInput = context.ReadValue<Vector2>();
         moveInput = new Vector3(moveInput.x, 0, moveInput.y);
+        if (moveInput.x != 0 || moveInput.y != 0) {
+            IsMoving = true;
+        } else {
+            IsMoving = false;
+        }
     }
 
     // need to check if in free roam

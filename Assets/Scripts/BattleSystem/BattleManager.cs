@@ -40,7 +40,11 @@ public class BattleManager : MonoBehaviour {
         GameManager.Instance.GameState = GameState.Battle;
 
         yield return StartCoroutine(SceneHelper.LoadSceneWithTransition("ForestBattleScene", true, true, null, () => {
-            MusicManager.Instance.PauseMusic();
+            if (MusicManager.Instance) {
+                MusicManager.Instance.PauseMusic();
+
+            }
+
             CircleFadeTransition circleFade = FindObjectOfType<CircleFadeTransition>();
             if (circleFade != null) {
                 circleFade.onTransitionComplete = () => {
