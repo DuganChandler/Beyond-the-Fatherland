@@ -107,6 +107,7 @@ public class BookReader : MonoBehaviour {
     /// Loads the book file asynchronously.
     /// </summary>
     IEnumerator LoadBookCoroutine(BookEntry entry) {
+        Debug.Log(entry);
         string path = System.IO.Path.Combine(Application.streamingAssetsPath, "Books", entry.fileName);
         string fileContent = "";
 
