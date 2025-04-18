@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: CeramicBeastStats
   m_EditorClassIdentifier: 
   levelStats:
-  - Strength: 17
+  - Strength: 19
     Magic: 10
-    Defense: 17
+    Defense: 18
   hpGrowth: 0
   mpGrowth: 0
