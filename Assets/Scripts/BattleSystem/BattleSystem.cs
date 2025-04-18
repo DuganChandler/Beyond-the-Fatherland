@@ -430,7 +430,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
             return;
         }
 
-        if (actionSlot.BattleAction.User.Character.CharacterData.CharacerType == CharacerType.Enemy) {
+        if (actionSlot.BattleAction.User.Character.CharacterData.CharacerType == CharacerType.Enemy || actionSlot.BattleAction.User.Character.CharacterData.CharacerType == CharacerType.Boss) {
             Debug.Log("Unable to remove Enemy Slot");
             return;
         }
@@ -637,7 +637,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         // death animation
         // remove model from instanceList or mark as dead and skip over;
         BattleUnit dyingUnit = actionSlot.BattleAction.Target;
-        if (dyingUnit.Character.CharacterData.CharacerType == CharacerType.Enemy) {
+        if (dyingUnit.Character.CharacterData.CharacerType == CharacerType.Enemy || dyingUnit.Character.CharacterData.CharacerType == CharacerType.Boss) {
             // dyingUnit.CurrentModelInstance.GetComponent<MeshRenderer>().materials[0].color = Color.red;
 
             dyingUnit.BattlePosition.Occupied = false;
@@ -645,6 +645,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
 
             foreach(var enemyUnit in enemyUnits) {
                 if(enemyUnit == dyingUnit) {
+                    enemyUnit.Character.IsAlive = false;
                     enemyUnits.Remove(enemyUnit);
                     break;
                 }
@@ -662,7 +663,14 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
             }
         }
 
-        if (enemyUnits.Count <= 0) {
+        int numEnemyAlive = 0;
+        foreach (var unit in EnemyUnits) {
+            if (unit.Character.IsAlive) {
+               numEnemyAlive++; 
+            }
+        }
+
+        if (enemyUnits.Count <= 0 || numEnemyAlive < 1) {
             yield return BattleOver(true);
         } else if (CheckIfPartyDead()){
             yield return BattleOver(false);
@@ -693,20 +701,6 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
 
         canRunRound = false;
         
-        Debug.Log(actionPoints);
-        // if (actionPoints >= 2) {
-        //     int leftovers = 2;
-        //     actionPoints += leftovers + 3;
-        // } if (actionPoints == 1) {
-        //     int leftovers = 1;
-        //     actionPoints += leftovers + 3;
-        // } else {
-        //     actionPoints = 3;
-        // }
-
-        // if (actionPoints > 8) {
-        //     actionPoints = 8;
-        // }
         actionPoints += 3;
 
         if (actionPoints >= 8) {
