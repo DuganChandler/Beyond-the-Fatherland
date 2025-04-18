@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -68,11 +69,11 @@ public class Character  {
         IsAlive = true;
     }
 
-    public int CalculateBasicAttackDamage() {
+    public int CalculateBasicAttackDamage(Character target) {
         if (PrimaryStat == Stat.Strength) {
-            return 10 * Stats.Strength;
+            return (int)Mathf.Clamp(5 * Mathf.Sqrt(Stats.Strength * 10/target.Stats.Defense) * UnityEngine.Random.Range(0.95f,1.05f), 0, 1000);
         } else if (PrimaryStat == Stat.Magic) {
-            return 10 * Stats.Magic;
+            return (int)Mathf.Clamp(5 * Mathf.Sqrt(Stats.Strength * 10/target.Stats.Defense ) * UnityEngine.Random.Range(0.95f,1.05f), 0, 1000);
         } 
         return 0;
     }
@@ -81,9 +82,9 @@ public class Character  {
         //DMG = 5 * sqrt(primary state/enemy def * ability power) * rnd
         int damage = 0;
         if (PrimaryStat == Stat.Strength) {
-            damage = (int)(5 * Mathf.Sqrt(Stats.Strength/target.Stats.Defense * power) * UnityEngine.Random.Range(0.95f,1.05f));
+            damage = (int)Mathf.Clamp(5 * Mathf.Sqrt(Stats.Strength * power/target.Stats.Defense ) * UnityEngine.Random.Range(0.95f,1.05f), 0, 1000);
         }else if(PrimaryStat == Stat.Magic){
-            damage = (int)(5 * Mathf.Sqrt(Stats.Magic/target.Stats.Defense * power) * UnityEngine.Random.Range(0.95f,1.05f));
+            damage = (int)Mathf.Clamp(5 * Mathf.Sqrt(Stats.Magic * power/target.Stats.Defense ) * UnityEngine.Random.Range(0.95f,1.05f), 0, 1000);
         }
         return damage;
         
@@ -123,7 +124,7 @@ public class Character  {
 
         MaxHP = characterData.GetHpAtLevel(level);
         MaxMP = characterData.GetMpAtLevel(level);        
-        Debug.Log(MaxHP);
+        //Debug.Log(MaxHP);
 
         if (oldMaxHP != 0) {
             HP += MaxHP - oldMaxHP;
@@ -150,4 +151,16 @@ public class Character  {
             return characterData.Abilities;
         }
     }
+
+    public List<Condition> Conditions{
+        get{
+            return characterData.Conditions;
+        }
+    }
+
+    /*public void CheckConditions(int round, BattleSystem battleSystem){
+        foreach(Condition condition in Conditions){
+            if(condition.initilaRound - )
+        }
+    }*/
 }

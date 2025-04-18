@@ -3,10 +3,13 @@ using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Heal Effect", menuName = "Abilities/Effects/HealHP")]
 public class AbilityHealEffect : AbilityEffectBase {
-    [SerializeField] private int abilityHealAmount;
 
     public override IEnumerator ApplyToCharacter(AbilityContext context) {
-        context.target.Character.IncreaseHP(abilityHealAmount);
+        int heal = (int)((context.user.Character.Stats.Magic * (2 + context.user.Character.Level)/(3 + 1) +100) / (100 * context.ability.Power));
+        context.target.Character.IncreaseHP(heal);
+        GameObject damageTextObject = context.target.CurrentModelInstance.transform.GetChild(0).gameObject;
+            damageTextObject.SetActive(true);
+            damageTextObject.GetComponent<DamageText>().text.text = $"<color=green>{heal}</color>";
         yield return null;
     }
 

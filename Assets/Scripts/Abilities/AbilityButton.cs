@@ -15,6 +15,14 @@ public class AbilityButton : MonoBehaviour {
         }
     }
 
+    public TextMeshProUGUI AbilityCost {
+        get {
+            return abilityCost;
+        } set {
+            abilityCost = value;
+        }
+    }
+
     void Update() {
         if (GameManager.Instance.GameState == GameState.Battle) {
             abilityName.color = Color.white;

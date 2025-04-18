@@ -15,8 +15,8 @@ MonoBehaviour:
   name: Overwhelming Strike
   description: Slams an enemy with extreme force.
   element: 0
-  power: 10
-  actionCost: 0
+  power: 20
+  actionCost: 10
   target: 0
   category: 0
   isAOE: 0
