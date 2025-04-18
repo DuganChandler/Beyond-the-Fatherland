@@ -1571,12 +1571,95 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1c1533b9d9dc3046b394f227172b9de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  encounterList:
+  lowEncounters:
   - characterList:
     - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
       level: 1
     - characterData: {fileID: 11400000, guid: bb3c8660bb1d4f947b0929db07ac8008, type: 2}
       level: 1
+  - characterList:
+    - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
+      level: 2
+    - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
+      level: 2
+    - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
+      level: 2
+  - characterList:
+    - characterData: {fileID: 11400000, guid: bb3c8660bb1d4f947b0929db07ac8008, type: 2}
+      level: 2
+    - characterData: {fileID: 11400000, guid: bb3c8660bb1d4f947b0929db07ac8008, type: 2}
+      level: 2
+    - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
+      level: 2
+  - characterList:
+    - characterData: {fileID: 11400000, guid: bb3c8660bb1d4f947b0929db07ac8008, type: 2}
+      level: 2
+    - characterData: {fileID: 11400000, guid: bb3c8660bb1d4f947b0929db07ac8008, type: 2}
+      level: 2
+    - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
+      level: 2
+    - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
+      level: 1
+  - characterList:
+    - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
+      level: 2
+    - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
+      level: 2
+    - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
+      level: 2
+    - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
+      level: 1
+  medEncounters:
+  - characterList:
+    - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
+      level: 4
+    - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
+      level: 4
+    - characterData: {fileID: 11400000, guid: bb3c8660bb1d4f947b0929db07ac8008, type: 2}
+      level: 3
+  - characterList:
+    - characterData: {fileID: 11400000, guid: bb3c8660bb1d4f947b0929db07ac8008, type: 2}
+      level: 4
+    - characterData: {fileID: 11400000, guid: bb3c8660bb1d4f947b0929db07ac8008, type: 2}
+      level: 3
+    - characterData: {fileID: 11400000, guid: bb3c8660bb1d4f947b0929db07ac8008, type: 2}
+      level: 5
+  - characterList:
+    - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
+      level: 5
+    - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
+      level: 4
+    - characterData: {fileID: 11400000, guid: bb3c8660bb1d4f947b0929db07ac8008, type: 2}
+      level: 4
+    - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
+      level: 4
+  - characterList:
+    - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
+      level: 6
+    - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
+      level: 6
+  highEncounters:
+  - characterList:
+    - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
+      level: 7
+    - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
+      level: 7
+    - characterData: {fileID: 11400000, guid: bb3c8660bb1d4f947b0929db07ac8008, type: 2}
+      level: 7
+  - characterList:
+    - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
+      level: 6
+    - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
+      level: 6
+    - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
+      level: 6
+    - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
+      level: 6
+  - characterList:
+    - characterData: {fileID: 11400000, guid: bb3c8660bb1d4f947b0929db07ac8008, type: 2}
+      level: 8
+    - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
+      level: 8
 --- !u!1001 &28634865
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -61404,12 +61487,27 @@ PrefabInstance:
     - target: {fileID: 5577032797201050228, guid: b40add025be238c49a315cbdf30c7039,
         type: 3}
       propertyPath: m_Name
-      value: Renivar
+      value: PlayerCharacter
       objectReference: {fileID: 0}
     - target: {fileID: 5577032797201050228, guid: b40add025be238c49a315cbdf30c7039,
         type: 3}
       propertyPath: m_TagString
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 8357425145394215059, guid: b40add025be238c49a315cbdf30c7039,
+        type: 3}
+      propertyPath: characterList.Array.data[0].level
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8357425145394215059, guid: b40add025be238c49a315cbdf30c7039,
+        type: 3}
+      propertyPath: characterList.Array.data[1].level
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8357425145394215059, guid: b40add025be238c49a315cbdf30c7039,
+        type: 3}
+      propertyPath: characterList.Array.data[2].level
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8715048881297873509, guid: b40add025be238c49a315cbdf30c7039,
         type: 3}

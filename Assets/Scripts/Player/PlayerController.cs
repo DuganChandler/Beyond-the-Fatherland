@@ -4,6 +4,7 @@ using UnityEngine.Android;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody), typeof(CapsuleCollider), typeof(Animator))]
+[RequireComponent(typeof(PartyList), typeof(Inventory))]
 public class PlayerController : MonoBehaviour { 
     [SerializeField] private float walkSpeed = 10f;
 
@@ -92,10 +93,11 @@ public class PlayerController : MonoBehaviour {
 
         if (distanceAccumulated >= distanceThreshhold) {
             if (Random.value <= encounterChance) {
-                BattleManager.Instance.EncounterPartyList = encounterLayer.Item2.GetComponent<EncounterMapArea>().GetRandomEncounter();
-                BattleManager.Instance.PlayerPartyList = GetComponent<PartyList>().CharacterList;
-                BattleManager.Instance.PlayerInventory = GetComponent<Inventory>();
+                PartyList partyList = GetComponent<PartyList>();
 
+                BattleManager.Instance.EncounterPartyList = encounterLayer.Item2.GetComponent<EncounterMapArea>().GetRandomEncounter(partyList.CalculateAveragePartyLevel());
+                BattleManager.Instance.PlayerPartyList = partyList.CharacterList;
+                BattleManager.Instance.PlayerInventory = GetComponent<Inventory>();
                 BattleManager.Instance.BattleType = BattleType.Random;
 
                 StartCoroutine(BattleManager.Instance.StartBattle());
