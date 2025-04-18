@@ -607,6 +607,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
 
         GameObject damageTextObject = newTarget.CurrentModelInstance.transform.GetChild(0).gameObject;
         yield return StartCoroutine(UseItem(currentItem, user.Character, newTarget.Character, damageTextObject));
+        yield return new WaitForSeconds(0.5f);
 
     }
 

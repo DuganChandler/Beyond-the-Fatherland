@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelStats:
   - Strength: 2
-    Magic: 5
+    Magic: 6
     Defense: 4
   - Strength: 2
     Magic: 7

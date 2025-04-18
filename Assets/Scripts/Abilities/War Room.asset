@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bba6f6b913b7124c966bc88bd0f0e06, type: 3}
   m_Name: War Room
   m_EditorClassIdentifier: 
-  name: 
+  name: War Room
   description: Transfer your MP to an ally.
   element: 0
   power: 10

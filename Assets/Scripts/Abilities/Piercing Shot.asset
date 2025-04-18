@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bba6f6b913b7124c966bc88bd0f0e06, type: 3}
   m_Name: Piercing Shot
   m_EditorClassIdentifier: 
-  name: 
-  description: 
+  name: Priecing Shot
+  description: Fire a pircing bullet dealing signicant damage
   element: 0
-  power: 15
+  power: 17
   actionCost: 10
   target: 0
   category: 0
