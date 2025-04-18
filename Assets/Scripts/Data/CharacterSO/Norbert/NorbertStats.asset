@@ -13,19 +13,19 @@ MonoBehaviour:
   m_Name: NorbertStats
   m_EditorClassIdentifier: 
   levelStats:
-  - Strength: 3
+  - Strength: 4
     Magic: 2
     Defense: 5
-  - Strength: 5
+  - Strength: 6
     Magic: 3
     Defense: 7
-  - Strength: 5
+  - Strength: 6
     Magic: 3
     Defense: 9
-  - Strength: 7
+  - Strength: 8
     Magic: 4
     Defense: 12
-  - Strength: 9
+  - Strength: 10
     Magic: 5
     Defense: 12
   - Strength: 9
@@ -43,5 +43,5 @@ MonoBehaviour:
   - Strength: 14
     Magic: 12
     Defense: 20
-  mpGrowth: 3
   hpGrowth: 15
+  mpGrowth: 3

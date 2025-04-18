@@ -1,9 +1,10 @@
 using UnityEngine;
 
 public class BattleUnit {
-    public BattleUnit(Character character, CharacterHud hud = null) {
+    public BattleUnit(Character character, BattlePosition battlePosition, CharacterHud hud = null) {
         _character = character;
         _hud = hud;
+        _battlePosition = battlePosition;
     }
 
     // default to null if an enemy
@@ -32,10 +33,28 @@ public class BattleUnit {
         }
     }
 
+    private BattlePosition _battlePosition;
+    public BattlePosition BattlePosition{
+        get {
+            return _battlePosition;
+        } set {
+            _battlePosition = value;
+        }
+    }
+
 
     public void Setup() {
+        if (_character.CharacterData.CharacerType != CharacerType.PartyMember) {
+            _character?.Init();
+        }
+
         if (_hud) {
             _hud.SetData(_character);
         }
+
+        if (_battlePosition) {
+            _battlePosition.Occupied = true;
+        }
+
     }
 }

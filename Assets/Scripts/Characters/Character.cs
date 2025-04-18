@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using Unity.Mathematics;
 using UnityEngine;
 
 [System.Serializable]
@@ -25,6 +27,14 @@ public class Character  {
 
     public Stat PrimaryStat { get; set; }
     public Stats Stats { get; set; }
+    public float strengthBuffs {get; set;}
+    public float magicBuffs {get; set;}
+    public float defenseBuffs {get; set;}
+    public float strengthDebuffs {get; set;}
+    public float magicDebuffs {get; set;}
+    public float defenseDebuffs {get; set;}
+
+    public bool LeveledUp { get; set; } = false;
 
     public int Level {
         get {
@@ -59,13 +69,25 @@ public class Character  {
         IsAlive = true;
     }
 
-    public int CalculateBasicAttackDamage() {
+    public int CalculateBasicAttackDamage(Character target) {
         if (PrimaryStat == Stat.Strength) {
-            return 10 * Stats.Strength;
+            return (int)Mathf.Clamp(5 * Mathf.Sqrt(Stats.Strength * 10/target.Stats.Defense) * UnityEngine.Random.Range(0.95f,1.05f), 0, 1000);
         } else if (PrimaryStat == Stat.Magic) {
-            return 10 * Stats.Magic;
+            return (int)Mathf.Clamp(5 * Mathf.Sqrt(Stats.Strength * 10/target.Stats.Defense ) * UnityEngine.Random.Range(0.95f,1.05f), 0, 1000);
         } 
         return 0;
+    }
+
+    public int CalculateAbilityPower(int power, Character target){
+        //DMG = 5 * sqrt(primary state/enemy def * ability power) * rnd
+        int damage = 0;
+        if (PrimaryStat == Stat.Strength) {
+            damage = (int)Mathf.Clamp(5 * Mathf.Sqrt(Stats.Strength * power/target.Stats.Defense ) * UnityEngine.Random.Range(0.95f,1.05f), 0, 1000);
+        }else if(PrimaryStat == Stat.Magic){
+            damage = (int)Mathf.Clamp(5 * Mathf.Sqrt(Stats.Magic * power/target.Stats.Defense ) * UnityEngine.Random.Range(0.95f,1.05f), 0, 1000);
+        }
+        return damage;
+        
     }
 
     public int CalculateDefense() {
@@ -97,21 +119,31 @@ public class Character  {
 
     public void CalculateStats() {
         int oldMaxHP = MaxHP;
+        int oldMaxMP = MaxMP;
+        Stats = characterData.GetStatsAtLevel(level);
+
         MaxHP = characterData.GetHpAtLevel(level);
+        MaxMP = characterData.GetMpAtLevel(level);        
+        //Debug.Log(MaxHP);
 
         if (oldMaxHP != 0) {
             HP += MaxHP - oldMaxHP;
+            MP += MaxMP - oldMaxMP;
         }
+
+        OnHpChange?.Invoke();
+        OnMpChange?.Invoke(); 
     }
 
-    public bool CheckForLevelUp() {
-        if (EXP >= 90) {
+    public void CheckForLevelUp() {
+        if (EXP >= 75) {
             ++level;
-            // calculate stats
-            EXP -= 90;
-            return true;
+            EXP -= 75;
+            LeveledUp = true;
+            CalculateStats();
+            return;
         }
-        return false;
+        LeveledUp = false;
     }
 
     public List<AbilityBase> Abilities{
@@ -119,4 +151,16 @@ public class Character  {
             return characterData.Abilities;
         }
     }
+
+    public List<Condition> Conditions{
+        get{
+            return characterData.Conditions;
+        }
+    }
+
+    /*public void CheckConditions(int round, BattleSystem battleSystem){
+        foreach(Condition condition in Conditions){
+            if(condition.initilaRound - )
+        }
+    }*/
 }

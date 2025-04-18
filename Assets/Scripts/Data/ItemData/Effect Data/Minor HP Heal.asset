@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: Minor HP Heal
   m_EditorClassIdentifier: 
   _effectName: Minor HP Heal
-  _effectNameDescription: 
-  healAmount: 25
+  effectType: 0
+  _effectNameDescription: Heals a minor amount
+  healAmount: 35

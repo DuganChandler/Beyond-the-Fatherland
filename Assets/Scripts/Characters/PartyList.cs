@@ -19,4 +19,13 @@ public class PartyList : MonoBehaviour
 
         BattleManager.Instance.PlayerPartyList = characterList;
     }
+
+    public int CalculateAveragePartyLevel() {
+        int totalLevels = 0;
+        foreach(Character character in characterList) {
+            totalLevels += character.Level;
+        }
+
+        return totalLevels / characterList.Count;
+    }
 }

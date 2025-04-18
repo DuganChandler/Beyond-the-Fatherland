@@ -12,7 +12,8 @@ public enum BagMenuState {
     Books,
     Status,
     System,
-    Using
+    Using,
+    Controls
 }
 
 public struct BagMenuStateObject {
@@ -35,6 +36,7 @@ public class MenuManager : MonoBehaviour {
     [SerializeField] private GameObject books;
     [SerializeField] private GameObject bookReadingSection;
     [SerializeField] private GameObject status;
+    [SerializeField] private GameObject controls;
 
     [Header("Menu Buttons")]
     [SerializeField] private List<Button> optionButtonList;
@@ -52,36 +54,10 @@ public class MenuManager : MonoBehaviour {
 
     private Stack<BagMenuStateObject> menuStates;
 
-    private ItemSlot itemToUse = new();
-    // ability
 
-    public GameObject Background;
-    public GameObject backscreen;
-
-    public GameObject MainMenueTing;
-    public GameObject StartinngButton;
-    
-    public GameObject pauseMenuUI;
-    public GameObject firseButton;
- 
-    public GameObject optionsMenuUI;
-    public GameObject StartingButton;
-
-    public GameObject ItemsMenuUI;
-    public GameObject FirstItem;
+    private static ItemSlot itemToUse = new();
 
     public GameObject StatsMenuUI;
-    public GameObject FirstStats;
-    public GameObject character1Stats;
-    public GameObject FirstStatsA;
-    public GameObject character2Stats;
-    public GameObject FirstStatsB;
-    public GameObject character3Stats;
-    public GameObject FirstStatsC;
-
-    public GameObject StoriesMenuUI;
-    public GameObject FirstStory;
-
 
     void OnEnable() {
         items.GetComponent<ItemMenu>().OnItemSelected += HandleItemSelection;
@@ -106,6 +82,8 @@ public class MenuManager : MonoBehaviour {
         if (EventSystem.current) {
             EventSystem.current.SetSelectedGameObject(null);
         }
+
+        CheckReversUsingState();
 
         if (menuStates.Count > 0) {
             menuStates.Pop().MenuObject.SetActive(false);
@@ -161,6 +139,13 @@ public class MenuManager : MonoBehaviour {
         books.SetActive(true);
     }
 
+    public void OnControls() {
+        MusicManager.Instance.PlaySound("MenuConfirm");
+        menuStates.Peek().MenuObject.SetActive(false);
+        menuStates.Push(new BagMenuStateObject(BagMenuState.Controls, controls));
+        controls.SetActive(true);
+    }
+
     public void OnMainMenu() {
         // MusicManager.Instance.PlaySound("MenuConfirm");
         SceneHelper.LoadScene("MainMenu", false, true);
@@ -193,6 +178,12 @@ public class MenuManager : MonoBehaviour {
                 }
             }
         }
+
+        CheckReversUsingState();
+    }
+
+    void CheckReversUsingState() {
+        if (menuStates.Count < 1) return; 
 
         if (menuStates.Peek().State == BagMenuState.Using) {
             if(itemToUse.Item != null && itemToUse.Item.ItemCategory == ItemCategory.Combat) {
@@ -245,12 +236,13 @@ public class MenuManager : MonoBehaviour {
 
     public IEnumerator UseItem(CombatItemData item, Character target) {
         foreach (ItemEffectBase effect in item.effects) {
-            EffectInfo effectInfo = effect.ApplyEffect(null, target);
+            EffectInfo effectInfo = effect.ApplyEffectToCharacter(null, target);
             Debug.Log(effectInfo.TextInformation);
         }
 
         playerInventory.RemoveItem(item);
-        itemToUse.Item = null;
+
+        itemToUse = null;
 
         yield return new WaitForEndOfFrame();
 
@@ -259,149 +251,5 @@ public class MenuManager : MonoBehaviour {
         menuStates.Pop();
         menuStates.Pop();
         OnItemMenu();
-    }
-
-
-    public void ExitToMenue()
-    {
-        SceneManager.LoadScene("Mainmenu", LoadSceneMode.Single);
-        pauseMenuUI.SetActive(false);
-        EventSystem.current.SetSelectedGameObject(StartinngButton);
-
-    }
-
-    //Main menue tings
-    public void stargGame()
-    {
-
-        SceneManager.LoadScene("SampleScene", LoadSceneMode.Single);
-        // replace sample scene for the starting scene
-        Debug.Log("Loading game scene and deleting this one");
-
-
-    }
-
-    public void Begone()
-    {
-        Application.Quit();
-        Debug.Log("Succesfully exited the game");
-    }
-
-    //options Menue tings
-    public void openOpps()
-    {
-
-        optionsMenuUI.SetActive(true);
-        EventSystem.current.SetSelectedGameObject(StartingButton);
-        Debug.Log("The options Menue is open");
-       
-        pauseMenuUI.SetActive(false);
-
-    }
-
-    public void volume()
-    {
-        Debug.Log("Volume is volumeing");
-    }
-
-
-    //stats menue tings
-    public void openStats()
-    {
-        StatsMenuUI.SetActive(true);
-        Debug.Log("Stats menue is open");
-        EventSystem.current.SetSelectedGameObject(FirstStats);
-        
-        pauseMenuUI.SetActive(false);
-    }
-
-    public void closedStats()
-    {
-        StatsMenuUI.SetActive(false);
-        Debug.Log("Stats menue is closed");
-        EventSystem.current.SetSelectedGameObject(firseButton);
-        
-        pauseMenuUI.SetActive(true);
-    }
-    public void firstStat()
-    {
-        Debug.Log("first stat is stating");
-        character1Stats.SetActive(true);
-        EventSystem.current.SetSelectedGameObject(FirstStatsA);
-        StatsMenuUI.SetActive(false );
-
-    }
-    public void atackone()
-    {
-        Debug.Log("Attack 1 description pops up");
-    }
-
-    public void secondstat()
-    {
-        Debug.Log("second stat is stating");
-        character2Stats.SetActive(true);
-        EventSystem.current.SetSelectedGameObject(FirstStatsB);
-        StatsMenuUI.SetActive(false);
-
-    }
-    public void atacktwo()
-    {
-        Debug.Log("Attack 2 description pops up");
-    }
-    public void thirdStat()
-    {
-        Debug.Log("third stat is stating");
-        character3Stats.SetActive(true);
-        EventSystem.current.SetSelectedGameObject(FirstStatsC);
-        StatsMenuUI.SetActive(false);
-    }
-    public void atackthree()
-    {
-        Debug.Log("Attack 3 description pops up");
-    }
-
-    public void closeCurrentStat()
-    {
-        character1Stats.SetActive(false);
-        character2Stats.SetActive(false);
-        character3Stats.SetActive(false);
-        EventSystem.current.SetSelectedGameObject(FirstStats);
-        StatsMenuUI.SetActive(true);
-    }
-    
-
-    // stories menu tings
-    public void openStories()
-    {
-        StoriesMenuUI.SetActive(true);
-        Debug.Log("Stories menue is open");
-        EventSystem.current.SetSelectedGameObject(FirstStory);
-        
-        pauseMenuUI.SetActive(false);
-
-    }
-
-    public void closedStories()
-    {
-        StoriesMenuUI.SetActive(false);
-        Debug.Log("Stories menue is closed");
-        EventSystem.current.SetSelectedGameObject(firseButton);
-        
-        pauseMenuUI.SetActive(true);
-
-
-    }
-
-    public void firststori()
-    {
-        Debug.Log("stories are storing");
-        
-    }
-
-    
-    //save data shinanigains
-    public void Savestuff()
-    {
-        Debug.Log("The game data is saving");
     }
 }

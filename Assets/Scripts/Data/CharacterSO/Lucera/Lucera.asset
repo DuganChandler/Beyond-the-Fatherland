@@ -14,15 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Lucera
   description: Lucera's character stuff
-  characterPrefab: {fileID: 8368075523850562389, guid: a3e44a2543d84704d8645264842a90da,
+  characterPrefab: {fileID: 1442042994720655802, guid: 220067ef35eceaa43b1f82b7ba4e94b8,
     type: 3}
-  characterPortrait: {fileID: 21300000, guid: d521e37728983b942a007b70c49b0088, type: 3}
+  characterPortrait: {fileID: 21300000, guid: 1cfad3964852c254685a464c604cfc7d, type: 3}
   characerType: 0
   currentLevel: 1
-  baseHP: 65
+  baseHP: 75
   baseMP: 40
   characterStats: {fileID: 11400000, guid: 03e8a65b2f4883e4b88b901b25458731, type: 2}
   primaryStat: 1
   abilities:
-  - {fileID: 11400000, guid: 3d1cbc7ed8f4c6c4aaf2ec11ba5e0b32, type: 2}
-  - {fileID: 11400000, guid: 1aeba399d2e0b594aa25d1851686a685, type: 2}
+  - {fileID: 11400000, guid: d10dd79ead47ffa4d938ad0a2c0e7593, type: 2}
+  - {fileID: 11400000, guid: 95e50db33f3e1aa4a856e901c976fc47, type: 2}

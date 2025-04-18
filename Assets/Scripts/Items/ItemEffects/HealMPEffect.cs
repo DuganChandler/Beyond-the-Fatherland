@@ -4,7 +4,7 @@ using UnityEngine;
 public class HealMPEffect : ItemEffectBase {
     [SerializeField] private int healAmount;
 
-    public override EffectInfo ApplyEffect(Character user, Character target) {
+    public override EffectInfo ApplyEffectToCharacter(Character user, Character target) {
         if (!target.IsAlive) {
             return new EffectInfo(Color.red, $"N");
         }

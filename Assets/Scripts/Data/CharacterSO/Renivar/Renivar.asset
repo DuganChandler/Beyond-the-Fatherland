@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Renivar
   description: Renivar Character SO
-  characterPrefab: {fileID: 6112562269900263120, guid: 58057a8a019c3ee45a6d33f3ea08ea07,
+  characterPrefab: {fileID: 137348568128419082, guid: 3925e8b4c3751804593c1c93a6493662,
     type: 3}
-  characterPortrait: {fileID: 21300000, guid: 93e58564d67c24546b0d9f43f5acc6a3, type: 3}
+  characterPortrait: {fileID: 21300000, guid: 450915e93ec84394f9ab443aa78ac0fc, type: 3}
   characerType: 0
   currentLevel: 1
-  baseHP: 80
-  baseMP: 25
+  baseHP: 85
+  baseMP: 30
   characterStats: {fileID: 11400000, guid: 4374d435dfdcf42439d214326b71bdbf, type: 2}
   primaryStat: 0
   abilities:

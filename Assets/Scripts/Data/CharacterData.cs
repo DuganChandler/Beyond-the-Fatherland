@@ -27,25 +27,28 @@ public class CharacterData : ScriptableObject {
     [Header("Abilities")]
     [SerializeField] List<AbilityBase> abilities;
 
+    List<Condition> conditions;
+
     // Make sure to check if the character type is BOSS
     public Stats GetStatsAtLevel(int level) {
-        if (level < 1 || level > characterStats.levelStats.Length) {
-            return characterStats.levelStats[characterStats.levelStats.Length - 1];
+        if (level < 1 || level > characterStats.LevelStats.Length) {
+            return characterStats.LevelStats[^1];
         }
 
-        return characterStats.levelStats[level - 1];
+        Debug.Log($"Strength: {characterStats.LevelStats[level - 1].Strength}");
+        return characterStats.LevelStats[level - 1];
     }
 
     public Stats GetStatsForBoss() {
-        return characterStats.levelStats[0];
+        return characterStats.LevelStats[0];
     }
 
     public int GetHpAtLevel(int level) {
-        return baseHP + (characterStats.HpGrowth * level - 1);
+        return baseHP + (characterStats.HpGrowth * (level - 1));
     }
 
     public int GetMpAtLevel(int level) {
-        return baseMP + (characterStats.MpGrowth * level - 1);
+        return baseMP + (characterStats.MpGrowth * (level - 1));
     }
 
     public GameObject CharacterPrefab {
@@ -78,6 +81,12 @@ public class CharacterData : ScriptableObject {
         }
     }
     // Create List of Abilities
+
+    public List<Condition> Conditions{
+        get{
+            return conditions;
+        }
+    }
 }
 
 public enum CharacerType {

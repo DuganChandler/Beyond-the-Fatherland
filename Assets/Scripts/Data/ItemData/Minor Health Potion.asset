@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Minor Health Potion
   itemCategory: 0
+  itemTarget: 0
   itemSprite: {fileID: 0}
-  itemDescription: This item restores a minor amount of Health to a given target.
-    May be used in or outside of battle.
+  itemDescription: Heals a target a minor amount.
+  canTargetDead: 0
   effects:
   - {fileID: 11400000, guid: b70593cb231380640b0e70db54c8b7a2, type: 2}

@@ -13,14 +13,13 @@ MonoBehaviour:
   m_Name: Heal
   m_EditorClassIdentifier: 
   name: Heal
-  description: 
+  description: Regain a moderate ammount of an ally's HP.
   element: 0
-  power: 0
-  actionCost: 0
+  power: 30
+  actionCost: 10
   target: 1
+  category: 1
   isAOE: 0
-  category: 0
   sound: {fileID: 0}
   effects:
   - {fileID: 11400000, guid: 4544351f4e4d5ae4185f679784889df4, type: 2}
-  - {fileID: 11400000, guid: 5ec9d3be7ce248f48978955dfb1410b6, type: 2}
