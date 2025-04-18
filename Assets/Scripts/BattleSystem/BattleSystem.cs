@@ -5,8 +5,6 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using TMPro;
-using Cinemachine;
-using UnityEditor.Animations;
 
 public enum BattleState {
     Start,

@@ -9,7 +9,7 @@ public class HealMPEffect : ItemEffectBase {
             return new EffectInfo(Color.red, $"N");
         }
 
-        target.IncreaseHP(healAmount);
+        target.IncraseMP(healAmount);
         return new EffectInfo(Color.blue, $"{healAmount}");
     }
 }
