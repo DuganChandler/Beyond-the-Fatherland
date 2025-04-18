@@ -60,4 +60,5 @@ public class AbilityBase: ScriptableObject
     public AbilityCategory Category { get => category; }
     public AbilityTarget AbilityTarget { get => target; }
     public AudioClip Sound => sound;
+    public string AbilityDescription => description;
 }

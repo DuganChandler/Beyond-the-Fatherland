@@ -13,35 +13,35 @@ MonoBehaviour:
   m_Name: TigermooseStats
   m_EditorClassIdentifier: 
   levelStats:
-  - Strength: 4
+  - Strength: 3
     Magic: 1
     Defense: 3
-  - Strength: 5
+  - Strength: 4
     Magic: 1
     Defense: 4
-  - Strength: 7
+  - Strength: 6
     Magic: 2
     Defense: 5
-  - Strength: 8
+  - Strength: 7
     Magic: 2
     Defense: 6
-  - Strength: 10
+  - Strength: 9
     Magic: 2
     Defense: 7
-  - Strength: 12
+  - Strength: 11
     Magic: 2
     Defense: 8
-  - Strength: 14
+  - Strength: 13
     Magic: 3
     Defense: 9
   - Strength: 16
     Magic: 3
     Defense: 10
-  - Strength: 18
+  - Strength: 16
     Magic: 3
     Defense: 11
   - Strength: 20
     Magic: 3
     Defense: 12
-  mpGrowth: 2
   hpGrowth: 15
+  mpGrowth: 2

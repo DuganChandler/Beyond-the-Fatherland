@@ -756,6 +756,11 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
 
 
     void HandleAbilitySelection(AbilityBase selectedAbility){
+        if (currentAction.User.Character.MP < selectedAbility.ActionCost) {
+            MusicManager.Instance.PlaySound("Wrong");
+            return;
+        }
+
         currentAction.AbilityBase = selectedAbility;
         StateManager.ChangeState(new TargetSelectionState(this));
     }
