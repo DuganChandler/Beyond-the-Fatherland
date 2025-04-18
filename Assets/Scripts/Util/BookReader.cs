@@ -107,6 +107,7 @@ public class BookReader : MonoBehaviour {
     /// Loads the book file asynchronously.
     /// </summary>
     IEnumerator LoadBookCoroutine(BookEntry entry) {
+        Debug.Log(entry);
         string path = System.IO.Path.Combine(Application.streamingAssetsPath, "Books", entry.fileName);
         string fileContent = "";
 
@@ -146,6 +147,8 @@ public class BookReader : MonoBehaviour {
     /// Advances to the next two pages.
     /// </summary>
     public void NextPage() {
+        if (pages == null) return;
+
         currentPageIndex += 2;
         if (currentPageIndex >= pages.Length) {
             // Clamp to the last valid pair of pages
@@ -161,6 +164,8 @@ public class BookReader : MonoBehaviour {
     /// Goes back to the previous two pages.
     /// </summary>
     public void PreviousPage() {
+        if (pages == null) return;
+
         currentPageIndex -= 2;
         if (currentPageIndex < 0)
             currentPageIndex = 0;

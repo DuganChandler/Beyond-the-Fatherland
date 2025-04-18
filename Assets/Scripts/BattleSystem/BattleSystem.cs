@@ -5,6 +5,8 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using TMPro;
+using Cinemachine;
+using UnityEditor.Animations;
 
 public enum BattleState {
     Start,
@@ -20,6 +22,7 @@ public enum BattleState {
     RunningRound,
     EndRound,
     BattleOver,
+    ViewTutorial
 }
 
 public enum ActionType {
@@ -30,12 +33,13 @@ public enum ActionType {
     None
 } 
 
-public class BattleSystem : MonoBehaviour {
+public class BattleSystem : MonoBehaviour, IBattleActions {
     [Header("Battle Setup")]
-    [SerializeField] private List<GameObject> partyPositions;
-    [SerializeField] private List<GameObject> encounterPositions;
+    [SerializeField] private List<BattlePosition> partyPositions;
+    [SerializeField] private List<BattlePosition> encounterPositions;
     [SerializeField] private int actionPoints;
     [SerializeField] private ItemUser itemUser;
+    [SerializeField] private AbilityExecutor abilityExecutor;
 
     [Header("Battle UI")]
     [SerializeField] List<Button> playerPortraits; 
@@ -44,7 +48,6 @@ public class BattleSystem : MonoBehaviour {
     [SerializeField] Material enemyOutline;
     [SerializeField] TextMeshProUGUI actionPointText;
     [SerializeField] PointerManager pointerManager;
-    [SerializeField] UIPointerManager uIPointerManager;
     [SerializeField] ItemMenu itemMenu;
     [SerializeField] GameObject itemPanel;
     [SerializeField] GameObject abilityPanel;
@@ -53,6 +56,11 @@ public class BattleSystem : MonoBehaviour {
     [SerializeField] GameObject slotActionPanel;
     [SerializeField] ActionBarManager actionBarManager;
     [SerializeField] InfoPanelManager infoPanelManager;
+    [SerializeField] ActionButtonManager actionButtonManager;
+    [SerializeField] LevelUpSummaryManager levelUpSummaryManager;
+    [SerializeField] GameObject tutorialPanel;
+
+    [SerializeField] BattleStateManager stateManager;
 
     private List<BattleUnit> playerUnits;
     private List<BattleUnit> enemyUnits;
@@ -72,10 +80,13 @@ public class BattleSystem : MonoBehaviour {
     private bool hasRoundPassed = false;
     private bool canNavigate = true;
     private bool canRunRound = false;
+    private bool closeSummary = false;
 
     private int numEscapeAttempts;
 
-    public BattleStateManager StateManager { get; private set; } = new();
+    public bool IsAnimating {get; set; } = false;
+
+    public BattleStateManager StateManager { get => stateManager; }
     public List<Button> PlayerPortraits { get => playerPortraits; }
     public GameObject AbilityPanel { get => abilityPanel; }
     public GameObject ItemPanel{ get => itemPanel; }
@@ -87,6 +98,10 @@ public class BattleSystem : MonoBehaviour {
     public BattleAction CurrentAction { get => currentAction;  set => currentAction = value; }
     public Inventory PlayerInventory { get => playerInventory; }
     public InfoPanelManager InfoPanelManager { get => infoPanelManager; }
+    public ActionButtonManager ActionButtonManager { get => actionButtonManager; } 
+    public List<BattlePosition> EncounterPositions { get => encounterPositions; } 
+    public List<BattleUnit> EnemyUnits { get => enemyUnits; }
+    public GameObject TutorialPanel { get => tutorialPanel; }
 
     void Awake() {
         StartBattle(); 
@@ -97,7 +112,7 @@ public class BattleSystem : MonoBehaviour {
         BattleEventManager.Instance.OnAbilitySelected += HandleAbilitySelection;
         BattleEventManager.Instance.OnSlotActionSelected += HandleSlotActionSelected;
         BattleEventManager.Instance.OnSlotSelected += HandleActionSlotSelected;
-
+        BattleEventManager.Instance.OnAnimationCompleted += HandleAnimationEnd;
     }
 
     void OnDisable() {
@@ -105,6 +120,7 @@ public class BattleSystem : MonoBehaviour {
         BattleEventManager.Instance.OnAbilitySelected -= HandleAbilitySelection;
         BattleEventManager.Instance.OnSlotActionSelected -= HandleSlotActionSelected;
         BattleEventManager.Instance.OnSlotSelected -= HandleActionSlotSelected;
+        BattleEventManager.Instance.OnAnimationCompleted -= HandleAnimationEnd;
     }
 
     public void StartBattle() {
@@ -126,30 +142,43 @@ public class BattleSystem : MonoBehaviour {
         actionPointText.text = $"{actionPoints}";
 
         numEscapeAttempts = 0;
+        // currentRound = 1;
     }
 
     public IEnumerator SetupBattle() {
         yield return new WaitForEndOfFrame(); 
-        MusicManager.Instance.PlayMusic("BattleTheme");
+        if (BattleManager.Instance.BattleType == BattleType.Random) {
+            MusicManager.Instance.PlayMusicNoFade("BattleTheme");
+        } else {
+            MusicManager.Instance.PlayMusicNoFade("BossTheme");
+        }
 
         for (int i = 0; i < playerCharacters.Count; i++) {
-            BattleUnit unit = new(playerCharacters[i], characterHudList[i]); 
+            BattleUnit unit = new(playerCharacters[i], partyPositions[i], characterHudList[i]); 
             unit.Setup();
             unit.CurrentModelInstance = Instantiate(unit.Character.CharacterData.CharacterPrefab, partyPositions[i].transform);
+
             playerUnits.Add(unit);
         }
 
         for (int i = 0; i < enemyCharacters.Count; i++) {
-            enemyCharacters[i].Init();
-            BattleUnit unit = new(enemyCharacters[i]); 
+            BattleUnit unit = new(enemyCharacters[i], encounterPositions[i]); 
             unit.Setup();
             unit.CurrentModelInstance = Instantiate(unit.Character.CharacterData.CharacterPrefab, encounterPositions[i].transform);
+
             enemyUnits.Add(unit);
         }
 
         LoadEnemyActionSlots();
-        uIPointerManager.LastSelected = null;
-        StateManager.ChangeState(new CharacterSelectionState(this));
+        EventSystem.current.SetSelectedGameObject(null);
+
+        if (GameManager.Instance.FirstBattle) {
+            StateManager.ChangeState(new ViewTutorialState(this));
+            GameManager.Instance.FirstBattle = true;
+            yield break;
+        }
+
+        StateManager.ChangeState(new ActionSelectionState(this));
     }
 
     void LoadEnemyActionSlots() {
@@ -162,6 +191,7 @@ public class BattleSystem : MonoBehaviour {
         }
 
         foreach (var enemyUnit in enemyUnits) {
+            int randomNum = Random.Range(0, 2); 
             List<BattleUnit> validTargets = new();
             foreach (var playerUnit in playerUnits) {
                 if (playerUnit.Character.IsAlive) {
@@ -174,6 +204,30 @@ public class BattleSystem : MonoBehaviour {
                 break;
             }
 
+            if (enemyUnit.Character.CharacterData.CharacerType == CharacerType.Boss) {
+                int numberOfEnemies = 0;
+                foreach (var positon in encounterPositions) {
+                    if (positon.Occupied) {
+                        numberOfEnemies++;
+                    }
+                }
+
+                if (numberOfEnemies < 2) {
+                    int randomListIndex = Random.Range(0, availableIndecies.Count);
+                    int slotIndex = availableIndecies[randomListIndex];
+                    BattleAction action = new(ActionType.Ability, enemyUnit, enemyUnit, null, enemyUnit.Character.CharacterData.Abilities[0]);
+                    ActionSlot actionSlot = actionBarManager.ActionSLots[slotIndex];
+                    actionSlot.CharacterPortrait.GetComponent<Image>().sprite = enemyUnit.Character.CharacterData.CharacterPortrait;
+                    actionSlot.CharacterPortrait.SetActive(true);
+                    actionSlot.BattleAction = action;
+                    actionSlot.IsOccupied = true;
+
+                    availableIndecies.RemoveAt(randomListIndex);
+                    continue;
+                }
+
+            }
+            
             if (availableIndecies.Count > 0) {
                 int randomListIndex = Random.Range(0, availableIndecies.Count);
                 int slotIndex = availableIndecies[randomListIndex];
@@ -216,100 +270,70 @@ public class BattleSystem : MonoBehaviour {
         StateManager.ChangeState(new BattleOverState(this));
         
         if (won) {
-            foreach(var unit in playerUnits) {
-                if (unit.Character.IsAlive) {
-                    yield return GiveEXP(unit.Character, 100); 
-                }
-            }
+            yield return GiveEXP(playerUnits, CalculateEXP(enemyUnits));
+            yield return ShowInfoBox(levelUpSummaryManager.gameObject);
         }
         
         foreach(var playerUnit in playerUnits) {
             Destroy(playerUnit.CurrentModelInstance);
         }
 
-        BattleManager.Instance.EndBattle();
+        levelUpSummaryManager.gameObject.SetActive(false);
+
+        BattleManager.Instance.EndBattle(won);
     }
 
-    IEnumerator GiveEXP(Character character, int expAmount) {
-        character.EXP += expAmount;     
-        yield return dialogBox.TypeDialog($"{character.CharacterData.name} has gained {expAmount} EXP!");
+    private IEnumerator WaitForSummaryInput() {
+        yield return new WaitUntil(() => closeSummary);
+        closeSummary = false;
+    }
 
-        while (character.CheckForLevelUp()) {
-            yield return dialogBox.TypeDialog($"{character.CharacterData.name} has leveled up to {character.Level}");
+    public IEnumerator ShowInfoBox(GameObject objectToShow) {
+        objectToShow.SetActive(true);
+
+        yield return WaitForSummaryInput();
+
+        objectToShow.SetActive(false);
+    }
+
+    private int CalculateEXP(List<BattleUnit> enemyUnits) {
+        return 75;
+    }
+
+    IEnumerator GiveEXP(List<BattleUnit> playerUnits, int expAmount) {
+        foreach(var unit in playerUnits) {
+            if (unit.Character.IsAlive) {
+                unit.Character.EXP += expAmount;     
+                unit.Character.CheckForLevelUp();
+            }
         }
+
+        levelUpSummaryManager.SetSummaryUI(playerUnits, expAmount);
 
         yield return new WaitForSeconds(1);
     }
 
     // Callback for player input (B key or B on C Xbox)
     public void OnBackSelected(InputAction.CallbackContext context) {
-        if (!context.started) {
-            return;
-        }
+        if (!context.started) return;
 
-        Debug.Log($"The Current State is: {StateManager.CurrentState.State}");
-
-        if (StateManager.CurrentState.State != BattleState.CharacterSelect) {
-            uIPointerManager.LastSelected = null;
+        if (StateManager.CurrentState.State != BattleState.ActionSelection) {
             StateManager.Back();
         } else {
-            StateManager.ChangeState(new SlotActionSelectionState(this));
+            if (actionPoints <= 0) {
+                Debug.Log("No action points available!");
+                return;
+            }
+
+            MusicManager.Instance.PlaySound("MenuConfirm");
+            currentAction.Type = ActionType.Run;
+            StateManager.ChangeState(new CharacterSelectionState(this));
         }
     }
 
     // Button OnClick for Character Select State
-    public void OnCharacterSelect(int playerCharacterIndex) {
-        if (StateManager.CurrentState.State != BattleState.CharacterSelect) {
-            Debug.Log("Not in the character select state brother");
-            return;
-        }
-
-        if (actionPoints <= 0) {
-            Debug.Log("No action points available!");
-            return;
-        }
-
-        currentSelectedPlayerUnit = playerUnits[playerCharacterIndex];
-        if (!currentSelectedPlayerUnit.Character.IsAlive) {
-            Debug.Log("Charcter is not alife!");
-            currentSelectedPlayerUnit = null;
-            return;
-        }
-
-        MusicManager.Instance.PlaySound("MenuConfirm");
-        uIPointerManager.LastSelected = null;
-        currentAction.User = currentSelectedPlayerUnit;
-        StateManager.ChangeState(new ActionSelectionState(this));
-    }    
 
     // Button OnClick for Action Selection State
-    public void OnActionSelection(string actionType) {
-        MusicManager.Instance.PlaySound("MenuConfirm");
-        currentAction.User = currentSelectedPlayerUnit;
-
-        switch (actionType) {
-            case "attack":
-                currentAction.Type = ActionType.Attack;
-                uIPointerManager.LastSelected = null;
-                StateManager.ChangeState(new TargetSelectionState(this));
-                break; 
-            case "run":
-                currentAction.Type = ActionType.Run;
-                uIPointerManager.LastSelected = null;
-                StateManager.ChangeState(new ActionSlotSelectionState(this));
-                break;
-            case "item":
-                currentAction.Type = ActionType.Item;
-                uIPointerManager.LastSelected = null;
-                StateManager.ChangeState(new ItemSelectionState(this));
-                break;
-            case "ability":
-                currentAction.Type = ActionType.Ability;
-                uIPointerManager.LastSelected = null;
-                StateManager.ChangeState(new AbilitySelectionState(this));
-                break;
-        }
-    }
 
     // Player input call back for navigating Target selection
     public void OnTargetNavigate(InputAction.CallbackContext context) {
@@ -376,7 +400,6 @@ public class BattleSystem : MonoBehaviour {
 
             currentAction.Target = currentList[currentTargetIndex]; 
 
-            uIPointerManager.LastSelected = null;
             StateManager.ChangeState(new ActionSlotSelectionState(this));
         }
     }
@@ -399,7 +422,7 @@ public class BattleSystem : MonoBehaviour {
         actionPoints--;
         actionPointText.text = $"{actionPoints}";
         
-        StateManager.ChangeState(new CharacterSelectionState(this));
+        StateManager.ChangeState(new ActionSelectionState(this));
     }
 
     // Removes player from action slot
@@ -418,19 +441,19 @@ public class BattleSystem : MonoBehaviour {
         actionPoints++;
         actionPointText.text = $"{actionPoints}";
 
-        StateManager.ChangeState(new CharacterSelectionState(this));
+        StateManager.ChangeState(new ActionSelectionState(this));
     }
 
 
     // Player input callback for running a round
     public void OnRoundRunSelected(InputAction.CallbackContext context) {
-        if (context.started) {
-            if (!canRunRound && StateManager.CurrentState.State == BattleState.CharacterSelect) {
+        if (context.performed) {
+            if (!canRunRound && StateManager.CurrentState.State == BattleState.ActionSelection) {
                 Debug.Log("no actions in the action bar");
                 return;
             }
 
-            if (StateManager.CurrentState.State != BattleState.CharacterSelect) {
+            if (StateManager.CurrentState.State != BattleState.ActionSelection) {
                 Debug.Log("Currently cannot activate a round");
                 return;
             }
@@ -457,6 +480,8 @@ public class BattleSystem : MonoBehaviour {
                 continue;
             }
 
+            
+
             switch (slot.BattleAction.Type) {
                 case ActionType.Attack:
                     yield return StartCoroutine(RunAttack(slot));
@@ -473,44 +498,56 @@ public class BattleSystem : MonoBehaviour {
             }
         }
 
+        yield return new WaitForEndOfFrame();
+
         if (StateManager.CurrentState.State != BattleState.BattleOver) {
             CleanUp();
-            uIPointerManager.LastSelected = null;
-            StateManager.ChangeState(new CharacterSelectionState(this));
+            StateManager.ChangeState(new ActionSelectionState(this));
         }
 
         yield return null;
+
     }
 
     IEnumerator RunAttack(ActionSlot actionSlot) {
         BattleUnit user = actionSlot.BattleAction.User;
         BattleUnit target = actionSlot.BattleAction.Target;
 
-        if (!target.Character.IsAlive) {
-            foreach (var unit in enemyUnits) {
-                if (unit.Character.IsAlive) {
-                    target = unit;
-                }
+        if (target.Character.IsAlive) {
+            Animator animator = user.CurrentModelInstance.GetComponent<Animator>();
+            if( animator != null) {
+                animator.SetTrigger("Attack");
+                yield return new WaitUntil(() => IsAnimating);
+                IsAnimating = false;
             }
-        }
 
-        int totalDamage = CalculateAttackDamage(user.Character, target.Character); 
-        target.Character.DecreaseHP(totalDamage);
+            int totalDamage = CalculateAttackDamage(user.Character, target.Character); 
+            target.Character.DecreaseHP(totalDamage);
 
-        GameObject damageTextObject = target.CurrentModelInstance.transform.GetChild(0).gameObject;
-        damageTextObject.SetActive(true);
-        damageTextObject.GetComponent<DamageText>().text.text = $"{totalDamage}";
+            GameObject damageTextObject = target.CurrentModelInstance.transform.GetChild(0).gameObject;
+            damageTextObject.SetActive(true);
+            damageTextObject.GetComponent<DamageText>().text.text = $"{totalDamage}";
 
-        yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(1f);
 
-        damageTextObject.SetActive(false);
+            damageTextObject.SetActive(false);
 
-        if (target.Character.HP <= 0) {
-            yield return StartCoroutine(OnCharacterDeath(actionSlot));
+            if (target.Character.HP <= 0) {
+                yield return StartCoroutine(OnCharacterDeath(actionSlot));
+            }
+        }else{
+            GameObject damageTextObject = user.CurrentModelInstance.transform.GetChild(0).gameObject;
+            damageTextObject.SetActive(true);
+            damageTextObject.GetComponent<DamageText>().text.text = "Missed!";
+
+            yield return new WaitForSeconds(1f);
+
+            damageTextObject.SetActive(false);
         }
 
         yield return new WaitForEndOfFrame();
     }
+
 
     int CalculateAttackDamage(Character user, Character target) {
         int userDamage = user.CalculateBasicAttackDamage();
@@ -528,55 +565,31 @@ public class BattleSystem : MonoBehaviour {
             StateManager.ChangeState(new BattleOverState(this));
         }
 
-        yield return null;
+        yield return new WaitForEndOfFrame();
     }
 
     // ability -> calculate damage, check for status effects, check if you can cast
     IEnumerator RunAbility(ActionSlot actionSlot){
-        BattleUnit target = actionSlot.BattleAction.Target;
-        BattleUnit user = actionSlot.BattleAction.User;
         AbilityBase currentAbility = actionSlot.BattleAction.AbilityBase;
+        BattleUnit target = actionSlot.BattleAction.Target; 
 
-        BattleUnit newTarget = null;
+        if (actionSlot.BattleAction.AbilityBase.AbilityTarget == AbilityTarget.Battle) {
+            yield return StartCoroutine(abilityExecutor.ExecuteAbility(currentAbility, actionSlot.BattleAction.User, actionSlot.BattleAction.Target, this));
+        } else if (target.Character.IsAlive) {
+            yield return StartCoroutine(abilityExecutor.ExecuteAbility(currentAbility, actionSlot.BattleAction.User, actionSlot.BattleAction.Target, this));
+        } else {
+            Debug.Log("Missed");
+        }
 
-        if (!target.Character.IsAlive && currentAbility.AbilityTarget == AbilityTarget.Player) {
-            newTarget = user;
-        } else if (!target.Character.IsAlive && currentAbility.AbilityTarget == AbilityTarget.Enemy) {
-            foreach(var enemy in enemyUnits) {
-                newTarget = enemy;
+        if (actionSlot.BattleAction.Target != null) {
+            if (actionSlot.BattleAction.Target.Character.HP <= 0) {
+                yield return StartCoroutine(OnCharacterDeath(actionSlot));
             }
-        }else{
-            newTarget = target;
-        }
-
-        GameObject damageTextObject = newTarget.CurrentModelInstance.transform.GetChild(0).gameObject;
-        yield return StartCoroutine(UseAbility(currentAbility,user.Character,newTarget.Character,damageTextObject, actionSlot));
-    }
-
-    public IEnumerator UseAbility(AbilityBase ability, Character user, Character target, GameObject damageTextObject, ActionSlot actionSlot){
-        Character newTarget = target;
-
-        foreach (AbilityEffectBase effect in ability.Effects){
-            AbilityEffectInfo effectInfo = effect.ApplyEffect(user,target);
-            damageTextObject.SetActive(true);
-            damageTextObject.GetComponent<DamageText>().text.text = $"{effectInfo.TextInformation}";
-            damageTextObject.GetComponent<DamageText>().text.color = effectInfo.TextColor;
-
-            yield return new WaitForSeconds(1f);
-
-            damageTextObject.SetActive(false);
-        }
-        damageTextObject.GetComponent<DamageText>().text.color = Color.white;
-
-        if (target.HP <= 0) {
-            yield return StartCoroutine(OnCharacterDeath(actionSlot));
         }
 
         yield return new WaitForEndOfFrame();
-
     }
 
-    // items -> calculate value, check for any status effects
     IEnumerator RunItem(ActionSlot actionSlot) {
         BattleUnit target = actionSlot.BattleAction.Target;
         BattleUnit user = actionSlot.BattleAction.User;
@@ -603,7 +616,7 @@ public class BattleSystem : MonoBehaviour {
         Character newTarget = target;
 
         foreach (ItemEffectBase effect in item.effects) {
-            EffectInfo effectInfo = effect.ApplyEffect(user, newTarget);
+            EffectInfo effectInfo = effect.ApplyEffectToCharacter(user, newTarget);
             damageTextObject.SetActive(true);
             damageTextObject.GetComponent<DamageText>().text.text = $"{effectInfo.TextInformation}";
             damageTextObject.GetComponent<DamageText>().text.color = effectInfo.TextColor;
@@ -626,7 +639,11 @@ public class BattleSystem : MonoBehaviour {
         // remove model from instanceList or mark as dead and skip over;
         BattleUnit dyingUnit = actionSlot.BattleAction.Target;
         if (dyingUnit.Character.CharacterData.CharacerType == CharacerType.Enemy) {
-            dyingUnit.CurrentModelInstance.GetComponent<MeshRenderer>().materials[0].color = Color.red;
+            // dyingUnit.CurrentModelInstance.GetComponent<MeshRenderer>().materials[0].color = Color.red;
+
+            dyingUnit.BattlePosition.Occupied = false;
+            Destroy(dyingUnit.CurrentModelInstance);
+
             foreach(var enemyUnit in enemyUnits) {
                 if(enemyUnit == dyingUnit) {
                     enemyUnits.Remove(enemyUnit);
@@ -634,11 +651,13 @@ public class BattleSystem : MonoBehaviour {
                 }
             }
         } else {
-            dyingUnit.CurrentModelInstance.transform.GetChild(2).GetComponent<SkinnedMeshRenderer>().materials[0].color = Color.red;
+            // dyingUnit.CurrentModelInstance.transform.GetChild(2).GetComponent<SkinnedMeshRenderer>().materials[0].color = Color.red;
             foreach(var playerUnit in playerUnits) {
                 if(playerUnit == dyingUnit) {
                     // playerUnits.Remove(playerUnit);
                     playerUnit.Character.IsAlive = false;
+                    Animator animator = playerUnit.CurrentModelInstance.GetComponent<Animator>();
+                    animator.SetTrigger("Death");
                     break;
                 }
             }
@@ -674,8 +693,27 @@ public class BattleSystem : MonoBehaviour {
         }
 
         canRunRound = false;
+        
+        Debug.Log(actionPoints);
+        // if (actionPoints >= 2) {
+        //     int leftovers = 2;
+        //     actionPoints += leftovers + 3;
+        // } if (actionPoints == 1) {
+        //     int leftovers = 1;
+        //     actionPoints += leftovers + 3;
+        // } else {
+        //     actionPoints = 3;
+        // }
 
-        actionPoints = 3;
+        // if (actionPoints > 8) {
+        //     actionPoints = 8;
+        // }
+        actionPoints += 3;
+
+        if (actionPoints >= 8) {
+            actionPoints = 8;
+        }
+
         actionPointText.text = $"{actionPoints}";
 
         hasRoundPassed = true;
@@ -693,6 +731,10 @@ public class BattleSystem : MonoBehaviour {
 
     // Event Handlers
     private void HandleSlotActionSelected(SlotAction slotAction) {
+        if (slotAction == SlotAction.Swap && actionPoints < 2) {
+            return;
+        }
+
         StateManager.ChangeState(new ActionSlotSelectionState(this, slotAction));
     }
 
@@ -705,8 +747,8 @@ public class BattleSystem : MonoBehaviour {
             if (!swapped) {
                 StateManager.ChangeState(new SlotSwapState(this));
             } else if (swapped) {
-                Debug.Log("herel");
-                StateManager.ChangeState(new CharacterSelectionState(this));
+                actionPoints -= 2;
+                StateManager.ChangeState(new ActionSelectionState(this));
             }
         } 
     }
@@ -714,7 +756,6 @@ public class BattleSystem : MonoBehaviour {
 
     void HandleAbilitySelection(AbilityBase selectedAbility){
         currentAction.AbilityBase = selectedAbility;
-        uIPointerManager.LastSelected = null;
         StateManager.ChangeState(new TargetSelectionState(this));
     }
 
@@ -728,4 +769,133 @@ public class BattleSystem : MonoBehaviour {
 
         StateManager.ChangeState(new TargetSelectionState(this));
     }
+
+    public void OnAttackSelected(InputAction.CallbackContext context) {
+        if (!context.started) return;
+        if (StateManager.CurrentState.State == BattleState.ActionSelection) {
+            if (actionPoints <= 0) {
+                Debug.Log("No action points available!");
+                return;
+            }
+
+            MusicManager.Instance.PlaySound("MenuConfirm");
+            currentAction.Type = ActionType.Attack;
+            StateManager.ChangeState(new CharacterSelectionState(this));
+        } else if (StateManager.CurrentState.State == BattleState.BattleOver) {
+            closeSummary = true;
+        } else {
+            return;
+        }
+    }
+
+    public void OnAbilitiesSelected(InputAction.CallbackContext context) {
+        if (!context.started) return;
+        if (StateManager.CurrentState.State != BattleState.ActionSelection) return;
+        if (actionPoints <= 0) {
+            Debug.Log("No action points available!");
+            return;
+        }
+
+        MusicManager.Instance.PlaySound("MenuConfirm");
+        currentAction.Type = ActionType.Ability;
+        StateManager.ChangeState(new CharacterSelectionState(this));
+    }
+
+    public void OnSlotActionsSelected(InputAction.CallbackContext context) {
+        if (!context.started) return;
+        if (StateManager.CurrentState.State != BattleState.ActionSelection) return;
+
+        MusicManager.Instance.PlaySound("MenuConfirm");
+        StateManager.ChangeState(new SlotActionSelectionState(this));
+    }
+
+    public void OnEscapeSelected(InputAction.CallbackContext context) {
+        if (!context.started) return;
+        return;
+    }
+
+    public void OnItemsSelected(InputAction.CallbackContext context) {
+        if (!context.started) return;
+        if (StateManager.CurrentState.State != BattleState.ActionSelection) return;
+        if (actionPoints <= 0) {
+            Debug.Log("No action points available!");
+            return;
+        }
+
+        MusicManager.Instance.PlaySound("MenuConfirm");
+        currentAction.Type = ActionType.Item;
+        StateManager.ChangeState(new CharacterSelectionState(this));
+    }
+
+    public void OnTutorialSelected(InputAction.CallbackContext context) {
+        if (!context.started) return;
+        if (StateManager.CurrentState.State != BattleState.ActionSelection) return;
+
+        MusicManager.Instance.PlaySound("MenuConfirm");
+        StateManager.ChangeState(new ViewTutorialState(this));
+    }
+
+    public void OnCharacterSelect(int playerCharacterIndex) {
+        if (StateManager.CurrentState.State != BattleState.CharacterSelect) {
+            Debug.Log("Not in the character select state brother");
+            return;
+        }
+
+        currentSelectedPlayerUnit = playerUnits[playerCharacterIndex];
+
+        if (!currentSelectedPlayerUnit.Character.IsAlive) {
+            Debug.Log("Charcter is not alife!");
+            currentSelectedPlayerUnit = null;
+            return;
+        }
+
+        currentAction.User = currentSelectedPlayerUnit;
+
+        MusicManager.Instance.PlaySound("MenuConfirm");
+
+        switch (currentAction.Type) {
+            case ActionType.Attack:
+                StateManager.ChangeState(new TargetSelectionState(this));
+                break; 
+            case ActionType.Run:
+                StateManager.ChangeState(new ActionSlotSelectionState(this));
+                break;
+            case ActionType.Item:
+                StateManager.ChangeState(new ItemSelectionState(this));
+                break;
+            case ActionType.Ability:
+                StateManager.ChangeState(new AbilitySelectionState(this));
+                break;
+        }
+    }    
+
+    public void DelayInput() {
+        StartCoroutine(Delay());
+    }
+
+    IEnumerator Delay() {
+        yield return new WaitForEndOfFrame();
+    }
+
+    public bool TrySummonEnemy(Character enemy) {
+        for (int i = 0; i < EncounterPositions.Count; i++) {
+            BattlePosition position = EncounterPositions[i];
+            if (!position.Occupied) {
+                BattleUnit unit = new BattleUnit(enemy, position);
+                unit.Setup();
+                unit.CurrentModelInstance = Instantiate(enemy.CharacterData.CharacterPrefab, position.transform);
+                EnemyUnits.Add(unit);
+                //purely for debug
+                enemyCharacters.Add(unit.Character);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void HandleAnimationEnd()
+    {
+        IsAnimating = true;
+    }
+
 }

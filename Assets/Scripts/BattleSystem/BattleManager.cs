@@ -2,8 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BattleManager : MonoBehaviour
-{
+public enum BattleType {
+    Random,
+    Boss,
+}
+
+public class BattleManager : MonoBehaviour {
     private static BattleManager _Instance;
     public static BattleManager Instance { 
         get { 
@@ -30,17 +34,13 @@ public class BattleManager : MonoBehaviour
     public List<Character> EncounterPartyList { get; set; }
     public Inventory PlayerInventory { get; set; }
     public BattleState BattleState { get; set; }
+    public BattleType BattleType { get; set; }
 
     public IEnumerator StartBattle() {
-        foreach (var character in PlayerPartyList) {
-            if (!character.IsAlive) {
-                character.IncreaseHP(1);
-                character.IsAlive = true;
-            }
-        }
         GameManager.Instance.GameState = GameState.Battle;
 
         yield return StartCoroutine(SceneHelper.LoadSceneWithTransition("ForestBattleScene", true, true, null, () => {
+            MusicManager.Instance.PauseMusic();
             CircleFadeTransition circleFade = FindObjectOfType<CircleFadeTransition>();
             if (circleFade != null) {
                 circleFade.onTransitionComplete = () => {
@@ -55,11 +55,40 @@ public class BattleManager : MonoBehaviour
         yield return null;
     }
 
-    public void EndBattle() {
+    public void EndBattle(bool won) {
+        if (!won) {
+            if (MusicManager.Instance != null) {
+                MusicManager.Instance.PlayMusicNoFade("TitleTheme"); 
+            }
+
+            SceneHelper.LoadScene("GameOver", false, true);
+            GameManager.Instance.GameState = GameState.GameOver;
+            MusicManager.Instance.StopMusic();
+            return;
+        }
+
+        if (BattleType == BattleType.Boss) {
+            GameManager.Instance.GameState = GameState.Victory;
+
+            if (MusicManager.Instance != null) {
+                MusicManager.Instance.StopMusic();
+            }
+
+            SceneHelper.LoadScene("Victory", false, true);
+            return;
+        }
+
         GameManager.Instance.GameState = GameState.FreeRoam;
         MusicManager.Instance.StopMusic();
 
         MusicManager.Instance.PlayMusicNoFade("ForestTheme"); 
+
+        foreach (var character in PlayerPartyList) {
+            if (!character.IsAlive) {
+                character.IncreaseHP(1);
+                character.IsAlive = true;
+            }
+        }
 
         SceneHelper.UnloadScene("ForestBattleScene");
         CallAfterDelay.Create(1.0f, () => {

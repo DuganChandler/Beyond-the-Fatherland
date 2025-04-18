@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class CharacterSelectionState : IBattleState {
     private readonly BattleSystem battleSystem;
@@ -19,17 +20,24 @@ public class CharacterSelectionState : IBattleState {
 
     public void OnEnter() {
         Debug.Log("Entering: Character Selection State");
+        battleSystem.ActionButtonManager.SetButtonText("", "Select", "Back", "", false);
         battleSystem.PlayerPortraits[0].Select();
-        battleSystem.CurrentAction.ResetBattleAction();
-        battleSystem.InfoPanelManager.SetText("Select a Character", true);
+
+        battleSystem.CurrentAction.User = null;
+        battleSystem.CurrentAction.AbilityBase = null;
+        battleSystem.CurrentAction.ItemSlot = null;
+        battleSystem.CurrentAction.Target = null;
+
+        battleSystem.InfoPanelManager.SetText($"{battleSystem.CurrentAction.Type}: Select a Character", true);
     }
 
     public void OnExit() {
         Debug.Log("Exiting: Character Selection State");
+        EventSystem.current.SetSelectedGameObject(null);
     }
 
     public IBattleState OnBack() {
-        Debug.Log("You are not allowed to back out of Character Selection State");
-        return null;
+        Debug.Log("Character Selection -> Action Selection State");
+        return new ActionSelectionState(battleSystem);
     }
 }

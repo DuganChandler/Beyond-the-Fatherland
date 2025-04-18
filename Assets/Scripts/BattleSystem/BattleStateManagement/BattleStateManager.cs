@@ -1,11 +1,17 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BattleStateManager {
+public class BattleStateManager : MonoBehaviour {
     private readonly Stack<IBattleState> states = new();
     public IBattleState CurrentState {get; private set; }
 
     public void ChangeState(IBattleState newState) {
+        StartCoroutine(DelayStateChange(newState));
+    }
+
+    IEnumerator DelayStateChange(IBattleState newState) {
+        yield return new WaitForEndOfFrame();
         CurrentState?.OnExit();
 
         CurrentState = newState;

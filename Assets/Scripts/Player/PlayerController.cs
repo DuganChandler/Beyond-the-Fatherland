@@ -59,10 +59,9 @@ public class PlayerController : MonoBehaviour {
     }
 
     private (bool, GameObject) IsEncounterLayer() {
-        RaycastHit hit;
 
         Debug.DrawRay(capsuleCollider.bounds.center, Vector3.down * 1f, Color.red);
-        if (Physics.Raycast(capsuleCollider.bounds.center, Vector3.down, out hit, 1f, encounterLayer)) {
+        if (Physics.Raycast(capsuleCollider.bounds.center, Vector3.down, out RaycastHit hit, 1f, encounterLayer)) {
             return (true, hit.collider.gameObject);
         }
         return (false, null);
@@ -76,6 +75,11 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void CheckRandomEncounter() {
+        if (GameManager.Instance.GameState != GameState.FreeRoam) {
+            Debug.Log("Need to be in Free Roam to enter Battle");
+            return;
+        }
+
         var encounterLayer = IsEncounterLayer();
         if (!encounterLayer.Item1) {
             distanceAccumulated = 0f;
@@ -87,7 +91,9 @@ public class PlayerController : MonoBehaviour {
                 BattleManager.Instance.EncounterPartyList = encounterLayer.Item2.GetComponent<EncounterMapArea>().GetRandomEncounter();
                 BattleManager.Instance.PlayerPartyList = GetComponent<PartyList>().CharacterList;
                 BattleManager.Instance.PlayerInventory = GetComponent<Inventory>();
-                Debug.Log(GetComponent<PartyList>().CharacterList);
+
+                BattleManager.Instance.BattleType = BattleType.Random;
+
                 StartCoroutine(BattleManager.Instance.StartBattle());
             }
             distanceAccumulated = 0f;

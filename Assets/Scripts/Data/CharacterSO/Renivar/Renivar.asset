@@ -16,7 +16,7 @@ MonoBehaviour:
   description: Renivar Character SO
   characterPrefab: {fileID: 137348568128419082, guid: 3925e8b4c3751804593c1c93a6493662,
     type: 3}
-  characterPortrait: {fileID: 21300000, guid: 93e58564d67c24546b0d9f43f5acc6a3, type: 3}
+  characterPortrait: {fileID: 21300000, guid: 450915e93ec84394f9ab443aa78ac0fc, type: 3}
   characerType: 0
   currentLevel: 1
   baseHP: 80

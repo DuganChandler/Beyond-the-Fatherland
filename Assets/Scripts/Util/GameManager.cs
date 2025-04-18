@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public enum GameState {
@@ -7,7 +8,10 @@ public enum GameState {
     Battle,
     Dialog,
     Pause,
-    Busy
+    Busy,
+    MainMenu,
+    GameOver,
+    Victory
 }
 
 public class GameManager : MonoBehaviour {
@@ -25,15 +29,5 @@ public class GameManager : MonoBehaviour {
 
     public GameState GameState { get; set; } = GameState.FreeRoam;
     public bool inDialog { get; set; } = false;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public bool FirstBattle { get; set; } = true;
 }

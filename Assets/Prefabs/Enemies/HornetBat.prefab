@@ -155,6 +155,12 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6461217060098007036, guid: e58170f8c01d2234d973471b9e825a69,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: -1908319793503937215, guid: 88caac9f2df6efc489fc18d7d7fb7820,
+        type: 2}
     - target: {fileID: 7273859442622118716, guid: e58170f8c01d2234d973471b9e825a69,
         type: 3}
       propertyPath: m_Pivot.x
@@ -260,6 +266,12 @@ PrefabInstance:
       propertyPath: m_MotionVectors
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7687723766116561263, guid: e58170f8c01d2234d973471b9e825a69,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: -1908319793503937215, guid: 88caac9f2df6efc489fc18d7d7fb7820,
+        type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

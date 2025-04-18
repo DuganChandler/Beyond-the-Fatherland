@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 [System.Serializable]
@@ -25,6 +26,14 @@ public class Character  {
 
     public Stat PrimaryStat { get; set; }
     public Stats Stats { get; set; }
+    public float strengthBuffs {get; set;}
+    public float magicBuffs {get; set;}
+    public float defenseBuffs {get; set;}
+    public float strengthDebuffs {get; set;}
+    public float magicDebuffs {get; set;}
+    public float defenseDebuffs {get; set;}
+
+    public bool LeveledUp { get; set; } = false;
 
     public int Level {
         get {
@@ -68,6 +77,18 @@ public class Character  {
         return 0;
     }
 
+    public int CalculateAbilityPower(int power, Character target){
+        //DMG = 5 * sqrt(primary state/enemy def * ability power) * rnd
+        int damage = 0;
+        if (PrimaryStat == Stat.Strength) {
+            damage = (int)(5 * Mathf.Sqrt(Stats.Strength/target.Stats.Defense * power) * UnityEngine.Random.Range(0.95f,1.05f));
+        }else if(PrimaryStat == Stat.Magic){
+            damage = (int)(5 * Mathf.Sqrt(Stats.Magic/target.Stats.Defense * power) * UnityEngine.Random.Range(0.95f,1.05f));
+        }
+        return damage;
+        
+    }
+
     public int CalculateDefense() {
         return (int)Math.Round(Stats.Defense * 4f);
     }
@@ -97,21 +118,31 @@ public class Character  {
 
     public void CalculateStats() {
         int oldMaxHP = MaxHP;
+        int oldMaxMP = MaxMP;
+        Stats = characterData.GetStatsAtLevel(level);
+
         MaxHP = characterData.GetHpAtLevel(level);
+        MaxMP = characterData.GetMpAtLevel(level);        
+        Debug.Log(MaxHP);
 
         if (oldMaxHP != 0) {
             HP += MaxHP - oldMaxHP;
+            MP += MaxMP - oldMaxMP;
         }
+
+        OnHpChange?.Invoke();
+        OnMpChange?.Invoke(); 
     }
 
-    public bool CheckForLevelUp() {
-        if (EXP >= 90) {
+    public void CheckForLevelUp() {
+        if (EXP >= 75) {
             ++level;
-            // calculate stats
-            EXP -= 90;
-            return true;
+            EXP -= 75;
+            LeveledUp = true;
+            CalculateStats();
+            return;
         }
-        return false;
+        LeveledUp = false;
     }
 
     public List<AbilityBase> Abilities{
