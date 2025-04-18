@@ -690,7 +690,20 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
 
         canRunRound = false;
 
-        actionPoints = 3;
+        if (actionPoints >= 2) {
+            int leftovers = 2;
+            actionPoints += leftovers + 3;
+        } if (actionPoints == 1) {
+            int leftovers = 1;
+            actionPoints += leftovers + 3;
+        } else {
+            actionPoints = 3;
+        }
+
+        if (actionPoints > 8) {
+            actionPoints = 8;
+        }
+
         actionPointText.text = $"{actionPoints}";
 
         hasRoundPassed = true;
