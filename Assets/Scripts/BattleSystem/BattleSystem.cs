@@ -174,7 +174,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
 
         if (GameManager.Instance.FirstBattle) {
             StateManager.ChangeState(new ViewTutorialState(this));
-            GameManager.Instance.FirstBattle = true;
+            GameManager.Instance.FirstBattle = false;
             yield break;
         }
 
@@ -748,6 +748,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
                 StateManager.ChangeState(new SlotSwapState(this));
             } else if (swapped) {
                 actionPoints -= 2;
+                actionPointText.text = $"{actionPoints}";
                 StateManager.ChangeState(new ActionSelectionState(this));
             }
         } 
