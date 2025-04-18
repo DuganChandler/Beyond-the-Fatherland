@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 public class AbilityMenu : MonoBehaviour {
     [Header("UI References")]
@@ -14,6 +17,7 @@ public class AbilityMenu : MonoBehaviour {
     public List<GameObject> buttonObjects = new();
 
     public event Action<AbilityBase> OnAbilitySelected;
+    public TextMeshProUGUI AbilityDescription;
 
     public void ClearButtons() {
         foreach (var button in buttonObjects) {
@@ -24,7 +28,31 @@ public class AbilityMenu : MonoBehaviour {
         buttonList.Clear();
         buttonObjects.Clear();
     }
+    public void Update()
+    {
+        SelectAbilityDescription();
+    }
 
+    void SelectAbilityDescription()
+    {
+        Button currentSelectedButton = EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
+        if (currentSelectedButton == null)
+        {
+            return;
+        }
+
+        foreach (var button in buttonList)
+        {
+            if (currentSelectedButton == button)
+            {
+                if (AbilityDescription != null)
+                {
+              // AbilityDescription.text = button;
+                }
+            }
+        }
+    }
+   
     // Clears existing buttons and repopulates the inventory menu.
     public void PopulateAbilities(List<AbilityBase> abilities) {
         ClearButtons();
