@@ -12,7 +12,8 @@ public enum BagMenuState {
     Books,
     Status,
     System,
-    Using
+    Using,
+    Controls
 }
 
 public struct BagMenuStateObject {
@@ -35,6 +36,7 @@ public class MenuManager : MonoBehaviour {
     [SerializeField] private GameObject books;
     [SerializeField] private GameObject bookReadingSection;
     [SerializeField] private GameObject status;
+    [SerializeField] private GameObject controls;
 
     [Header("Menu Buttons")]
     [SerializeField] private List<Button> optionButtonList;
@@ -135,6 +137,13 @@ public class MenuManager : MonoBehaviour {
         books.GetComponent<ItemMenu>().PopulateInventory(playerInventory, ItemCategory.Story);
 
         books.SetActive(true);
+    }
+
+    public void OnControls() {
+        MusicManager.Instance.PlaySound("MenuConfirm");
+        menuStates.Peek().MenuObject.SetActive(false);
+        menuStates.Push(new BagMenuStateObject(BagMenuState.Controls, controls));
+        controls.SetActive(true);
     }
 
     public void OnMainMenu() {
