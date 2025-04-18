@@ -22,6 +22,7 @@ public enum BattleState {
     RunningRound,
     EndRound,
     BattleOver,
+    ViewTutorial
 }
 
 public enum ActionType {
@@ -57,6 +58,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
     [SerializeField] InfoPanelManager infoPanelManager;
     [SerializeField] ActionButtonManager actionButtonManager;
     [SerializeField] LevelUpSummaryManager levelUpSummaryManager;
+    [SerializeField] GameObject tutorialPanel;
 
     [SerializeField] BattleStateManager stateManager;
 
@@ -97,6 +99,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
     public ActionButtonManager ActionButtonManager { get => actionButtonManager; } 
     public List<BattlePosition> EncounterPositions { get => encounterPositions; } 
     public List<BattleUnit> EnemyUnits { get => enemyUnits; }
+    public GameObject TutorialPanel { get => tutorialPanel; }
 
     void Awake() {
         StartBattle(); 
@@ -164,6 +167,13 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
 
         LoadEnemyActionSlots();
         EventSystem.current.SetSelectedGameObject(null);
+
+        if (GameManager.Instance.FirstBattle) {
+            StateManager.ChangeState(new ViewTutorialState(this));
+            GameManager.Instance.FirstBattle = true;
+            yield break;
+        }
+
         StateManager.ChangeState(new ActionSelectionState(this));
     }
 
@@ -674,7 +684,6 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
                 numDead++;
             }
         }
-        Debug.Log(numDead);
 
         return numDead == 3;
     }
@@ -689,18 +698,24 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         }
 
         canRunRound = false;
+        
+        Debug.Log(actionPoints);
+        // if (actionPoints >= 2) {
+        //     int leftovers = 2;
+        //     actionPoints += leftovers + 3;
+        // } if (actionPoints == 1) {
+        //     int leftovers = 1;
+        //     actionPoints += leftovers + 3;
+        // } else {
+        //     actionPoints = 3;
+        // }
 
-        if (actionPoints >= 2) {
-            int leftovers = 2;
-            actionPoints += leftovers + 3;
-        } if (actionPoints == 1) {
-            int leftovers = 1;
-            actionPoints += leftovers + 3;
-        } else {
-            actionPoints = 3;
-        }
+        // if (actionPoints > 8) {
+        //     actionPoints = 8;
+        // }
+        actionPoints += 3;
 
-        if (actionPoints > 8) {
+        if (actionPoints >= 8) {
             actionPoints = 8;
         }
 
@@ -721,6 +736,10 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
 
     // Event Handlers
     private void HandleSlotActionSelected(SlotAction slotAction) {
+        if (slotAction == SlotAction.Swap && actionPoints < 2) {
+            return;
+        }
+
         StateManager.ChangeState(new ActionSlotSelectionState(this, slotAction));
     }
 
@@ -733,6 +752,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
             if (!swapped) {
                 StateManager.ChangeState(new SlotSwapState(this));
             } else if (swapped) {
+                actionPoints -= 2;
                 StateManager.ChangeState(new ActionSelectionState(this));
             }
         } 
@@ -810,6 +830,14 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         MusicManager.Instance.PlaySound("MenuConfirm");
         currentAction.Type = ActionType.Item;
         StateManager.ChangeState(new CharacterSelectionState(this));
+    }
+
+    public void OnTutorialSelected(InputAction.CallbackContext context) {
+        if (!context.started) return;
+        if (StateManager.CurrentState.State != BattleState.ActionSelection) return;
+
+        MusicManager.Instance.PlaySound("MenuConfirm");
+        StateManager.ChangeState(new ViewTutorialState(this));
     }
 
     public void OnCharacterSelect(int playerCharacterIndex) {

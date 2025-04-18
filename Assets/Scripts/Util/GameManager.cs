@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public enum GameState {
@@ -28,4 +29,5 @@ public class GameManager : MonoBehaviour {
 
     public GameState GameState { get; set; } = GameState.FreeRoam;
     public bool inDialog { get; set; } = false;
+    public bool FirstBattle { get; set; } = true;
 }
