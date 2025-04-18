@@ -82,6 +82,8 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
 
     private int numEscapeAttempts;
 
+    private bool isAnimating = false;
+
     public BattleStateManager StateManager { get => stateManager; }
     public List<Button> PlayerPortraits { get => playerPortraits; }
     public GameObject AbilityPanel { get => abilityPanel; }
@@ -107,6 +109,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         BattleEventManager.Instance.OnAbilitySelected += HandleAbilitySelection;
         BattleEventManager.Instance.OnSlotActionSelected += HandleSlotActionSelected;
         BattleEventManager.Instance.OnSlotSelected += HandleActionSlotSelected;
+        BattleEventManager.Instance.OnAnimationCompleted += HandleAnimationEnd;
     }
 
     void OnDisable() {
@@ -114,6 +117,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         BattleEventManager.Instance.OnAbilitySelected -= HandleAbilitySelection;
         BattleEventManager.Instance.OnSlotActionSelected -= HandleSlotActionSelected;
         BattleEventManager.Instance.OnSlotSelected -= HandleActionSlotSelected;
+        BattleEventManager.Instance.OnAnimationCompleted -= HandleAnimationEnd;
     }
 
     public void StartBattle() {
@@ -495,52 +499,41 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         BattleUnit user = actionSlot.BattleAction.User;
         BattleUnit target = actionSlot.BattleAction.Target;
 
-        if (!target.Character.IsAlive) {
-            // foreach (var unit in enemyUnits) {
-            //     if (unit.Character.IsAlive) {
-            //         target = unit;
-            //     }
-            // }
-            Debug.Log("Missed Attack");
-            yield return new WaitForEndOfFrame();
-        }
+        if (target.Character.IsAlive) {
+            Animator animator = user.CurrentModelInstance.GetComponent<Animator>();
+            if( animator != null /*&& user.Character.CharacterData.CharacerType == CharacerType.PartyMember*/) {
+                animator.SetTrigger("Attack");
+                yield return new WaitUntil(() => isAnimating);
+                isAnimating = false;
+            }
 
-        int totalDamage = CalculateAttackDamage(user.Character, target.Character); 
-        target.Character.DecreaseHP(totalDamage);
+            int totalDamage = CalculateAttackDamage(user.Character, target.Character); 
+            target.Character.DecreaseHP(totalDamage);
 
-        Animator animator = user.CurrentModelInstance.GetComponent<Animator>();
-        if( animator != null) {
-            /*Debug.Log(animator.gameObject.activeSelf);
-            Debug.Log(animator.enabled);
-            Debug.Log("initialized: " + animator.isInitialized);
-            animator.Rebind();*/
-            yield return StartCoroutine(PlayAnimation(animator));
-            Debug.Log(animator.GetComponent<AnimatorController>() + "hi");
-            Debug.Log("initialized: " + animator.isInitialized);
-            //animator.SetBool("attack",false);
-            
-        }
+            GameObject damageTextObject = target.CurrentModelInstance.transform.GetChild(0).gameObject;
+            damageTextObject.SetActive(true);
+            damageTextObject.GetComponent<DamageText>().text.text = $"{totalDamage}";
 
-        GameObject damageTextObject = target.CurrentModelInstance.transform.GetChild(0).gameObject;
-        damageTextObject.SetActive(true);
-        damageTextObject.GetComponent<DamageText>().text.text = $"{totalDamage}";
+            yield return new WaitForSeconds(1f);
 
-        yield return new WaitForSeconds(1f);
+            damageTextObject.SetActive(false);
 
-        damageTextObject.SetActive(false);
+            if (target.Character.HP <= 0) {
+                yield return StartCoroutine(OnCharacterDeath(actionSlot));
+            }
+        }else{
+            GameObject damageTextObject = user.CurrentModelInstance.transform.GetChild(0).gameObject;
+            damageTextObject.SetActive(true);
+            damageTextObject.GetComponent<DamageText>().text.text = "Missed!";
 
-        if (target.Character.HP <= 0) {
-            yield return StartCoroutine(OnCharacterDeath(actionSlot));
+            yield return new WaitForSeconds(1f);
+
+            damageTextObject.SetActive(false);
         }
 
         yield return new WaitForEndOfFrame();
     }
 
-    IEnumerator PlayAnimation(Animator animator) {
-        animator.SetTrigger("Attack");
-        //animator.SetBool("attack",true);
-        yield return null;
-    }
 
     int CalculateAttackDamage(Character user, Character target) {
         int userDamage = user.CalculateBasicAttackDamage();
@@ -852,4 +845,10 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         }
         return false;
     }
+
+    public void HandleAnimationEnd()
+    {
+        isAnimating = true;
+    }
+
 }

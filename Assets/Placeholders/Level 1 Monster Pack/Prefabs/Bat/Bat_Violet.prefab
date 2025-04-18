@@ -422,6 +422,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4000013023002470}
   - component: {fileID: 95000012605312458}
+  - component: {fileID: 2127624907703154613}
   m_Layer: 0
   m_Name: Bat_Violet
   m_TagString: Untagged
@@ -457,7 +458,7 @@ Animator:
   m_GameObject: {fileID: 1000012081666484}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 59afa1f2c595d6343b15e945602e1f8f, type: 3}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: c417f2ebb49d9de4295c4a7f3f0ef7e0, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -468,6 +469,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &2127624907703154613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000012081666484}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80304390f36d3a841a95c3964eb0ca96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1000012161483196
 GameObject:
   m_ObjectHideFlags: 0
@@ -1244,7 +1257,7 @@ Transform:
   m_GameObject: {fileID: 1000013720936484}
   serializedVersion: 2
   m_LocalRotation: {x: 0.0021431067, y: 0.033799313, z: -0.46977055, w: 0.8821387}
-  m_LocalPosition: {x: -0.0059614717, y: 0.0027371498, z: -0.0023960918}
+  m_LocalPosition: {x: -0.0059614717, y: 0.0027371498, z: -0.002396092}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

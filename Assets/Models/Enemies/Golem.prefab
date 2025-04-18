@@ -239,6 +239,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Golem
       objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: d404e208454fe9641b70854e8e1f3c9c,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: bed25dd32262efb4a993feb1d0bcc124, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -246,8 +251,30 @@ PrefabInstance:
         type: 3}
       insertIndex: 0
       addedObject: {fileID: 3352144432922803549}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d404e208454fe9641b70854e8e1f3c9c,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2041588670088648069}
   m_SourcePrefab: {fileID: 100100000, guid: d404e208454fe9641b70854e8e1f3c9c, type: 3}
+--- !u!1 &7099203503838928685 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: d404e208454fe9641b70854e8e1f3c9c,
+    type: 3}
+  m_PrefabInstance: {fileID: 7945482415190450812}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2041588670088648069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7099203503838928685}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80304390f36d3a841a95c3964eb0ca96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &7624241593665930647 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d404e208454fe9641b70854e8e1f3c9c,

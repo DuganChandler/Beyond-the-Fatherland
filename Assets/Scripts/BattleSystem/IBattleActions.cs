@@ -4,4 +4,5 @@ using UnityEngine;
 
 public interface IBattleActions {
     bool TrySummonEnemy(Character enemy);
+    void HandleAnimationEnd();
 }
