@@ -264,10 +264,10 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         UpdateTargetIndicator();
     }
 
-    IEnumerator BattleOver(bool won) {
+    IEnumerator BattleOver(bool won, bool escaped = false) {
         StateManager.ChangeState(new BattleOverState(this));
         
-        if (won) {
+        if (won && !escaped) {
             yield return GiveEXP(playerUnits, CalculateEXP(enemyUnits));
             yield return ShowInfoBox(levelUpSummaryManager.gameObject);
         }
@@ -560,7 +560,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         f %= 256;
 
         if (Random.Range(0, 256) < f) {
-            StateManager.ChangeState(new BattleOverState(this));
+            yield return BattleOver(true, true);
         }
 
         yield return new WaitForEndOfFrame();
