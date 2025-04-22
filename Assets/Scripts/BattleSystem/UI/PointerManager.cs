@@ -37,7 +37,6 @@ public class PointerManager : MonoBehaviour {
     }
 
     public void UpdateSinglePointer(Transform target) {
-        Debug.Log(target.position);
         Vector3 screenPos = Camera.main.WorldToScreenPoint(target.position);
         activePointers[0].position = screenPos;
         MusicManager.Instance.PlaySound("MenuScroll");

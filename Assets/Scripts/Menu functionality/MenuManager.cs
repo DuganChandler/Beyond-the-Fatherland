@@ -52,6 +52,12 @@ public class MenuManager : MonoBehaviour {
     [Header("Book Reader")]
     [SerializeField] private BookReader bookReader;
 
+    [Header("Item Executor")]
+    [SerializeField] private ItemExecutor itemExecutor;
+
+    [Header("Ability Executor")]
+    [SerializeField] private AbilityExecutor abilityExecutor;
+
     private Stack<BagMenuStateObject> menuStates;
 
 
@@ -235,9 +241,10 @@ public class MenuManager : MonoBehaviour {
     }
 
     public IEnumerator UseItem(CombatItemData item, Character target) {
-        foreach (ItemEffectBase effect in item.effects) {
-            EffectInfo effectInfo = effect.ApplyEffectToCharacter(null, target);
-            Debug.Log(effectInfo.TextInformation);
+        BattleUnit unit = new(target, null);
+        ItemContext context = new(item, null, unit, null);
+        foreach (ItemEffectBase effect in item.Effects) {
+            yield return effect.ApplyToCharacter(context);
         }
 
         playerInventory.RemoveItem(item);

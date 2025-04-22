@@ -17,7 +17,6 @@ MonoBehaviour:
   itemTarget: 0
   itemSprite: {fileID: 0}
   itemDescription: Revives target dead party member and heals minor hp.
-  canTargetDead: 0
-  effects:
+  canTargetDead: 1
+  Effects:
   - {fileID: 11400000, guid: e05f4b0a08e0f4e469e7830cee4a91d1, type: 2}
-  - {fileID: 11400000, guid: b70593cb231380640b0e70db54c8b7a2, type: 2}
