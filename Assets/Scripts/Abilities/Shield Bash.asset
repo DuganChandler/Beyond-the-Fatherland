@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shield Bash
   m_EditorClassIdentifier: 
   name: Shield Bash
-  description: 
+  description: Bash you shield into an enemy dealing minor damage
   element: 0
   power: 10
   actionCost: 10

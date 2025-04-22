@@ -61619,17 +61619,17 @@ PrefabInstance:
     - target: {fileID: 8357425145394215059, guid: b40add025be238c49a315cbdf30c7039,
         type: 3}
       propertyPath: characterList.Array.data[0].level
-      value: 1
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8357425145394215059, guid: b40add025be238c49a315cbdf30c7039,
         type: 3}
       propertyPath: characterList.Array.data[1].level
-      value: 1
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8357425145394215059, guid: b40add025be238c49a315cbdf30c7039,
         type: 3}
       propertyPath: characterList.Array.data[2].level
-      value: 1
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8715048881297873509, guid: b40add025be238c49a315cbdf30c7039,
         type: 3}
