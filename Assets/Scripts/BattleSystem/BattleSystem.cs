@@ -394,20 +394,16 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
             CheckSlotsToAnimate(currentTarget, true);
         }
 
-        // if (lastSelectedTarget != null && lastSelectedTarget != currentTarget) {
-        //     lastSelectedTarget.GetComponent<MeshRenderer>().materials[^1].SetFloat("_OutlineThickness", 0f);
-        // }
-        // currentTarget.GetComponent<MeshRenderer>().materials[^1].SetFloat("_OutlineThickness", 0.04f);
-
         pointerManager.TargetSingle(currentTarget.transform);
 
         lastSelectedTarget = currentTarget;
     }
 
     public void ClearTargetIndicator() {
-        // if (lastSelectedTarget) {
-        //     lastSelectedTarget.GetComponent<MeshRenderer>().materials[^1].SetFloat("_OutlineThickness", 0f);
-        // }
+        foreach(ActionSlot slot in actionBarManager.ActionSLots) {
+            slot.Highlight = false;
+        }
+
         pointerManager.ClearPointers();
     }
 
@@ -572,8 +568,6 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
 
     int CalculateAttackDamage(Character user, Character target) {
         int userDamage = user.CalculateBasicAttackDamage(target);
-        //int targetDefense = target.CalculateDefense();
-        //Debug.Log($"User Damage: {userDamage} Target Defense: {targetDefense}");
         return userDamage;
     }
 
@@ -589,7 +583,6 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         yield return new WaitForEndOfFrame();
     }
 
-    // ability -> calculate damage, check for status effects, check if you can cast
     IEnumerator RunAbility(ActionSlot actionSlot){
         AbilityBase currentAbility = actionSlot.BattleAction.AbilityBase;
         BattleUnit target = actionSlot.BattleAction.Target; 
@@ -626,57 +619,9 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         yield return new WaitForEndOfFrame();
     }
 
-    // IEnumerator RunItem(ActionSlot actionSlot) {
-    //     BattleUnit target = actionSlot.BattleAction.Target;
-    //     BattleUnit user = actionSlot.BattleAction.User;
-    //     CombatItemData currentItem = (CombatItemData)actionSlot.BattleAction.ItemSlot.Item;
-
-    //     BattleUnit newTarget = null;
-
-    //     if (!target.Character.IsAlive && currentItem.ItemTarget == ItemTarget.Player) {
-    //         newTarget = user;
-    //     } else if (!target.Character.IsAlive && currentItem.ItemTarget == ItemTarget.Enemy) {
-    //         foreach(var enemy in enemyUnits) {
-    //             newTarget = enemy;
-    //         }
-    //     }else{
-    //         newTarget = target;
-    //     }
-
-    //     GameObject damageTextObject = newTarget.CurrentModelInstance.transform.GetChild(0).gameObject;
-    //     yield return StartCoroutine(UseItem(currentItem, user.Character, newTarget.Character, damageTextObject));
-    //     yield return new WaitForSeconds(0.5f);
-
-    // }
-
-    // public IEnumerator UseItem(CombatItemData item, Character user, Character target, GameObject damageTextObject) {
-    //     Character newTarget = target;
-
-    //     foreach (ItemEffectBase effect in item.effects) {
-    //         EffectInfo effectInfo = effect.ApplyEffectToCharacter(user, newTarget);
-    //         damageTextObject.SetActive(true);
-    //         damageTextObject.GetComponent<DamageText>().text.text = $"{effectInfo.TextInformation}";
-    //         damageTextObject.GetComponent<DamageText>().text.color = effectInfo.TextColor;
-
-    //         yield return new WaitForSeconds(1f);
-
-    //         damageTextObject.SetActive(false);
-    //     }
-
-    //     damageTextObject.GetComponent<DamageText>().text.color = Color.white;
-
-
-    //     yield return new WaitForEndOfFrame();
-    // }
-
     IEnumerator OnCharacterDeath(ActionSlot actionSlot) {
-        // get XP;
-        // death animation
-        // remove model from instanceList or mark as dead and skip over;
         BattleUnit dyingUnit = actionSlot.BattleAction.Target;
         if (dyingUnit.Character.CharacterData.CharacerType == CharacerType.Enemy || dyingUnit.Character.CharacterData.CharacerType == CharacerType.Boss) {
-            // dyingUnit.CurrentModelInstance.GetComponent<MeshRenderer>().materials[0].color = Color.red;
-
             dyingUnit.BattlePosition.Occupied = false;
             Destroy(dyingUnit.CurrentModelInstance);
 
@@ -688,10 +633,8 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
                 }
             }
         } else {
-            // dyingUnit.CurrentModelInstance.transform.GetChild(2).GetComponent<SkinnedMeshRenderer>().materials[0].color = Color.red;
             foreach(var playerUnit in playerUnits) {
                 if(playerUnit == dyingUnit) {
-                    // playerUnits.Remove(playerUnit);
                     playerUnit.Character.IsAlive = false;
                     Animator animator = playerUnit.CurrentModelInstance.GetComponent<Animator>();
                     animator.SetTrigger("Death");
@@ -796,7 +739,6 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
     }
 
     void HandleItemSelection(ItemSlot selectedSlot) {
-        Debug.Log("handle them items");
         currentAction.ItemSlot = selectedSlot;
         EventSystem.current.SetSelectedGameObject(null);
         itemPanel.SetActive(false);
