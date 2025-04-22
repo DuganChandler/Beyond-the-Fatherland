@@ -1,8 +1,16 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(Animator))]
 public class ActionSlot : MonoBehaviour {
     [SerializeField] private GameObject characterPortrait;
+    [SerializeField] private Button defaultLeftNavButton;
+
+    private Animator animator;
+
+    public bool IsOccupied { get; set; }
+    public bool IsSwapping { get; set; } 
+
     public GameObject CharacterPortrait {
         get {
             return characterPortrait;
@@ -11,11 +19,17 @@ public class ActionSlot : MonoBehaviour {
         }
     }
 
-    public bool IsSwapping  { get; set; } 
+    private bool _highlight = false;
+    public bool Highlight {
+        get {
+            return _highlight;
+        } set {
+            _highlight = value;
+            animator.SetBool("Target", value);
+        }
+    }
 
-    [SerializeField] private Button defaultLeftNavButton;
-
-    private BattleAction battleAction;
+    private BattleAction battleAction = null;
     public BattleAction BattleAction {
         get {
             return battleAction;
@@ -24,15 +38,19 @@ public class ActionSlot : MonoBehaviour {
         }
     }
 
-    public bool IsOccupied { get; set; }
+    void Start() {
+        animator = GetComponent<Animator>();
+    } 
+
+    public void SetToNormal() {
+        animator.SetTrigger("Normal");
+    }
 
     public void ResetData() {
         battleAction.User = null;
         battleAction.Target = null;
         battleAction.Type = ActionType.None;
-        // _targetBattleUnit = null;
         IsOccupied = false;
-
         characterPortrait.SetActive(false);
     }
 

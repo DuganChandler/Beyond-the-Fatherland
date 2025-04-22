@@ -363,11 +363,34 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         }
     } 
 
+    void CheckSlotsToAnimate(GameObject currentTarget, bool startAnim) {
+        foreach (ActionSlot slot in actionBarManager.ActionSLots) {
+            GameObject userModel = slot.BattleAction?.User.CurrentModelInstance;
+            if (userModel != null) {
+                if (userModel == currentTarget) {
+                    if (startAnim) {
+                        slot.Highlight = true;
+                    } else {
+                        // stop animation
+                        slot.Highlight = false;
+                        slot.SetToNormal();
+                    }
+                }
+            }
+        }
+    }
+
     void UpdateTargetIndicator() {
         List<BattleUnit> currentTargetList = isSelectingEnemy ? enemyUnits: playerUnits;
         if (currentTargetList.Count < 0) return;
 
+        if (lastSelectedTarget != null) {
+            CheckSlotsToAnimate(lastSelectedTarget, false);
+        }
+
         GameObject currentTarget = currentTargetList[currentTargetIndex].CurrentModelInstance;
+        
+        CheckSlotsToAnimate(currentTarget, true);
 
         // if (lastSelectedTarget != null && lastSelectedTarget != currentTarget) {
         //     lastSelectedTarget.GetComponent<MeshRenderer>().materials[^1].SetFloat("_OutlineThickness", 0f);
@@ -477,8 +500,6 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
             if (!slot.BattleAction.User.Character.IsAlive) {
                 continue;
             }
-
-            
 
             switch (slot.BattleAction.Type) {
                 case ActionType.Attack:
