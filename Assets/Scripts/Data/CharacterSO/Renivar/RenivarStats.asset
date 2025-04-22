@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: RenivarStats
   m_EditorClassIdentifier: 
   levelStats:
-  - Strength: 5
+  - Strength: 6
     Magic: 2
     Defense: 4
   - Strength: 7

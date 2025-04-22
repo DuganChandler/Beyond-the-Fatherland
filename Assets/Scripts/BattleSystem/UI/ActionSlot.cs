@@ -11,9 +11,6 @@ public class ActionSlot : MonoBehaviour {
         }
     }
 
-    [SerializeField] int slotNumber; 
-    public int SlotNumber { get => slotNumber; set { slotNumber =  value; } }
-
     public bool IsSwapping  { get; set; } 
 
     [SerializeField] private Button defaultLeftNavButton;

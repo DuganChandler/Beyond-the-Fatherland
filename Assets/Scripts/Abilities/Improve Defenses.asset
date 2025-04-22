@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bba6f6b913b7124c966bc88bd0f0e06, type: 3}
   m_Name: Improve Defenses
   m_EditorClassIdentifier: 
-  name: 
+  name: Improve Defenses
   description: Regain a small ammount of an ally's HP.
   element: 0
   power: 15

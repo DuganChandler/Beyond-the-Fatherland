@@ -18,8 +18,8 @@ MonoBehaviour:
     type: 3}
   characterPortrait: {fileID: 21300000, guid: 00cc7b9a6678c08488c38b9a870da1ef, type: 3}
   characerType: 2
-  currentLevel: 8
-  baseHP: 320
+  currentLevel: 9
+  baseHP: 300
   baseMP: 60
   characterStats: {fileID: 11400000, guid: 5ce8fce237dd50444809e7df799d1807, type: 2}
   primaryStat: 0
