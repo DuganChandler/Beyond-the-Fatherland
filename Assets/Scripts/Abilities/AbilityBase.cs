@@ -42,6 +42,8 @@ public class AbilityBase: ScriptableObject
     [SerializeField] int power;
     [SerializeField] int actionCost;
 
+    [SerializeField] bool costHP;
+
     [Header("Attributes")]
     [SerializeField] AbilityTarget target;
     [SerializeField] AbilityCategory category;
@@ -55,6 +57,7 @@ public class AbilityBase: ScriptableObject
     public string AbilityName { get => name; }
     public int Power { get => power; }
     public int ActionCost { get => actionCost; }
+    public bool CostHP {get => costHP;}
     public Element Element { get => element; }
     public List<AbilityEffectBase> Effects{ get => effects; }
     public AbilityCategory Category { get => category; }

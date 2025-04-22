@@ -1,9 +1,24 @@
 fileFormatVersion: 2
-guid: 57f74081a008ae84fb03509e62edc63f
+guid: 9bd27920b5e1eda4eb774de772054142
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: SpearAccent
+    second: {fileID: 2100000, guid: fb32cb452401c704e963326097b2b718, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: SpearHandle
+    second: {fileID: 2100000, guid: 6b032709a29e47a44a76feec7148fa9d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: SpearHead
+    second: {fileID: 2100000, guid: 06aa4cee553d29d498acc32388730057, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
