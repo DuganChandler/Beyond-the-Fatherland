@@ -70,32 +70,27 @@ public class Character  {
     }
 
     public int CalculateBasicAttackDamage(Character target) {
-        int mod = (int)Mathf.Max((Level - target.Level) * 1.1f, 1f);
+        float primaryStat = PrimaryStat == Stat.Strength ? Stats.Strength : Stats.Magic;
+        float levelMod = Mathf.Max((Level - target.Level) * 1.1f, 1f);
         float targetDefense = target.Stats.Defense;
-        if (PrimaryStat == Stat.Strength) {
-            float strength = Stats.Strength;
-            return (int)Mathf.Clamp(5 * Mathf.Max(Mathf.Sqrt(strength/targetDefense * 10)) * mod * UnityEngine.Random.Range(0.95f,1.05f), 0, 10000);
-        } else if (PrimaryStat == Stat.Magic) {
-            float magic = Stats.Magic;
-            return (int)Mathf.Clamp(5 * Mathf.Max(Mathf.Sqrt(magic/targetDefense * 10)) * mod * UnityEngine.Random.Range(0.95f,1.05f), 0, 10000);
-        } 
-        return 0;
+        // change 10 to characterData.WeaponPower;
+        float baseDamage = Mathf.Max(Mathf.Sqrt(primaryStat/targetDefense * 10), 1f);
+        float randMod = UnityEngine.Random.Range(0.95f,1.05f);
+
+        // attaack dmg mod and def reduction mod
+
+        return (int)Mathf.Clamp(5 * baseDamage * levelMod * randMod, 0, 10000); 
     }
 
     public int CalculateAbilityPower(int power, Character target){
-        //DMG = 5 * sqrt(primary state/enemy def * ability power) * rnd
-        int damage = 0;
+        float primaryStat = PrimaryStat == Stat.Strength ? Stats.Strength : Stats.Magic;
+        float levelMod = Mathf.Max((Level - target.Level) * 1.1f, 1f);
         float targetDefense = target.Stats.Defense;
-        int mod = (int)Mathf.Max((Level - target.Level) * 1.1f, 1f);
-        if (PrimaryStat == Stat.Strength) {
-            float strength = Stats.Strength;
-            damage = (int)Mathf.Clamp(5 * Mathf.Max(Mathf.Sqrt(strength/targetDefense * power)) * mod * UnityEngine.Random.Range(0.95f,1.05f), 0, 10000);
-        }else if(PrimaryStat == Stat.Magic){
-            float magic = Stats.Magic;
-            damage = (int)Mathf.Clamp(5 * Mathf.Max(Mathf.Sqrt(magic/targetDefense * power), 1f) * mod * UnityEngine.Random.Range(0.95f,1.05f), 0, 10000);
-        }
-        return damage;
-        
+        float baseDamage = Mathf.Max(Mathf.Sqrt(primaryStat/targetDefense * power), 1f);
+        float randMod = UnityEngine.Random.Range(0.95f,1.05f);
+        // attaack dmg mod and def reduction mod
+
+        return (int)Mathf.Clamp(5 * baseDamage * levelMod * randMod, 0, 10000); 
     }
 
     public int CalculateDefense() {

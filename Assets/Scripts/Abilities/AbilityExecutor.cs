@@ -5,11 +5,11 @@ public class AbilityExecutor : MonoBehaviour {
      public IEnumerator ExecuteAbility(AbilityBase ability, BattleUnit user, BattleUnit target, BattleSystem battleSystem) {
         AbilityContext context = new(ability, user, target, battleSystem);
         Animator animator = user.CurrentModelInstance.GetComponent<Animator>();
-            if( animator != null && user.Character.CharacterData.CharacerType == CharacerType.PartyMember) {
-                animator.SetTrigger("Attack");
-                yield return new WaitUntil(() => battleSystem.IsAnimating);
-                battleSystem.IsAnimating = false;
-            }
+        if( animator != null && user.Character.CharacterData.CharacerType == CharacerType.PartyMember) {
+            animator.SetTrigger("Attack");
+            yield return new WaitUntil(() => battleSystem.IsAnimating);
+            battleSystem.IsAnimating = false;
+        }
 
         foreach (AbilityEffectBase effect in ability.Effects) {
             yield return StartCoroutine(effect.ApplyToCharacter(context));
