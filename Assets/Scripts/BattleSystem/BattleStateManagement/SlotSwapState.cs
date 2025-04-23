@@ -32,6 +32,6 @@ public class SlotSwapState : IBattleState {
 
     public IBattleState OnBack() {
         Debug.Log("SLot Swap State: Back -> Slot Action State");
-        return null;
+        return new SlotActionSelectionState(battleSystem);
     }
 }

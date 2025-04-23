@@ -10809,7 +10809,6 @@ MonoBehaviour:
   - {fileID: 1573946317}
   - {fileID: 558221361}
   - {fileID: 1319281050}
-  actionPoints: 0
   abilityExecutor: {fileID: 1218607552}
   itemExecutor: {fileID: 1218607553}
   playerPortraits:

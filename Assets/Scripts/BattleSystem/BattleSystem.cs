@@ -35,7 +35,6 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
     [Header("Battle Setup")]
     [SerializeField] private List<BattlePosition> partyPositions;
     [SerializeField] private List<BattlePosition> encounterPositions;
-    [SerializeField] private int actionPoints;
     [SerializeField] private AbilityExecutor abilityExecutor;
     [SerializeField] private ItemExecutor itemExecutor;
 
@@ -81,6 +80,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
     private bool closeSummary = false;
 
     private int numEscapeAttempts;
+    private int actionPoints;
 
     public bool IsAnimating {get; set; } = false;
 
@@ -100,6 +100,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
     public List<BattlePosition> EncounterPositions { get => encounterPositions; } 
     public List<BattleUnit> EnemyUnits { get => enemyUnits; }
     public GameObject TutorialPanel { get => tutorialPanel; }
+    public int ActionPoints { get => actionPoints; } 
     public int CurrentRound {get; set; } = 1;
 
     void Awake() {
@@ -365,7 +366,8 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
 
     void CheckSlotsToAnimate(GameObject currentTarget, bool startAnim) {
         foreach (ActionSlot slot in actionBarManager.ActionSLots) {
-            GameObject userModel = slot.BattleAction?.User.CurrentModelInstance;
+            Debug.Log(slot);
+            GameObject userModel = slot.BattleAction?.User?.CurrentModelInstance;
             if (userModel != null) {
                 if (userModel == currentTarget) {
                     if (startAnim) {
@@ -404,6 +406,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
             slot.Highlight = false;
         }
 
+        lastSelectedTarget = null;
         pointerManager.ClearPointers();
     }
 
@@ -460,7 +463,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         actionPoints++;
         actionPointText.text = $"{actionPoints}";
 
-        StateManager.ChangeState(new ActionSelectionState(this));
+        StateManager.ChangeState(new SlotActionSelectionState(this));
     }
 
 
