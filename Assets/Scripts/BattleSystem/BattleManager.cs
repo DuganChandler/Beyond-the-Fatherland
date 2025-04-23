@@ -9,6 +9,8 @@ public enum BattleType {
 
 public class BattleManager : MonoBehaviour {
     private static BattleManager _Instance;
+    PlayerController _playerController;
+
     public static BattleManager Instance { 
         get { 
             if (!_Instance) {
@@ -98,6 +100,10 @@ public class BattleManager : MonoBehaviour {
         CallAfterDelay.Create(1.0f, () => {
             ForestObjects.SetActive(true);
         });
+
+        Debug.Log("now in grace period");
+        _playerController.StartGracePeriod(); 
     }
+    
 
 }

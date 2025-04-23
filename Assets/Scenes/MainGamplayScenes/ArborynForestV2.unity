@@ -61553,6 +61553,11 @@ PrefabInstance:
       objectReference: {fileID: 1896520968}
     - target: {fileID: 4523893552268880463, guid: b40add025be238c49a315cbdf30c7039,
         type: 3}
+      propertyPath: gracePeriod
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4523893552268880463, guid: b40add025be238c49a315cbdf30c7039,
+        type: 3}
       propertyPath: sceneObjects
       value: 
       objectReference: {fileID: 77396819}
