@@ -26,12 +26,13 @@ public class SlotSwapState : IBattleState {
     public void OnExit() {
         Debug.Log("Exiting: Slot Swap Selection State");
         battleSystem.ClearTargetIndicator();
+        battleSystem.ActionBarManager.ResetSwap();
         EventSystem.current.SetSelectedGameObject(null);
         battleSystem.InfoPanelManager.SetText("", false);
     }
 
     public IBattleState OnBack() {
         Debug.Log("SLot Swap State: Back -> Slot Action State");
-        return null;
+        return new SlotActionSelectionState(battleSystem);
     }
 }

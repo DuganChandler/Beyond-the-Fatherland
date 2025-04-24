@@ -28,7 +28,8 @@ public class CharacterSelectionState : IBattleState {
         battleSystem.CurrentAction.ItemSlot = null;
         battleSystem.CurrentAction.Target = null;
 
-        battleSystem.InfoPanelManager.SetText($"{battleSystem.CurrentAction.Type}: Select a Character", true);
+        string infoText = battleSystem.ActionPoints > 0 ? $"{battleSystem.CurrentAction.Type}: Select a Character" : $"No Action Points Left Execute Turn";
+        battleSystem.InfoPanelManager.SetText(infoText, true);
     }
 
     public void OnExit() {

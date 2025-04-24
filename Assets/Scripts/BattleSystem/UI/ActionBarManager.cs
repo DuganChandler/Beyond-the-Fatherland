@@ -17,14 +17,36 @@ public class ActionBarManager : MonoBehaviour {
 
     public void HandleActionSlotSelection(SlotAction slotAction) {
         currentSlotAction = slotAction;
-        StartCoroutine(DelayActionSlotSelection());
+        StartCoroutine(DelayActionSlotSelection(slotAction));
     }
 
-    private IEnumerator DelayActionSlotSelection() {
+    private IEnumerator DelayActionSlotSelection(SlotAction slotAction) {
         EventSystem.current.SetSelectedGameObject(null);
         yield return null;
 
-        if (previouslySelectedSlot != null) {
+        if (slotAction == SlotAction.Add) {
+            foreach (ActionSlot slot in actionSlots) {
+                if (!slot.IsOccupied) {
+                    slot.GetComponent<Button>().Select();
+                    break;
+                }
+            } 
+        } else if (slotAction == SlotAction.Remove) {
+            foreach (ActionSlot slot in actionSlots) {
+                if (slot.IsOccupied && slot.BattleAction.User.Character.CharacterData.CharacerType == CharacerType.PartyMember) {
+                    slot.GetComponent<Button>().Select();
+                    break;
+                }
+            } 
+            actionSlots[0].GetComponent<Button>().Select();
+        } else if (slotAction == SlotAction.Swap) {
+            foreach (ActionSlot slot in actionSlots) {
+                if (slot.IsOccupied) {
+                    slot.GetComponent<Button>().Select();
+                    break;
+                }
+            } 
+        } else if (previouslySelectedSlot != null) {
             previouslySelectedSlot.Select();
         } else {
             actionSlots[0].GetComponent<Button>().Select();
@@ -45,6 +67,13 @@ public class ActionBarManager : MonoBehaviour {
                 break;
         }
     }
+
+    public void ResetSwap() {
+        foreach (var slot in actionSlots) {
+            slot.GetComponent<Image>().color = Color.white;
+            slot.IsSwapping = false;
+        }
+    } 
 
     private void HandleSwap(ActionSlot slot) {
         if (slotToSwap == null) {

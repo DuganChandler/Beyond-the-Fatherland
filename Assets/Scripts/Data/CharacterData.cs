@@ -24,6 +24,9 @@ public class CharacterData : ScriptableObject {
     [SerializeField] int baseMP;
     [SerializeField] CharacterStats characterStats;
     [SerializeField] Stat primaryStat;
+    [SerializeField] float weaponPower;
+
+
     [Header("Abilities")]
     [SerializeField] List<AbilityBase> abilities;
 
@@ -87,6 +90,8 @@ public class CharacterData : ScriptableObject {
             return conditions;
         }
     }
+
+    public float WeaponPower => weaponPower;
 }
 
 public enum CharacerType {

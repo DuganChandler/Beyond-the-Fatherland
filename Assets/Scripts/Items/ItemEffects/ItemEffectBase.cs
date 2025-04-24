@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public struct EffectInfo {
@@ -18,12 +19,14 @@ public enum EffectType {
 
 public abstract class ItemEffectBase : ScriptableObject {
     [SerializeField] private string _effectName;
-    [SerializeField] private EffectType effectType;
+    [SerializeField] private EffectType _effectType;
 
     [TextArea]
     [SerializeField] private string _effectNameDescription;
 
-    public abstract EffectInfo ApplyEffectToCharacter(Character user, Character target);
+    public EffectType EffectType { get => _effectType; }
 
-    public virtual EffectInfo ApplyEffectToBattle(BattleSystem battleSystem) { return new EffectInfo(Color.clear, "No effect here"); }
+    public virtual IEnumerator ApplyToCharacter(ItemContext context) { yield return null; }
+
+    public virtual IEnumerator ApplyToBattle(ItemContext context) { yield return null; }
 }

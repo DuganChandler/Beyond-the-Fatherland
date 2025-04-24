@@ -18,6 +18,7 @@ public class AbilitySelectionState : IBattleState {
 
     public void OnEnter() {
         Debug.Log("Now Entering: Ability Selection State");
+        battleSystem.InfoPanelManager.SetText("Select an ability", true);
         battleSystem.CurrentAction.AbilityBase = null;
         battleSystem.AbilityMenu.PopulateAbilities(battleSystem.CurrentSelectedPlayerUnit.Character.Abilities);
         battleSystem.AbilityPanel.SetActive(true);

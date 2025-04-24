@@ -1,13 +1,19 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Revive Effect", menuName = "Items/Effects/RevivePlayer")]
 public class ReviveEffect : ItemEffectBase {
-    public override EffectInfo ApplyEffectToCharacter(Character user, Character target) {
-        if (!target.IsAlive) {
-            target.IsAlive = true;
-            return new EffectInfo(Color.green, $"Revived");
+    public override IEnumerator ApplyToCharacter(ItemContext context) {
+        if (!context.target.Character.IsAlive) {
+            if (context.target.CurrentModelInstance.TryGetComponent<Animator>(out var animator)) {
+                animator.SetTrigger("Revive");
+            }
+
+            context.target.Character.IsAlive = true;
+
+            yield return null;
         }
-        return new EffectInfo(Color.white, "No Effect");
+        yield return null;
     }
 }

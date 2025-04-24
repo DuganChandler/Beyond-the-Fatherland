@@ -20,6 +20,8 @@ public class ItemSelectionState : IBattleState {
         battleSystem.CurrentAction.ItemSlot = null;
         battleSystem.ItemMenu.PopulateInventory(battleSystem.PlayerInventory, ItemCategory.Combat);
         battleSystem.ItemPanel.SetActive(true);
+
+        battleSystem.InfoPanelManager.SetText($"Select an Item", true);
     }
 
     public void OnExit() {

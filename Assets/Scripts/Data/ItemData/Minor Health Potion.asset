@@ -18,5 +18,5 @@ MonoBehaviour:
   itemSprite: {fileID: 0}
   itemDescription: Heals a target a minor amount.
   canTargetDead: 0
-  effects:
+  Effects:
   - {fileID: 11400000, guid: b70593cb231380640b0e70db54c8b7a2, type: 2}

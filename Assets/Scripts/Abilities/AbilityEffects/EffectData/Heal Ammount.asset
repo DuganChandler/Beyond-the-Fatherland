@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2832ce485ca932a42a314e77c9e92508, type: 3}
   m_Name: Heal Ammount
   m_EditorClassIdentifier: 
-  _effectName: 
+  _effectName: Ability Heal
   _effectType: 1
   _effectNameDescription: 
-  abilityHealAmount: 30

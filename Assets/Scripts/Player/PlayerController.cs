@@ -85,7 +85,6 @@ public class PlayerController : MonoBehaviour {
         }
 
         var encounterLayer = IsEncounterLayer();
-        Debug.Log(encounterLayer);
         if (!encounterLayer.Item1) {
             distanceAccumulated = 0f;
             return;

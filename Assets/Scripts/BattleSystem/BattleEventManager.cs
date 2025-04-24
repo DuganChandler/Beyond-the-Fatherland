@@ -19,7 +19,7 @@ public class BattleEventManager : MonoBehaviour {
     public event Action<AbilityBase> OnAbilitySelected;
     public event Action<SlotAction> OnSlotActionSelected;
     public event Action<ActionSlot, SlotAction, bool> OnSlotSelected;
-     public event Action OnAnimationCompleted; 
+    public event Action OnAnimationCompleted; 
 
     public void ItemSelected(ItemSlot itemSlot) {
         OnItemSelected?.Invoke(itemSlot);
@@ -37,13 +37,7 @@ public class BattleEventManager : MonoBehaviour {
         OnSlotSelected?.Invoke(actionSlot,slotAction, swapped);
     }
 
-     public void AnimationCompleted() {
-         OnAnimationCompleted?.Invoke();
-     } 
+    public void AnimationCompleted() {
+        OnAnimationCompleted?.Invoke();
+    } 
 }
-
-// public class AnimationEventHandler : MonoBehaviour {
-//     public void OnAnimationCompleted() {
-//         BattleEventManager.Instance.AnimationCompleted();
-//     }
-// }
