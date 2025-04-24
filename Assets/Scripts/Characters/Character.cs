@@ -73,8 +73,8 @@ public class Character  {
         float primaryStat = PrimaryStat == Stat.Strength ? Stats.Strength : Stats.Magic;
         float levelMod = Mathf.Max((Level - target.Level) * 1.1f, 1f);
         float targetDefense = target.Stats.Defense;
-        // change 10 to characterData.WeaponPower;
-        float baseDamage = Mathf.Max(Mathf.Sqrt(primaryStat/targetDefense * 10), 1f);
+        float weaponPower = CharacterData.WeaponPower;
+        float baseDamage = Mathf.Max(Mathf.Sqrt(primaryStat/targetDefense * weaponPower), 1f);
         float randMod = UnityEngine.Random.Range(0.95f,1.05f);
 
         // attaack dmg mod and def reduction mod

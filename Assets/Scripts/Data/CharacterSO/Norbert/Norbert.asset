@@ -19,10 +19,11 @@ MonoBehaviour:
   characterPortrait: {fileID: 21300000, guid: df215fd0483dd354392e00be0854fb2c, type: 3}
   characerType: 0
   currentLevel: 1
-  baseHP: 95
-  baseMP: 65
+  baseHP: 85
+  baseMP: 40
   characterStats: {fileID: 11400000, guid: 8849d72589329174f8e098cd82a232f1, type: 2}
   primaryStat: 0
+  weaponPower: 8
   abilities:
   - {fileID: 11400000, guid: 4767d475d48e6104abde61a45153815a, type: 2}
   - {fileID: 11400000, guid: 5ca1f17f7ebe3364b8e50fa00f7264b0, type: 2}

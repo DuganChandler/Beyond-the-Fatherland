@@ -581,7 +581,10 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
     IEnumerator TryToEscape() {
         numEscapeAttempts++;
         float f = 5 * 128 / 7 + 30 * numEscapeAttempts;
+        Debug.Log(f);
         f %= 256;
+
+        Debug.Log(f);
 
         if (Random.Range(0, 256) < f) {
             yield return BattleOver(true, true);
