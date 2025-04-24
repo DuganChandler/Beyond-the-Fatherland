@@ -7,6 +7,11 @@ public class AbilityExecutor : MonoBehaviour {
         Animator animator = user.CurrentModelInstance.GetComponent<Animator>();
         if( animator != null && user.Character.CharacterData.CharacerType == CharacerType.PartyMember) {
             animator.SetTrigger("Attack");
+
+            yield return new WaitUntil(() => battleSystem.PlaySFX);
+            MusicManager.Instance.PlaySoundByAudioClip(ability.Sound); 
+            battleSystem.PlaySFX = false;
+
             yield return new WaitUntil(() => battleSystem.IsAnimating);
             battleSystem.IsAnimating = false;
         }

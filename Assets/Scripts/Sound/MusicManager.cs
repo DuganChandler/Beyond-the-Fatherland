@@ -83,4 +83,8 @@ public class MusicManager : MonoBehaviour {
     public void PlaySound(string soundName) {
         soundSource.PlayOneShot(soundLibrary.GetClipFromName(soundName));
     }
+
+    public void PlaySoundByAudioClip(AudioClip sound) {
+        soundSource.PlayOneShot(sound);
+    }
 }

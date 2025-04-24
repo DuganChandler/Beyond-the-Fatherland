@@ -18,6 +18,9 @@ public class CharacterData : ScriptableObject {
     [Header("Character Type")]
     [SerializeField] CharacerType characerType;
 
+    [Header("Attack SFX")]
+    [SerializeField] AudioClip attackSFX;
+
     [Header("Stats")]
     [SerializeField] int currentLevel;
     [SerializeField] int baseHP;
@@ -25,7 +28,6 @@ public class CharacterData : ScriptableObject {
     [SerializeField] CharacterStats characterStats;
     [SerializeField] Stat primaryStat;
     [SerializeField] float weaponPower;
-
 
     [Header("Abilities")]
     [SerializeField] List<AbilityBase> abilities;
@@ -92,6 +94,7 @@ public class CharacterData : ScriptableObject {
     }
 
     public float WeaponPower => weaponPower;
+    public AudioClip AttackSFX => attackSFX;
 }
 
 public enum CharacerType {

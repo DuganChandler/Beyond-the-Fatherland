@@ -6,4 +6,5 @@ public interface IBattleActions {
     bool TrySummonEnemy(Character enemy);
     void HandleAnimationEnd();
     void HandleRemoveItem(ItemBase item);
+    void HandleSFXTriggered();
 }

@@ -20,6 +20,7 @@ public class BattleEventManager : MonoBehaviour {
     public event Action<SlotAction> OnSlotActionSelected;
     public event Action<ActionSlot, SlotAction, bool> OnSlotSelected;
     public event Action OnAnimationCompleted; 
+    public event Action OnSFXTriggered; 
 
     public void ItemSelected(ItemSlot itemSlot) {
         OnItemSelected?.Invoke(itemSlot);
@@ -40,4 +41,8 @@ public class BattleEventManager : MonoBehaviour {
     public void AnimationCompleted() {
         OnAnimationCompleted?.Invoke();
     } 
+
+    public void SFXTriggered() {
+        OnSFXTriggered?.Invoke();
+    }
 }

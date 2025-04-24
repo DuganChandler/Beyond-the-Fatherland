@@ -83,6 +83,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
     private int actionPoints;
 
     public bool IsAnimating {get; set; } = false;
+    public bool PlaySFX { get; set; } = false;
 
     public BattleStateManager StateManager { get => stateManager; }
     public List<Button> PlayerPortraits { get => playerPortraits; }
@@ -101,7 +102,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
     public List<BattleUnit> EnemyUnits { get => enemyUnits; }
     public GameObject TutorialPanel { get => tutorialPanel; }
     public int ActionPoints { get => actionPoints; } 
-    public int CurrentRound {get; set; } = 1;
+    public int CurrentRound { get; set; } = 1;
 
     void Awake() {
         StartBattle(); 
@@ -113,6 +114,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         BattleEventManager.Instance.OnSlotActionSelected += HandleSlotActionSelected;
         BattleEventManager.Instance.OnSlotSelected += HandleActionSlotSelected;
         BattleEventManager.Instance.OnAnimationCompleted += HandleAnimationEnd;
+        BattleEventManager.Instance.OnSFXTriggered += HandleSFXTriggered;
     }
 
     void OnDisable() {
@@ -121,6 +123,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         BattleEventManager.Instance.OnSlotActionSelected -= HandleSlotActionSelected;
         BattleEventManager.Instance.OnSlotSelected -= HandleActionSlotSelected;
         BattleEventManager.Instance.OnAnimationCompleted -= HandleAnimationEnd;
+        BattleEventManager.Instance.OnSFXTriggered -= HandleSFXTriggered;
     }
 
     public void StartBattle() {
@@ -533,9 +536,12 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         BattleUnit target = actionSlot.BattleAction.Target;
 
         if (target.Character.IsAlive) {
-            Animator animator = user.CurrentModelInstance.GetComponent<Animator>();
-            if( animator != null) {
+            if( user.CurrentModelInstance.TryGetComponent<Animator>(out var animator)) {
                 animator.SetTrigger("Attack");
+
+                yield return new WaitUntil(() => PlaySFX); MusicManager.Instance.PlaySoundByAudioClip(user.Character.CharacterData.AttackSFX); 
+                PlaySFX = false;
+
                 yield return new WaitUntil(() => IsAnimating);
                 IsAnimating = false;
             }
@@ -554,7 +560,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
             if (target.Character.HP <= 0) {
                 yield return StartCoroutine(OnCharacterDeath(actionSlot));
             }
-        }else{
+        } else {
             if (user.CurrentModelInstance != null) {
                 GameObject damageTextObject = user.CurrentModelInstance.transform.GetChild(0).gameObject;
                 damageTextObject.SetActive(true);
@@ -881,6 +887,10 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
 
     public void HandleAnimationEnd() {
         IsAnimating = true;
+    }
+
+    public void HandleSFXTriggered() {
+        PlaySFX = true;
     }
 
     public void HandleRemoveItem(ItemBase item) {
