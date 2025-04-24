@@ -31,9 +31,17 @@ public class ActionBarManager : MonoBehaviour {
                     break;
                 }
             } 
-        } else if (slotAction == SlotAction.Remove || slotAction == SlotAction.Swap) {
+        } else if (slotAction == SlotAction.Remove) {
             foreach (ActionSlot slot in actionSlots) {
                 if (slot.IsOccupied && slot.BattleAction.User.Character.CharacterData.CharacerType == CharacerType.PartyMember) {
+                    slot.GetComponent<Button>().Select();
+                    break;
+                }
+            } 
+            actionSlots[0].GetComponent<Button>().Select();
+        } else if (slotAction == SlotAction.Swap) {
+            foreach (ActionSlot slot in actionSlots) {
+                if (slot.IsOccupied) {
                     slot.GetComponent<Button>().Select();
                     break;
                 }
@@ -59,6 +67,13 @@ public class ActionBarManager : MonoBehaviour {
                 break;
         }
     }
+
+    public void ResetSwap() {
+        foreach (var slot in actionSlots) {
+            slot.GetComponent<Image>().color = Color.white;
+            slot.IsSwapping = false;
+        }
+    } 
 
     private void HandleSwap(ActionSlot slot) {
         if (slotToSwap == null) {

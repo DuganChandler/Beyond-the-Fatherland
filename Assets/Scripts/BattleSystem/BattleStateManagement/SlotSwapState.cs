@@ -26,6 +26,7 @@ public class SlotSwapState : IBattleState {
     public void OnExit() {
         Debug.Log("Exiting: Slot Swap Selection State");
         battleSystem.ClearTargetIndicator();
+        battleSystem.ActionBarManager.ResetSwap();
         EventSystem.current.SetSelectedGameObject(null);
         battleSystem.InfoPanelManager.SetText("", false);
     }

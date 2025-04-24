@@ -29,7 +29,7 @@ public class TargetSelectionState : IBattleState {
     public IBattleState OnBack() {
         switch (battleSystem.CurrentAction.Type) {
             case ActionType.Attack:
-                return new ActionSelectionState(battleSystem);
+                return new CharacterSelectionState(battleSystem);
             case ActionType.Ability:
                 return new AbilitySelectionState(battleSystem);
             case ActionType.Item:

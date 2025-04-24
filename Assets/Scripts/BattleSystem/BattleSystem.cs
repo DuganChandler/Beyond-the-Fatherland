@@ -371,11 +371,10 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
             if (userModel != null) {
                 if (userModel == currentTarget) {
                     if (startAnim) {
-                        slot.Highlight = true;
+                        slot.GetComponent<Animator>().SetTrigger("Selected");
                     } else {
                         // stop animation
-                        slot.Highlight = false;
-                        slot.SetToNormal();
+                        slot.GetComponent<Animator>().SetTrigger("Normal");
                     }
                 }
             }
@@ -403,7 +402,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
 
     public void ClearTargetIndicator() {
         foreach(ActionSlot slot in actionBarManager.ActionSLots) {
-            slot.Highlight = false;
+            slot.GetComponent<Animator>().SetTrigger("Normal");
         }
 
         lastSelectedTarget = null;
@@ -463,7 +462,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         actionPoints++;
         actionPointText.text = $"{actionPoints}";
 
-        StateManager.ChangeState(new SlotActionSelectionState(this));
+        // StateManager.ChangeState(new SlotActionSelectionState(this));
     }
 
 
@@ -732,11 +731,10 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
             } else if (swapped) {
                 actionPoints -= 2;
                 actionPointText.text = $"{actionPoints}";
-                StateManager.ChangeState(new ActionSelectionState(this));
+                // StateManager.ChangeState(new ActionSelectionState(this));
             }
         } 
     }
-
 
     void HandleAbilitySelection(AbilityBase selectedAbility){
         if (currentAction.User.Character.MP < selectedAbility.ActionCost) {
