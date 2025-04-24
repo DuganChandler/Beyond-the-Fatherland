@@ -59,16 +59,31 @@ public class BattleManager : MonoBehaviour {
         yield return null;
     }
 
-    public void EndBattle(bool won) {
+    public IEnumerator EndBattle(bool won) {
         if (!won) {
             if (MusicManager.Instance != null) {
                 MusicManager.Instance.PlayMusicNoFade("TitleTheme"); 
             }
 
-            SceneHelper.LoadScene("GameOver", false, true);
-            GameManager.Instance.GameState = GameState.GameOver;
-            MusicManager.Instance.StopMusic();
-            return;
+            yield return StartCoroutine(SceneHelper.LoadSceneWithTransition("GameOver", false, true, null, () => {
+                if (MusicManager.Instance) {
+                    MusicManager.Instance.PauseMusic();
+                }
+
+                GameManager.Instance.GameState = GameState.GameOver;
+
+                CircleFadeTransition circleFade = FindObjectOfType<CircleFadeTransition>();
+                if (circleFade != null) {
+                    circleFade.onTransitionComplete = () => {
+                        SceneHelper.AllowActivation();
+                        circleFade.Cleanup();
+                        SceneHelper.UnloadScene("ForestBattleScene");
+                    };
+                    StartCoroutine(circleFade.TriggerTransition());
+                }
+            }));
+
+            yield return null;
         }
 
         if (BattleType == BattleType.Boss) {
@@ -78,14 +93,26 @@ public class BattleManager : MonoBehaviour {
                 MusicManager.Instance.StopMusic();
             }
 
-            SceneHelper.LoadScene("Victory", false, true);
-            return;
+            yield return StartCoroutine(SceneHelper.LoadSceneWithTransition("Victory", false, true, null, () => {
+                if (MusicManager.Instance) {
+                    MusicManager.Instance.PauseMusic();
+
+                }
+                GameManager.Instance.GameState = GameState.GameOver;
+
+                CircleFadeTransition circleFade = FindObjectOfType<CircleFadeTransition>();
+                if (circleFade != null) {
+                    circleFade.onTransitionComplete = () => {
+                        SceneHelper.AllowActivation();
+                        circleFade.Cleanup();
+                    };
+                    StartCoroutine(circleFade.TriggerTransition());
+                }
+            }));
+
+            yield return null;
         }
 
-        GameManager.Instance.GameState = GameState.FreeRoam;
-        MusicManager.Instance.StopMusic();
-
-        MusicManager.Instance.PlayMusicNoFade("ForestTheme"); 
 
         foreach (var character in PlayerPartyList) {
             if (!character.IsAlive) {
@@ -94,8 +121,16 @@ public class BattleManager : MonoBehaviour {
             }
         }
 
-        SceneHelper.UnloadScene("ForestBattleScene");
+        CircleFadeTransition circleFade = FindObjectOfType<CircleFadeTransition>();
+        if (circleFade != null) {
+            yield return StartCoroutine(circleFade.TriggerTransition());
+        }
+
         CallAfterDelay.Create(1.0f, () => {
+            MusicManager.Instance.StopMusic();
+            MusicManager.Instance.PlayMusicNoFade("ForestTheme"); 
+            SceneHelper.UnloadScene("ForestBattleScene");
+            GameManager.Instance.GameState = GameState.FreeRoam;
             ForestObjects.SetActive(true);
         });
     }

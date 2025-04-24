@@ -37,7 +37,7 @@ public class BattleEventManager : MonoBehaviour {
         OnSlotSelected?.Invoke(actionSlot,slotAction, swapped);
     }
 
-     public void AnimationCompleted() {
-         OnAnimationCompleted?.Invoke();
-     } 
+    public void AnimationCompleted() {
+        OnAnimationCompleted?.Invoke();
+    } 
 }

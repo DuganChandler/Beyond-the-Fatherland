@@ -279,7 +279,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
 
         levelUpSummaryManager.gameObject.SetActive(false);
 
-        BattleManager.Instance.EndBattle(won);
+        yield return BattleManager.Instance.EndBattle(won);
     }
 
     private IEnumerator WaitForSummaryInput() {
@@ -556,13 +556,17 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
                 yield return StartCoroutine(OnCharacterDeath(actionSlot));
             }
         }else{
-            GameObject damageTextObject = user.CurrentModelInstance.transform.GetChild(0).gameObject;
-            damageTextObject.SetActive(true);
-            damageTextObject.GetComponent<DamageText>().text.text = "Missed!";
+            if (user.CurrentModelInstance != null) {
+                GameObject damageTextObject = user.CurrentModelInstance.transform.GetChild(0).gameObject;
+                damageTextObject.SetActive(true);
+                damageTextObject.GetComponent<DamageText>().text.text = "Missed!";
 
-            yield return new WaitForSeconds(1f);
+                yield return new WaitForSeconds(1f);
 
-            damageTextObject.SetActive(false);
+                damageTextObject.SetActive(false);
+            } else {
+                yield return new WaitForSeconds(1f);
+            }
         }
 
         yield return new WaitForEndOfFrame();
