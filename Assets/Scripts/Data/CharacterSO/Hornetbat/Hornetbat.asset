@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Hornetbat
   description: Hornet + Bat = WHY DOES THIS EXIST!!??!?!?!?!?!?!?
-  characterPrefab: {fileID: 1000012081666484, guid: a300b93764f24c94b9ddb3445d906548,
+  characterPrefab: {fileID: 1909952558971217001, guid: 6f3264c1769e6f94fafc7e06d7f62631,
     type: 3}
   characterPortrait: {fileID: 21300000, guid: 023287d2c0259494dbbf3a0cfc920981, type: 3}
   characerType: 1
