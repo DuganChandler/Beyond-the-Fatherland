@@ -15,7 +15,11 @@ public class AbilityExecutor : MonoBehaviour {
             yield return StartCoroutine(effect.ApplyToCharacter(context));
             yield return StartCoroutine(effect.ApplyToBattle(context));
         }
-        user.Character.DecreaseMP(ability.ActionCost);
+        if(ability.CostHP){
+            user.Character.DecreaseHP(ability.ActionCost);
+        }else{
+            user.Character.DecreaseMP(ability.ActionCost);
+        }
         yield return new WaitForEndOfFrame();
     }
 }
