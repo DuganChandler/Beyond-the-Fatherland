@@ -27,12 +27,9 @@ public class Character  {
 
     public Stat PrimaryStat { get; set; }
     public Stats Stats { get; set; }
-    public float strengthBuffs {get; set;}
-    public float magicBuffs {get; set;}
-    public float defenseBuffs {get; set;}
-    public float strengthDebuffs {get; set;}
-    public float magicDebuffs {get; set;}
-    public float defenseDebuffs {get; set;}
+    public float strengthMod {get; set;}
+    public float magicMod {get; set;}
+    public float defenseMod {get; set;}
 
     public bool LeveledUp { get; set; } = false;
 
@@ -161,9 +158,9 @@ public class Character  {
         }
     }
 
-    /*public void CheckConditions(int round, BattleSystem battleSystem){
+    public void CheckConditions(int round, BattleSystem battleSystem){
         foreach(Condition condition in Conditions){
-            if(condition.initilaRound - )
+            
         }
-    }*/
+    }
 }

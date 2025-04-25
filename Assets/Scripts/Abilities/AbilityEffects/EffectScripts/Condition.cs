@@ -1,4 +1,15 @@
 using System.Collections;
+using UnityEngine;
+
+public abstract class Condition : ScriptableObject {
+    [SerializeField] private string _conditionName;
+
+    [TextArea]
+    [SerializeField] private string _conditionNameDescription;
+
+    public virtual IEnumerator ApplyToCharacter(AbilityContext context) { yield return null; }
+}
+/*using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,4 +23,4 @@ public class Condition : AbilityEffectBase
     {
         return base.ApplyToCharacter(context);
     }
-}
+}*/
