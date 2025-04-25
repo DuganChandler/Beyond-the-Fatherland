@@ -394,6 +394,8 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         
         if (isSelectingEnemy) {
             CheckSlotsToAnimate(currentTarget, true);
+        } else {
+            MusicManager.Instance.PlaySound("MenuScroll");
         }
 
         pointerManager.TargetSingle(currentTarget.transform);
