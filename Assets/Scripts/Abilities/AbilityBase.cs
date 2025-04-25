@@ -27,8 +27,7 @@ public enum AbilityProperty{
 }
 
 [CreateAssetMenu(fileName = "Abilities", menuName = "Abilities/Create new Ability", order = 0)]
-public class AbilityBase: ScriptableObject
-{
+public class AbilityBase: ScriptableObject {
     [Header("Ability Information")]
     [SerializeField] new string name;
 
@@ -48,10 +47,11 @@ public class AbilityBase: ScriptableObject
     [SerializeField] AbilityTarget target;
     [SerializeField] AbilityCategory category;
     [SerializeField] bool isAOE;
-    //[SerializeField] List<Secondaries> secondaries;
 
     [Header("Audio")]
     [SerializeField] AudioClip sound;
+
+    [Header("Ability Effects")]
     [SerializeField] List<AbilityEffectBase> effects;
     [SerializeField] List<Condition> conditions;
 

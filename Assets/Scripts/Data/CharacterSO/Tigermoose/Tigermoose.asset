@@ -18,6 +18,7 @@ MonoBehaviour:
     type: 3}
   characterPortrait: {fileID: 21300000, guid: 5e7070c29b6420140acec2c63e3badaa, type: 3}
   characerType: 1
+  attackSFX: {fileID: 8300000, guid: d3fba037e1ab1354ab2d33bc1eb725e6, type: 3}
   currentLevel: 1
   baseHP: 110
   baseMP: 10

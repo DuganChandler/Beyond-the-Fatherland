@@ -57,7 +57,9 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
     [SerializeField] ActionButtonManager actionButtonManager;
     [SerializeField] LevelUpSummaryManager levelUpSummaryManager;
     [SerializeField] GameObject tutorialPanel;
+    [SerializeField] BattleTextManager battleTextManager;
 
+    [Header("State Management")]
     [SerializeField] BattleStateManager stateManager;
 
     private List<BattleUnit> playerUnits;
@@ -84,6 +86,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
     private int actionPoints;
 
     public bool IsAnimating {get; set; } = false;
+    public bool PlaySFX { get; set; } = false;
 
     public BattleStateManager StateManager { get => stateManager; }
     public List<Button> PlayerPortraits { get => playerPortraits; }
@@ -102,7 +105,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
     public List<BattleUnit> EnemyUnits { get => enemyUnits; }
     public GameObject TutorialPanel { get => tutorialPanel; }
     public int ActionPoints { get => actionPoints; } 
-    public int CurrentRound {get; set; } = 1;
+    public int CurrentRound { get; set; } = 1;
 
     void Awake() {
         StartBattle(); 
@@ -114,6 +117,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         BattleEventManager.Instance.OnSlotActionSelected += HandleSlotActionSelected;
         BattleEventManager.Instance.OnSlotSelected += HandleActionSlotSelected;
         BattleEventManager.Instance.OnAnimationCompleted += HandleAnimationEnd;
+        BattleEventManager.Instance.OnSFXTriggered += HandleSFXTriggered;
     }
 
     void OnDisable() {
@@ -122,6 +126,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         BattleEventManager.Instance.OnSlotActionSelected -= HandleSlotActionSelected;
         BattleEventManager.Instance.OnSlotSelected -= HandleActionSlotSelected;
         BattleEventManager.Instance.OnAnimationCompleted -= HandleAnimationEnd;
+        BattleEventManager.Instance.OnSFXTriggered -= HandleSFXTriggered;
     }
 
     public void StartBattle() {
@@ -502,6 +507,10 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
                 continue;
             }
 
+            if (StateManager.CurrentState.State == BattleState.BattleOver) {
+                yield break;
+            }
+
             switch (slot.BattleAction.Type) {
                 case ActionType.Attack:
                     yield return StartCoroutine(RunAttack(slot));
@@ -534,9 +543,12 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         BattleUnit target = actionSlot.BattleAction.Target;
 
         if (target.Character.IsAlive) {
-            Animator animator = user.CurrentModelInstance.GetComponent<Animator>();
-            if( animator != null) {
+            if( user.CurrentModelInstance.TryGetComponent<Animator>(out var animator)) {
                 animator.SetTrigger("Attack");
+
+                yield return new WaitUntil(() => PlaySFX); MusicManager.Instance.PlaySoundByAudioClip(user.Character.CharacterData.AttackSFX); 
+                PlaySFX = false;
+
                 yield return new WaitUntil(() => IsAnimating);
                 IsAnimating = false;
             }
@@ -544,26 +556,20 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
             int totalDamage = CalculateAttackDamage(user.Character, target.Character); 
             target.Character.DecreaseHP(totalDamage);
 
-            GameObject damageTextObject = target.CurrentModelInstance.transform.GetChild(0).gameObject;
-            damageTextObject.SetActive(true);
-            damageTextObject.GetComponent<DamageText>().text.text = $"{totalDamage}";
+            battleTextManager.CreateBattleText(target.CurrentModelInstance.transform, $"{totalDamage}", Color.red);
 
             yield return new WaitForSeconds(1f);
-
-            damageTextObject.SetActive(false);
 
             if (target.Character.HP <= 0) {
                 yield return StartCoroutine(OnCharacterDeath(actionSlot));
             }
-        }else{
+        } else {
             if (user.CurrentModelInstance != null) {
-                GameObject damageTextObject = user.CurrentModelInstance.transform.GetChild(0).gameObject;
-                damageTextObject.SetActive(true);
-                damageTextObject.GetComponent<DamageText>().text.text = "Missed!";
+                battleTextManager.CreateBattleText(user.CurrentModelInstance.transform, "Missed!", Color.red);
 
                 yield return new WaitForSeconds(1f);
 
-                damageTextObject.SetActive(false);
+                // damageTextObject.SetActive(false);
             } else {
                 yield return new WaitForSeconds(1f);
             }
@@ -735,7 +741,6 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
             } else if (swapped) {
                 actionPoints -= 2;
                 actionPointText.text = $"{actionPoints}";
-                // StateManager.ChangeState(new ActionSelectionState(this));
             }
         } 
     }
@@ -887,7 +892,15 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         IsAnimating = true;
     }
 
+    public void HandleSFXTriggered() {
+        PlaySFX = true;
+    }
+
     public void HandleRemoveItem(ItemBase item) {
         playerInventory.RemoveItem(item);
+    }
+
+    public void CreateDamageTextAtTarget(Transform target, string text, Color color) {
+        battleTextManager.CreateBattleText(target, text, color);
     }
 }
