@@ -30,7 +30,6 @@ public class CharacterData : ScriptableObject {
     [Header("Abilities")]
     [SerializeField] List<AbilityBase> abilities;
 
-    List<Condition> conditions;
 
     // Make sure to check if the character type is BOSS
     public Stats GetStatsAtLevel(int level) {
@@ -84,12 +83,6 @@ public class CharacterData : ScriptableObject {
         }
     }
     // Create List of Abilities
-
-    public List<Condition> Conditions{
-        get{
-            return conditions;
-        }
-    }
 
     public float WeaponPower => weaponPower;
 }

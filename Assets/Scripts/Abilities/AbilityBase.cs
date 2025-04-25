@@ -53,6 +53,7 @@ public class AbilityBase: ScriptableObject
     [Header("Audio")]
     [SerializeField] AudioClip sound;
     [SerializeField] List<AbilityEffectBase> effects;
+    [SerializeField] List<Condition> conditions;
 
     public string AbilityName { get => name; }
     public int Power { get => power; }
@@ -60,6 +61,7 @@ public class AbilityBase: ScriptableObject
     public bool CostHP {get => costHP;}
     public Element Element { get => element; }
     public List<AbilityEffectBase> Effects{ get => effects; }
+    public List<Condition> Conditions {get => conditions;}
     public AbilityCategory Category { get => category; }
     public AbilityTarget AbilityTarget { get => target; }
     public AudioClip Sound => sound;

@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using TMPro;
+using UnityEditor.VersionControl;
 
 public enum BattleState {
     Start,
@@ -680,6 +681,9 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
     }
 
     void CleanUp() {
+        foreach(var playerUnit in playerUnits){
+            playerUnit.Character.EndOfRound(playerUnit.Character);
+        }
         foreach (var slot in actionBarManager.ActionSLots) {
             if (!slot.IsOccupied) {
                 continue;
