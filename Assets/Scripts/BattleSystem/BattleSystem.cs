@@ -5,7 +5,6 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using TMPro;
-using UnityEditor.VersionControl;
 
 public enum BattleState {
     Start,
@@ -335,10 +334,6 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
             StateManager.ChangeState(new CharacterSelectionState(this));
         }
     }
-
-    // Button OnClick for Character Select State
-
-    // Button OnClick for Action Selection State
 
     // Player input call back for navigating Target selection
     public void OnTargetNavigate(InputAction.CallbackContext context) {
@@ -770,6 +765,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         if (StateManager.CurrentState.State == BattleState.ActionSelection) {
             if (actionPoints <= 0) {
                 Debug.Log("No action points available!");
+                MusicManager.Instance.PlaySound("Wrong");
                 return;
             }
 
@@ -788,6 +784,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         if (StateManager.CurrentState.State != BattleState.ActionSelection) return;
         if (actionPoints <= 0) {
             Debug.Log("No action points available!");
+            MusicManager.Instance.PlaySound("Wrong");
             return;
         }
 
@@ -814,6 +811,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         if (StateManager.CurrentState.State != BattleState.ActionSelection) return;
         if (actionPoints <= 0) {
             Debug.Log("No action points available!");
+            MusicManager.Instance.PlaySound("Wrong");
             return;
         }
 
