@@ -53,15 +53,17 @@ public class AbilityBase: ScriptableObject {
 
     [Header("Ability Effects")]
     [SerializeField] List<AbilityEffectBase> effects;
+    [SerializeField] List<Condition> conditions;
 
-    public string AbilityName => name;
-    public int Power => power;
-    public int ActionCost => actionCost;
-    public bool CostHP => costHP;
-    public Element Element => element;
-    public List<AbilityEffectBase> Effects => effects;
-    public AbilityCategory Category => category;
-    public AbilityTarget AbilityTarget => target;
+    public string AbilityName { get => name; }
+    public int Power { get => power; }
+    public int ActionCost { get => actionCost; }
+    public bool CostHP {get => costHP;}
+    public Element Element { get => element; }
+    public List<AbilityEffectBase> Effects{ get => effects; }
+    public List<Condition> Conditions {get => conditions;}
+    public AbilityCategory Category { get => category; }
+    public AbilityTarget AbilityTarget { get => target; }
     public AudioClip Sound => sound;
     public string AbilityDescription => description;
 }
