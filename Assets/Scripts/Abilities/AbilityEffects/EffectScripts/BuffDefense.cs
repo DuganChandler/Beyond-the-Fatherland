@@ -18,7 +18,7 @@ public class DefenseBuffEffect : Condition {
     }
     public override IEnumerator RemoveFromCharacter(Character target)
     {
-        target.DefenseMod -= buffAmmount;
+        target.DefenseMod = 1;
 
         yield return null;
     }

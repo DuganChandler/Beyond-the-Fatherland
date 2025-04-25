@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Rendering.UI;
 
 [System.Serializable]
 public class Character  {
@@ -81,7 +82,7 @@ public class Character  {
 
         // attaack dmg mod and def reduction mod
 
-        return (int)Mathf.Clamp(5 * baseDamage * damageMod* levelMod * randMod, 0, 10000); 
+        return (int)Mathf.Clamp(5 * baseDamage * levelMod * randMod * damageMod, 0, 10000); 
     }
 
     public int CalculateAbilityPower(int power, Character target){
@@ -91,9 +92,10 @@ public class Character  {
         float baseDamage = Mathf.Max(Mathf.Sqrt(primaryStat/targetDefense * power), 1f);
         float randMod = UnityEngine.Random.Range(0.95f,1.05f);
         float damageMod = 1 + AttackMod - target.DefenseMod;
+
         // attaack dmg mod and def reduction mod
 
-        return (int)Mathf.Clamp(5 * baseDamage * damageMod * levelMod * randMod, 0, 10000); 
+        return (int)Mathf.Clamp(5 * baseDamage * levelMod * randMod * damageMod , 0, 10000); 
     }
 
     public int CalculateDefense() {
