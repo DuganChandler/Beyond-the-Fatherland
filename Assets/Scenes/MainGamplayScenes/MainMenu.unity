@@ -228,17 +228,17 @@ PrefabInstance:
         type: 3}
       propertyPath: tracks.Array.data[1].clip
       value: 
-      objectReference: {fileID: 8300000, guid: 211e5a9b6113fcb46997fd087cac3c08, type: 3}
+      objectReference: {fileID: 8300000, guid: 20d2787501e8cb0449d05b82a56b1804, type: 3}
     - target: {fileID: 1470334480135860049, guid: 2227a1bda8104854caa9d09fe17df23c,
         type: 3}
       propertyPath: tracks.Array.data[2].clip
       value: 
-      objectReference: {fileID: 8300000, guid: ea98eee4d63996d4084114e28be0f39c, type: 3}
+      objectReference: {fileID: 8300000, guid: 1c44d6177f629d447b37d9e14b0157b2, type: 3}
     - target: {fileID: 1470334480135860049, guid: 2227a1bda8104854caa9d09fe17df23c,
         type: 3}
       propertyPath: tracks.Array.data[3].clip
       value: 
-      objectReference: {fileID: 8300000, guid: 97bb02e56cda9684695b83141f9383b3, type: 3}
+      objectReference: {fileID: 8300000, guid: 64e23bba0754bf44e927f70eba8dc76c, type: 3}
     - target: {fileID: 1470334480135860049, guid: 2227a1bda8104854caa9d09fe17df23c,
         type: 3}
       propertyPath: tracks.Array.data[1].trackName
