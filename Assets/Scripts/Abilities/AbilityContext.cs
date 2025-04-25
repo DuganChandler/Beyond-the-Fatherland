@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class AbilityContext {
     public AbilityBase ability;
     public BattleUnit user;

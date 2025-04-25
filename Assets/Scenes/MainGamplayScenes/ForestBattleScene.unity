@@ -10764,6 +10764,7 @@ GameObject:
   - component: {fileID: 1218607551}
   - component: {fileID: 1218607552}
   - component: {fileID: 1218607553}
+  - component: {fileID: 1218607554}
   m_Layer: 0
   m_Name: BattleSystem
   m_TagString: Untagged
@@ -10834,6 +10835,7 @@ MonoBehaviour:
   actionButtonManager: {fileID: 2017643877}
   levelUpSummaryManager: {fileID: 1116025940}
   tutorialPanel: {fileID: 849420952}
+  battleTextManager: {fileID: 1218607554}
   stateManager: {fileID: 1218607551}
 --- !u!114 &1218607546
 MonoBehaviour:
@@ -11087,6 +11089,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4ff604a8ec078f4fbf58fd94f8d3e59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1218607554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1218607543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f964d0303437d2944aacc7dde534296e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textPrefab: {fileID: 2482077979154307543, guid: ee4678bdf14b6064f957fe8bc722b255,
+    type: 3}
+  canvas: {fileID: 1967189435}
 --- !u!1 &1221293487
 GameObject:
   m_ObjectHideFlags: 0
