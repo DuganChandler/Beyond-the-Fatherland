@@ -9,9 +9,6 @@ public class AbilityHealEffect : AbilityEffectBase {
         int heal = 35;
         context.target.Character.IncreaseHP(heal);
         context.battleActions.CreateDamageTextAtTarget(context.target.CurrentModelInstance.transform, $"{heal}", Color.green);
-        // GameObject damageTextObject = context.target.CurrentModelInstance.transform.GetChild(0).gameObject;
-        // damageTextObject.SetActive(true);
-        // damageTextObject.GetComponent<DamageText>().text.text = $"<color=green>{heal}</color>";
         yield return null;
     }
 

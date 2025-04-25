@@ -552,13 +552,8 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
             target.Character.DecreaseHP(totalDamage);
 
             battleTextManager.CreateBattleText(target.CurrentModelInstance.transform, $"{totalDamage}", Color.red);
-            // GameObject damageTextObject = target.CurrentModelInstance.transform.GetChild(0).gameObject;
-            // damageTextObject.SetActive(true);
-            // damageTextObject.GetComponent<DamageText>().text.text = $"{totalDamage}";
 
             yield return new WaitForSeconds(1f);
-
-            // damageTextObject.SetActive(false);
 
             if (target.Character.HP <= 0) {
                 yield return StartCoroutine(OnCharacterDeath(actionSlot));
@@ -566,9 +561,6 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         } else {
             if (user.CurrentModelInstance != null) {
                 battleTextManager.CreateBattleText(user.CurrentModelInstance.transform, "Missed!", Color.red);
-                // GameObject damageTextObject = user.CurrentModelInstance.transform.GetChild(0).gameObject;
-                // damageTextObject.SetActive(true);
-                // damageTextObject.GetComponent<DamageText>().text.text = "Missed!";
 
                 yield return new WaitForSeconds(1f);
 
@@ -741,7 +733,6 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
             } else if (swapped) {
                 actionPoints -= 2;
                 actionPointText.text = $"{actionPoints}";
-                // StateManager.ChangeState(new ActionSelectionState(this));
             }
         } 
     }

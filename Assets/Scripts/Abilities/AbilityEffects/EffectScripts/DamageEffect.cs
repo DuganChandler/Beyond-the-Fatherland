@@ -8,10 +8,6 @@ public class AbilityDamageEffect : AbilityEffectBase {
         context.target.Character.DecreaseHP(damage);
 
         context.battleActions.CreateDamageTextAtTarget(context.target.CurrentModelInstance.transform, $"{damage}", Color.red);
-        // GameObject damageTextObject = context.target.CurrentModelInstance.transform.GetChild(0).gameObject;
-        // damageTextObject.SetActive(true);
-        // damageTextObject.GetComponent<DamageText>().text.text = $"{damage}";
-
         yield return null;
     }
 
