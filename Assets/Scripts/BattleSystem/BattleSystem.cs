@@ -56,7 +56,9 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
     [SerializeField] ActionButtonManager actionButtonManager;
     [SerializeField] LevelUpSummaryManager levelUpSummaryManager;
     [SerializeField] GameObject tutorialPanel;
+    [SerializeField] BattleTextManager battleTextManager;
 
+    [Header("State Management")]
     [SerializeField] BattleStateManager stateManager;
 
     private List<BattleUnit> playerUnits;
@@ -549,26 +551,28 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
             int totalDamage = CalculateAttackDamage(user.Character, target.Character); 
             target.Character.DecreaseHP(totalDamage);
 
-            GameObject damageTextObject = target.CurrentModelInstance.transform.GetChild(0).gameObject;
-            damageTextObject.SetActive(true);
-            damageTextObject.GetComponent<DamageText>().text.text = $"{totalDamage}";
+            battleTextManager.CreateBattleText(target.CurrentModelInstance.transform, $"{totalDamage}", Color.red);
+            // GameObject damageTextObject = target.CurrentModelInstance.transform.GetChild(0).gameObject;
+            // damageTextObject.SetActive(true);
+            // damageTextObject.GetComponent<DamageText>().text.text = $"{totalDamage}";
 
             yield return new WaitForSeconds(1f);
 
-            damageTextObject.SetActive(false);
+            // damageTextObject.SetActive(false);
 
             if (target.Character.HP <= 0) {
                 yield return StartCoroutine(OnCharacterDeath(actionSlot));
             }
         } else {
             if (user.CurrentModelInstance != null) {
-                GameObject damageTextObject = user.CurrentModelInstance.transform.GetChild(0).gameObject;
-                damageTextObject.SetActive(true);
-                damageTextObject.GetComponent<DamageText>().text.text = "Missed!";
+                battleTextManager.CreateBattleText(user.CurrentModelInstance.transform, "Missed!", Color.red);
+                // GameObject damageTextObject = user.CurrentModelInstance.transform.GetChild(0).gameObject;
+                // damageTextObject.SetActive(true);
+                // damageTextObject.GetComponent<DamageText>().text.text = "Missed!";
 
                 yield return new WaitForSeconds(1f);
 
-                damageTextObject.SetActive(false);
+                // damageTextObject.SetActive(false);
             } else {
                 yield return new WaitForSeconds(1f);
             }
@@ -895,5 +899,9 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
 
     public void HandleRemoveItem(ItemBase item) {
         playerInventory.RemoveItem(item);
+    }
+
+    public void CreateDamageTextAtTarget(Transform target, string text, Color color) {
+        battleTextManager.CreateBattleText(target, text, color);
     }
 }

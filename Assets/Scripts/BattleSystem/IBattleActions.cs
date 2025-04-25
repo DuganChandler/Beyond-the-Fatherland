@@ -7,4 +7,5 @@ public interface IBattleActions {
     void HandleAnimationEnd();
     void HandleRemoveItem(ItemBase item);
     void HandleSFXTriggered();
+    void CreateDamageTextAtTarget(Transform target, string text, Color color);
 }
