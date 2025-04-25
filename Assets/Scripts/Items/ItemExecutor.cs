@@ -8,7 +8,9 @@ public class ItemExecutor : MonoBehaviour {
         Animator animator = user.CurrentModelInstance.GetComponent<Animator>();
             if(animator != null && user.Character.CharacterData.CharacerType == CharacerType.PartyMember) {
                 animator.SetTrigger("Attack");
+                Debug.Log("cum");
                 yield return new WaitUntil(() => battleSystem.IsAnimating);
+                Debug.Log("penis");
                 battleSystem.IsAnimating = false;
             }
 
