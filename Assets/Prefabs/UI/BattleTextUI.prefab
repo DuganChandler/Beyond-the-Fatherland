@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 2030479457412729834}
   - component: {fileID: 2139917380961986670}
   - component: {fileID: 6701976898935827242}
-  - component: {fileID: 3213966364371786217}
   - component: {fileID: 2482077979154307543}
   m_Layer: 5
   m_Name: BattleTextUI
@@ -37,7 +36,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 56.9066}
+  m_SizeDelta: {x: 150, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2139917380961986670
 CanvasRenderer:
@@ -67,7 +66,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 100
+  m_text: 9999
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 88caac9f2df6efc489fc18d7d7fb7820, type: 2}
   m_sharedMaterial: {fileID: -1908319793503937215, guid: 88caac9f2df6efc489fc18d7d7fb7820,
@@ -137,27 +136,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!95 &3213966364371786217
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5905994701358585818}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: c744a3fdf3bf07d42be97ff89c31c09b, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &2482077979154307543
 MonoBehaviour:
   m_ObjectHideFlags: 0

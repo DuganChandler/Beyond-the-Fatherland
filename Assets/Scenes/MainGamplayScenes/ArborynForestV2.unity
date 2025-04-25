@@ -1574,7 +1574,9 @@ MonoBehaviour:
   lowEncounters:
   - characterList:
     - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
-      level: 1
+      level: 2
+    - characterData: {fileID: 11400000, guid: bb3c8660bb1d4f947b0929db07ac8008, type: 2}
+      level: 2
   - characterList:
     - characterData: {fileID: 11400000, guid: fd627bf52ed190647a776a3fcea99f8a, type: 2}
       level: 2

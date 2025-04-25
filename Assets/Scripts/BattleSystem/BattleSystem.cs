@@ -506,6 +506,10 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
                 continue;
             }
 
+            if (StateManager.CurrentState.State == BattleState.BattleOver) {
+                yield break;
+            }
+
             switch (slot.BattleAction.Type) {
                 case ActionType.Attack:
                     yield return StartCoroutine(RunAttack(slot));

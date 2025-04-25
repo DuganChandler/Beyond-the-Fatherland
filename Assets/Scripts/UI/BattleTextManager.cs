@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class BattleTextManager : MonoBehaviour {
@@ -23,5 +24,27 @@ public class BattleTextManager : MonoBehaviour {
 
         RectTransform rt = instance.GetComponent<RectTransform>();
         rt.anchoredPosition = localPoint;
+
+        StartCoroutine(FloatAndFade(instance, rt, localPoint));
+    }
+
+    private IEnumerator FloatAndFade(DamageText inst, RectTransform rt, Vector2 startPos) {
+        float duration = 1f;
+        float elapsed = 0f;
+        Color startColor = inst.Text.color;
+        Vector2 endPos = startPos + Vector2.up * 30f;
+
+        while (elapsed < duration) {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+
+            rt.anchoredPosition = Vector2.Lerp(startPos, endPos, t);
+
+            inst.Text.color = Color.Lerp(startColor, new Color(startColor.r, startColor.g, startColor.b, 0f), t);
+
+            yield return null;
+        }
+
+        Destroy(inst.gameObject);
     }
 }
