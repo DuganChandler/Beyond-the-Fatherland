@@ -137,7 +137,7 @@ public class BattleManager : MonoBehaviour {
         });
 
         Debug.Log("now in grace period");
-        _playerController.StartGracePeriod(); 
+        //_playerController.StartGracePeriod(); 
     }
     
 
