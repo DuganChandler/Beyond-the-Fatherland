@@ -9,6 +9,8 @@ public enum BattleType {
 
 public class BattleManager : MonoBehaviour {
     private static BattleManager _Instance;
+    PlayerController _playerController;
+
     public static BattleManager Instance { 
         get { 
             if (!_Instance) {
@@ -133,6 +135,10 @@ public class BattleManager : MonoBehaviour {
             GameManager.Instance.GameState = GameState.FreeRoam;
             ForestObjects.SetActive(true);
         });
+
+        Debug.Log("now in grace period");
+        _playerController.StartGracePeriod(); 
     }
+    
 
 }
