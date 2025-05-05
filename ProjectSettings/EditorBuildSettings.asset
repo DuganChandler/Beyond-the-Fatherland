@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/Scenes/ChandlerTestScene.unity
     guid: a2da97a918775fd469d261fad68350f9
   - enabled: 1
-    path: Assets/Scenes/MainMenu.unity
+    path: Assets/Scenes/MainGamplayScenes/MainMenu.unity
     guid: 5f05208fca2b2a64a9d0f29cdfa0aa13
   - enabled: 1
     path: Assets/Scenes/MainGamplayScenes/ArborynForestV2.unity
@@ -21,13 +21,13 @@ EditorBuildSettings:
     path: Assets/Scenes/MainGamplayScenes/ArborynForest.unity
     guid: 79ae8c2ee901efd468ef8b62d10e08a6
   - enabled: 1
-    path: Assets/Scenes/ForestBattleScene.unity
+    path: Assets/Scenes/MainGamplayScenes/ForestBattleScene.unity
     guid: 64ebce7e168b70142b1b45d746de4523
   - enabled: 1
-    path: Assets/Scenes/GameOver.unity
+    path: Assets/Scenes/MainGamplayScenes/GameOver.unity
     guid: f1e8345ee5ad79940a986b0a17385d86
   - enabled: 1
-    path: Assets/Scenes/Victory.unity
+    path: Assets/Scenes/MainGamplayScenes/Victory.unity
     guid: 3fcfaeef7ade6ff4b8035e247ff8d516
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 05234992186c6d14ea156df27a98e48c,

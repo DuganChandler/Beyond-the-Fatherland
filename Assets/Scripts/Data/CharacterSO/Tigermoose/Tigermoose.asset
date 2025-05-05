@@ -14,13 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Tigermoose
   description: A tiger + moose = fuck that shit
-  characterPrefab: {fileID: 5883155896844355918, guid: 8741cd6c8b9fc3947999191d0c381f50,
+  characterPrefab: {fileID: 6677436432277660853, guid: 78b068083d3b8c44bb339a821cf3e858,
     type: 3}
   characterPortrait: {fileID: 21300000, guid: 5e7070c29b6420140acec2c63e3badaa, type: 3}
   characerType: 1
+  attackSFX: {fileID: 8300000, guid: d3fba037e1ab1354ab2d33bc1eb725e6, type: 3}
   currentLevel: 1
-  baseHP: 50
+  baseHP: 110
   baseMP: 10
   characterStats: {fileID: 11400000, guid: 95fb5e87992473b46a74d857616b4a9d, type: 2}
   primaryStat: 0
+  weaponPower: 17
   abilities: []

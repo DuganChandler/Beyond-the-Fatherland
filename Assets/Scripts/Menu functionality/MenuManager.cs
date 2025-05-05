@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public enum BagMenuState {
@@ -52,6 +51,12 @@ public class MenuManager : MonoBehaviour {
     [Header("Book Reader")]
     [SerializeField] private BookReader bookReader;
 
+    [Header("Item Executor")]
+    [SerializeField] private ItemExecutor itemExecutor;
+
+    [Header("Ability Executor")]
+    [SerializeField] private AbilityExecutor abilityExecutor;
+
     private Stack<BagMenuStateObject> menuStates;
 
 
@@ -91,7 +96,6 @@ public class MenuManager : MonoBehaviour {
     }
 
     public void OnResume() {
-        MusicManager.Instance.PlaySound("MenuConfirm");
         GameManager.Instance.GameState = GameState.FreeRoam;
         menuStates.Clear();
         bagMenu.SetActive(false);
@@ -104,8 +108,6 @@ public class MenuManager : MonoBehaviour {
     }
 
     public void OnItemMenu() {
-        MusicManager.Instance.PlaySound("MenuConfirm");
-
         if (menuStates.Peek().MenuObject != null) {
             menuStates.Peek().MenuObject.SetActive(false);
         }
@@ -116,21 +118,19 @@ public class MenuManager : MonoBehaviour {
     }
 
     public void OnStatusMenu () {
-        MusicManager.Instance.PlaySound("MenuConfirm");
+        // MusicManager.Instance.PlaySound("MenuConfirm");
         menuStates.Peek().MenuObject.SetActive(false);
         menuStates.Push(new BagMenuStateObject(BagMenuState.Status, status));
         status.SetActive(true);
     }
 
     public void OnSystemMenu () {
-        MusicManager.Instance.PlaySound("MenuConfirm");
         menuStates.Peek().MenuObject.SetActive(false);
         menuStates.Push(new BagMenuStateObject(BagMenuState.System, system));
         system.SetActive(true);
     }
 
     public void OnBookMenu() {
-        MusicManager.Instance.PlaySound("MenuConfirm");
         menuStates.Peek().MenuObject.SetActive(false);
         menuStates.Push(new BagMenuStateObject(BagMenuState.Books, books));
 
@@ -140,14 +140,12 @@ public class MenuManager : MonoBehaviour {
     }
 
     public void OnControls() {
-        MusicManager.Instance.PlaySound("MenuConfirm");
         menuStates.Peek().MenuObject.SetActive(false);
         menuStates.Push(new BagMenuStateObject(BagMenuState.Controls, controls));
         controls.SetActive(true);
     }
 
     public void OnMainMenu() {
-        // MusicManager.Instance.PlaySound("MenuConfirm");
         SceneHelper.LoadScene("MainMenu", false, true);
         GameManager.Instance.GameState = GameState.FreeRoam;
     }
@@ -156,7 +154,6 @@ public class MenuManager : MonoBehaviour {
         if (!context.started || GameManager.Instance.GameState != GameState.Pause) {
             return;
         }
-        Debug.Log(menuStates.Peek().State);
 
         if (menuStates.Peek().State != BagMenuState.Using) {
             if (menuStates.Peek().State == BagMenuState.Options) {
@@ -178,6 +175,8 @@ public class MenuManager : MonoBehaviour {
                 }
             }
         }
+
+        MusicManager.Instance.PlaySound("MenuBack");
 
         CheckReversUsingState();
     }
@@ -235,9 +234,11 @@ public class MenuManager : MonoBehaviour {
     }
 
     public IEnumerator UseItem(CombatItemData item, Character target) {
-        foreach (ItemEffectBase effect in item.effects) {
-            EffectInfo effectInfo = effect.ApplyEffectToCharacter(null, target);
-            Debug.Log(effectInfo.TextInformation);
+        BattleUnit unit = new(target, null);
+        ItemContext context = new(item, null, unit, null);
+
+        foreach (ItemEffectBase effect in item.Effects) {
+            yield return effect.ApplyToCharacter(context);
         }
 
         playerInventory.RemoveItem(item);

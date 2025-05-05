@@ -18,16 +18,20 @@ public class CharacterData : ScriptableObject {
     [Header("Character Type")]
     [SerializeField] CharacerType characerType;
 
+    [Header("Attack SFX")]
+    [SerializeField] AudioClip attackSFX;
+
     [Header("Stats")]
     [SerializeField] int currentLevel;
     [SerializeField] int baseHP;
     [SerializeField] int baseMP;
     [SerializeField] CharacterStats characterStats;
     [SerializeField] Stat primaryStat;
+    [SerializeField] float weaponPower;
+
     [Header("Abilities")]
     [SerializeField] List<AbilityBase> abilities;
 
-    List<Condition> conditions;
 
     // Make sure to check if the character type is BOSS
     public Stats GetStatsAtLevel(int level) {
@@ -82,11 +86,8 @@ public class CharacterData : ScriptableObject {
     }
     // Create List of Abilities
 
-    public List<Condition> Conditions{
-        get{
-            return conditions;
-        }
-    }
+    public float WeaponPower => weaponPower;
+    public AudioClip AttackSFX => attackSFX;
 }
 
 public enum CharacerType {

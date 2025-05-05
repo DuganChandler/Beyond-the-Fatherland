@@ -43,5 +43,5 @@ MonoBehaviour:
   - Strength: 14
     Magic: 12
     Defense: 20
-  hpGrowth: 15
-  mpGrowth: 3
+  hpGrowth: 13
+  mpGrowth: 4

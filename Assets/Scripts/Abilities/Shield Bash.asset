@@ -17,9 +17,10 @@ MonoBehaviour:
   element: 0
   power: 10
   actionCost: 10
+  costHP: 0
   target: 0
   category: 0
   isAOE: 0
-  sound: {fileID: 0}
+  sound: {fileID: 8300000, guid: b4c48f8180f33e748898986d21903998, type: 3}
   effects:
   - {fileID: 11400000, guid: 69d8024c464dedb4e89cbe136e843f20, type: 2}

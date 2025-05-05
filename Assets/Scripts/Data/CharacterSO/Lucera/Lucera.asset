@@ -18,11 +18,13 @@ MonoBehaviour:
     type: 3}
   characterPortrait: {fileID: 21300000, guid: 1cfad3964852c254685a464c604cfc7d, type: 3}
   characerType: 0
+  attackSFX: {fileID: 8300000, guid: a8ed4472a812f4a4685c52fae4644b7a, type: 3}
   currentLevel: 1
-  baseHP: 75
+  baseHP: 62
   baseMP: 40
   characterStats: {fileID: 11400000, guid: 03e8a65b2f4883e4b88b901b25458731, type: 2}
   primaryStat: 1
+  weaponPower: 13
   abilities:
   - {fileID: 11400000, guid: d10dd79ead47ffa4d938ad0a2c0e7593, type: 2}
   - {fileID: 11400000, guid: 95e50db33f3e1aa4a856e901c976fc47, type: 2}

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Rendering.UI;
 
 [System.Serializable]
 public class Character  {
@@ -27,14 +27,14 @@ public class Character  {
 
     public Stat PrimaryStat { get; set; }
     public Stats Stats { get; set; }
-    public float strengthBuffs {get; set;}
-    public float magicBuffs {get; set;}
-    public float defenseBuffs {get; set;}
-    public float strengthDebuffs {get; set;}
-    public float magicDebuffs {get; set;}
-    public float defenseDebuffs {get; set;}
+    public float AttackMod {get; set;} = 0;
+    public float DefenseMod {get; set;} = 0;
+
+    
 
     public bool LeveledUp { get; set; } = false;
+    private List<(Condition, int duration)> buffs = new();
+    private List<(Condition, int duration)> debuffs = new();
 
     public int Level {
         get {
@@ -67,35 +67,35 @@ public class Character  {
 
 
         IsAlive = true;
+        if(buffs == null) buffs = new List<(Condition, int duration)>();
+        if(debuffs == null) debuffs = new List<(Condition, int duration)>();
     }
 
     public int CalculateBasicAttackDamage(Character target) {
-        int mod = (int)Mathf.Max((Level - target.Level) * 1.1f, 1f);
+        float primaryStat = PrimaryStat == Stat.Strength ? Stats.Strength : Stats.Magic;
+        float levelMod = Mathf.Max((Level - target.Level) * 1.1f, 1f);
         float targetDefense = target.Stats.Defense;
-        if (PrimaryStat == Stat.Strength) {
-            float strength = Stats.Strength;
-            return (int)Mathf.Clamp(5 * Mathf.Max(Mathf.Sqrt(strength/targetDefense * 10)) * mod * UnityEngine.Random.Range(0.95f,1.05f), 0, 10000);
-        } else if (PrimaryStat == Stat.Magic) {
-            float magic = Stats.Magic;
-            return (int)Mathf.Clamp(5 * Mathf.Max(Mathf.Sqrt(magic/targetDefense * 10)) * mod * UnityEngine.Random.Range(0.95f,1.05f), 0, 10000);
-        } 
-        return 0;
+        float weaponPower = CharacterData.WeaponPower;
+        float baseDamage = Mathf.Max(Mathf.Sqrt(primaryStat/targetDefense * weaponPower), 1f);
+        float randMod = UnityEngine.Random.Range(0.95f,1.05f);
+        float damageMod = 1 + AttackMod - target.DefenseMod;
+
+        // attaack dmg mod and def reduction mod
+
+        return (int)Mathf.Clamp(5 * baseDamage * levelMod * randMod * damageMod, 0, 10000); 
     }
 
     public int CalculateAbilityPower(int power, Character target){
-        //DMG = 5 * sqrt(primary state/enemy def * ability power) * rnd
-        int damage = 0;
+        float primaryStat = PrimaryStat == Stat.Strength ? Stats.Strength : Stats.Magic;
+        float levelMod = Mathf.Max((Level - target.Level) * 1.1f, 1f);
         float targetDefense = target.Stats.Defense;
-        int mod = (int)Mathf.Max((Level - target.Level) * 1.1f, 1f);
-        if (PrimaryStat == Stat.Strength) {
-            float strength = Stats.Strength;
-            damage = (int)Mathf.Clamp(5 * Mathf.Max(Mathf.Sqrt(strength/targetDefense * power)) * mod * UnityEngine.Random.Range(0.95f,1.05f), 0, 10000);
-        }else if(PrimaryStat == Stat.Magic){
-            float magic = Stats.Magic;
-            damage = (int)Mathf.Clamp(5 * Mathf.Max(Mathf.Sqrt(magic/targetDefense * power), 1f) * mod * UnityEngine.Random.Range(0.95f,1.05f), 0, 10000);
-        }
-        return damage;
-        
+        float baseDamage = Mathf.Max(Mathf.Sqrt(primaryStat/targetDefense * power), 1f);
+        float randMod = UnityEngine.Random.Range(0.95f,1.05f);
+        float damageMod = 1 + AttackMod - target.DefenseMod;
+
+        // attaack dmg mod and def reduction mod
+
+        return (int)Mathf.Clamp(5 * baseDamage * levelMod * randMod * damageMod , 0, 10000); 
     }
 
     public int CalculateDefense() {
@@ -160,15 +160,86 @@ public class Character  {
         }
     }
 
-    public List<Condition> Conditions{
+    public List<(Condition, int duration)> Buffs{
         get{
-            return characterData.Conditions;
+            return buffs;
+        }
+    }
+    public List<(Condition, int duration)> Debuffs{
+        get{
+            return debuffs;
+        }
+    }
+    public void AddCondition(Condition newCondition, Character target){
+        if(newCondition.Type == ConditionType.Buff){
+            if(buffs?.Count > 0){
+                for(int i = 0; i < buffs.Count; i ++){
+                    var condition = buffs[i];
+                    if(newCondition.ConditionName.Equals(condition.Item1.ConditionName)){
+                        condition.duration = newCondition.Duration;
+                    }else{
+                        buffs.Add((newCondition, newCondition.Duration));
+                        newCondition.ApplyToCharacter(target);
+                    }
+                }   
+            }else{
+                buffs?.Add((newCondition, newCondition.Duration));
+                newCondition.ApplyToCharacter(target);
+            }
+        }
+            
+        if(newCondition.Type == ConditionType.Debuff){
+            if(debuffs?.Count > 0){
+                for(int i = 0; i < debuffs.Count; i ++){
+                    var condition = debuffs[i];
+                    if(newCondition.ConditionName.Equals(condition.Item1.ConditionName)){
+                        condition.duration = newCondition.Duration;
+                    }else{
+                        debuffs.Add((newCondition, newCondition.Duration));
+                        newCondition.ApplyToCharacter(target);
+                    }
+                }   
+            }else{
+                debuffs.Add((newCondition, newCondition.Duration));
+                newCondition.ApplyToCharacter(target);
+            }
         }
     }
 
-    /*public void CheckConditions(int round, BattleSystem battleSystem){
-        foreach(Condition condition in Conditions){
-            if(condition.initilaRound - )
+    public void EndOfRound( Character target){
+        for( int i = 0; i< buffs.Count; i ++){
+            var condition = buffs[i];
+            condition.duration --;
+            if(condition.duration <= 0){
+                Debug.Log("ooooo");
+                condition.Item1.RemoveFromCharacter(target);
+                buffs.RemoveAt(i);
+                Debug.Log(buffs.Count + "eee");
+            }
         }
-    }*/
+        for( int i = 0; i< debuffs.Count; i ++){
+            var condition = debuffs[i];
+            condition.duration --;
+            if(condition.duration <= 0){
+                condition.Item1.RemoveFromCharacter(target);
+                debuffs.Remove(condition);
+            }
+        }
+        
+    }
+    public Condition CheckHasCondition(Condition newCondition){
+        for(int i = 0; i < buffs.Count; i ++){
+            var condition = buffs[i];
+           if(newCondition.ConditionName.Equals(condition.Item1.ConditionName)){
+               return newCondition;
+            }
+        }
+        for(int i = 0; i < debuffs.Count; i ++){
+            var condition = debuffs[i];
+           if(newCondition.ConditionName.Equals(condition.Item1.ConditionName)){
+               return newCondition;
+            }
+        }
+        return null;
+    }
 }

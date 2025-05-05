@@ -3,14 +3,24 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Buff Effect", menuName = "Abilities/Effects/Buff")]
-public class AbilityBuffEffect : AbilityEffectBase {
-    [SerializeField] private int duration;
-    [SerializeField] private string stat;
+[CreateAssetMenu(fileName = "New Buff Effect", menuName = "Condition/Attack Buff")]
+public class AttackBuffEffect : Condition {
 
-    public override IEnumerator ApplyToCharacter(AbilityContext context)
+    [Header("Buff Ammount (ex: .1 = 10% buff/debuff)")]
+    [SerializeField] private float buffAmmount;
+
+    public override IEnumerator ApplyToCharacter(Character target)
     {
-        return base.ApplyToCharacter(context);
+        target.AttackMod += buffAmmount;
+        target.AddCondition(this,target);
+
+        yield return null;
+    }
+    public override IEnumerator RemoveFromCharacter(Character target)
+    {
+        target.AttackMod -= buffAmmount;
+
+        yield return null;
     }
 
     // public override IEnumerator ApplyToCharacter(AbilityContext) {

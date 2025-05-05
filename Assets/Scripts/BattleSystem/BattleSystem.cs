@@ -35,9 +35,8 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
     [Header("Battle Setup")]
     [SerializeField] private List<BattlePosition> partyPositions;
     [SerializeField] private List<BattlePosition> encounterPositions;
-    [SerializeField] private int actionPoints;
-    [SerializeField] private ItemUser itemUser;
     [SerializeField] private AbilityExecutor abilityExecutor;
+    [SerializeField] private ItemExecutor itemExecutor;
 
     [Header("Battle UI")]
     [SerializeField] List<Button> playerPortraits; 
@@ -57,7 +56,9 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
     [SerializeField] ActionButtonManager actionButtonManager;
     [SerializeField] LevelUpSummaryManager levelUpSummaryManager;
     [SerializeField] GameObject tutorialPanel;
+    [SerializeField] BattleTextManager battleTextManager;
 
+    [Header("State Management")]
     [SerializeField] BattleStateManager stateManager;
 
     private List<BattleUnit> playerUnits;
@@ -81,8 +82,10 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
     private bool closeSummary = false;
 
     private int numEscapeAttempts;
+    private int actionPoints;
 
     public bool IsAnimating {get; set; } = false;
+    public bool PlaySFX { get; set; } = false;
 
     public BattleStateManager StateManager { get => stateManager; }
     public List<Button> PlayerPortraits { get => playerPortraits; }
@@ -100,7 +103,8 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
     public List<BattlePosition> EncounterPositions { get => encounterPositions; } 
     public List<BattleUnit> EnemyUnits { get => enemyUnits; }
     public GameObject TutorialPanel { get => tutorialPanel; }
-    public int CurrentRound {get; set; } = 1;
+    public int ActionPoints { get => actionPoints; } 
+    public int CurrentRound { get; set; } = 1;
 
     void Awake() {
         StartBattle(); 
@@ -112,6 +116,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         BattleEventManager.Instance.OnSlotActionSelected += HandleSlotActionSelected;
         BattleEventManager.Instance.OnSlotSelected += HandleActionSlotSelected;
         BattleEventManager.Instance.OnAnimationCompleted += HandleAnimationEnd;
+        BattleEventManager.Instance.OnSFXTriggered += HandleSFXTriggered;
     }
 
     void OnDisable() {
@@ -120,6 +125,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         BattleEventManager.Instance.OnSlotActionSelected -= HandleSlotActionSelected;
         BattleEventManager.Instance.OnSlotSelected -= HandleActionSlotSelected;
         BattleEventManager.Instance.OnAnimationCompleted -= HandleAnimationEnd;
+        BattleEventManager.Instance.OnSFXTriggered -= HandleSFXTriggered;
     }
 
     public void StartBattle() {
@@ -278,7 +284,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
 
         levelUpSummaryManager.gameObject.SetActive(false);
 
-        BattleManager.Instance.EndBattle(won);
+        yield return BattleManager.Instance.EndBattle(won);
     }
 
     private IEnumerator WaitForSummaryInput() {
@@ -329,10 +335,6 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         }
     }
 
-    // Button OnClick for Character Select State
-
-    // Button OnClick for Action Selection State
-
     // Player input call back for navigating Target selection
     public void OnTargetNavigate(InputAction.CallbackContext context) {
         if (StateManager.CurrentState.State != BattleState.TargetSelection) return;
@@ -363,16 +365,38 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         }
     } 
 
+    void CheckSlotsToAnimate(GameObject currentTarget, bool startAnim) {
+        foreach (ActionSlot slot in actionBarManager.ActionSLots) {
+            Debug.Log(slot);
+            GameObject userModel = slot.BattleAction?.User?.CurrentModelInstance;
+            if (userModel != null) {
+                if (userModel == currentTarget) {
+                    if (startAnim) {
+                        slot.GetComponent<Animator>().SetTrigger("Selected");
+                    } else {
+                        // stop animation
+                        slot.GetComponent<Animator>().SetTrigger("Normal");
+                    }
+                }
+            }
+        }
+    }
+
     void UpdateTargetIndicator() {
         List<BattleUnit> currentTargetList = isSelectingEnemy ? enemyUnits: playerUnits;
         if (currentTargetList.Count < 0) return;
 
-        GameObject currentTarget = currentTargetList[currentTargetIndex].CurrentModelInstance;
+        if (isSelectingEnemy && lastSelectedTarget != null) {
+            CheckSlotsToAnimate(lastSelectedTarget, false);
+        }
 
-        // if (lastSelectedTarget != null && lastSelectedTarget != currentTarget) {
-        //     lastSelectedTarget.GetComponent<MeshRenderer>().materials[^1].SetFloat("_OutlineThickness", 0f);
-        // }
-        // currentTarget.GetComponent<MeshRenderer>().materials[^1].SetFloat("_OutlineThickness", 0.04f);
+        GameObject currentTarget = currentTargetList[currentTargetIndex].CurrentModelInstance;
+        
+        if (isSelectingEnemy) {
+            CheckSlotsToAnimate(currentTarget, true);
+        } else {
+            MusicManager.Instance.PlaySound("MenuScroll");
+        }
 
         pointerManager.TargetSingle(currentTarget.transform);
 
@@ -380,9 +404,11 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
     }
 
     public void ClearTargetIndicator() {
-        // if (lastSelectedTarget) {
-        //     lastSelectedTarget.GetComponent<MeshRenderer>().materials[^1].SetFloat("_OutlineThickness", 0f);
-        // }
+        foreach(ActionSlot slot in actionBarManager.ActionSLots) {
+            slot.GetComponent<Animator>().SetTrigger("Normal");
+        }
+
+        lastSelectedTarget = null;
         pointerManager.ClearPointers();
     }
 
@@ -439,7 +465,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         actionPoints++;
         actionPointText.text = $"{actionPoints}";
 
-        StateManager.ChangeState(new ActionSelectionState(this));
+        // StateManager.ChangeState(new SlotActionSelectionState(this));
     }
 
 
@@ -478,7 +504,9 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
                 continue;
             }
 
-            
+            if (StateManager.CurrentState.State == BattleState.BattleOver) {
+                yield break;
+            }
 
             switch (slot.BattleAction.Type) {
                 case ActionType.Attack:
@@ -512,9 +540,12 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         BattleUnit target = actionSlot.BattleAction.Target;
 
         if (target.Character.IsAlive) {
-            Animator animator = user.CurrentModelInstance.GetComponent<Animator>();
-            if( animator != null) {
+            if( user.CurrentModelInstance.TryGetComponent<Animator>(out var animator)) {
                 animator.SetTrigger("Attack");
+
+                yield return new WaitUntil(() => PlaySFX); MusicManager.Instance.PlaySoundByAudioClip(user.Character.CharacterData.AttackSFX); 
+                PlaySFX = false;
+
                 yield return new WaitUntil(() => IsAnimating);
                 IsAnimating = false;
             }
@@ -522,25 +553,23 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
             int totalDamage = CalculateAttackDamage(user.Character, target.Character); 
             target.Character.DecreaseHP(totalDamage);
 
-            GameObject damageTextObject = target.CurrentModelInstance.transform.GetChild(0).gameObject;
-            damageTextObject.SetActive(true);
-            damageTextObject.GetComponent<DamageText>().text.text = $"{totalDamage}";
+            battleTextManager.CreateBattleText(target.CurrentModelInstance.transform, $"{totalDamage}", Color.red);
 
             yield return new WaitForSeconds(1f);
-
-            damageTextObject.SetActive(false);
 
             if (target.Character.HP <= 0) {
                 yield return StartCoroutine(OnCharacterDeath(actionSlot));
             }
-        }else{
-            GameObject damageTextObject = user.CurrentModelInstance.transform.GetChild(0).gameObject;
-            damageTextObject.SetActive(true);
-            damageTextObject.GetComponent<DamageText>().text.text = "Missed!";
+        } else {
+            if (user.CurrentModelInstance != null) {
+                battleTextManager.CreateBattleText(user.CurrentModelInstance.transform, "Missed!", Color.red);
 
-            yield return new WaitForSeconds(1f);
+                yield return new WaitForSeconds(1f);
 
-            damageTextObject.SetActive(false);
+                // damageTextObject.SetActive(false);
+            } else {
+                yield return new WaitForSeconds(1f);
+            }
         }
 
         yield return new WaitForEndOfFrame();
@@ -549,15 +578,16 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
 
     int CalculateAttackDamage(Character user, Character target) {
         int userDamage = user.CalculateBasicAttackDamage(target);
-        //int targetDefense = target.CalculateDefense();
-        //Debug.Log($"User Damage: {userDamage} Target Defense: {targetDefense}");
         return userDamage;
     }
 
     IEnumerator TryToEscape() {
         numEscapeAttempts++;
         float f = 5 * 128 / 7 + 30 * numEscapeAttempts;
+        Debug.Log(f);
         f %= 256;
+
+        Debug.Log(f);
 
         if (Random.Range(0, 256) < f) {
             yield return BattleOver(true, true);
@@ -566,7 +596,6 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         yield return new WaitForEndOfFrame();
     }
 
-    // ability -> calculate damage, check for status effects, check if you can cast
     IEnumerator RunAbility(ActionSlot actionSlot){
         AbilityBase currentAbility = actionSlot.BattleAction.AbilityBase;
         BattleUnit target = actionSlot.BattleAction.Target; 
@@ -589,57 +618,23 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
     }
 
     IEnumerator RunItem(ActionSlot actionSlot) {
+        CombatItemData currentCombatItem = (CombatItemData)actionSlot.BattleAction.ItemSlot.Item;
         BattleUnit target = actionSlot.BattleAction.Target;
-        BattleUnit user = actionSlot.BattleAction.User;
-        CombatItemData currentItem = (CombatItemData)actionSlot.BattleAction.ItemSlot.Item;
 
-        BattleUnit newTarget = null;
-
-        if (!target.Character.IsAlive && currentItem.ItemTarget == ItemTarget.Player) {
-            newTarget = user;
-        } else if (!target.Character.IsAlive && currentItem.ItemTarget == ItemTarget.Enemy) {
-            foreach(var enemy in enemyUnits) {
-                newTarget = enemy;
-            }
-        }else{
-            newTarget = target;
+        if (!target.Character.IsAlive && currentCombatItem.canTargetDead) {
+            yield return StartCoroutine(itemExecutor.ExecuteItem(currentCombatItem, actionSlot.BattleAction.User, actionSlot.BattleAction.Target, this));
+        } else if (target.Character.IsAlive) {
+            yield return StartCoroutine(itemExecutor.ExecuteItem(currentCombatItem, actionSlot.BattleAction.User, actionSlot.BattleAction.Target, this));
+        } else {
+            Debug.Log("No effect");
         }
-
-        GameObject damageTextObject = newTarget.CurrentModelInstance.transform.GetChild(0).gameObject;
-        yield return StartCoroutine(UseItem(currentItem, user.Character, newTarget.Character, damageTextObject));
-        yield return new WaitForSeconds(0.5f);
-
-    }
-
-    public IEnumerator UseItem(CombatItemData item, Character user, Character target, GameObject damageTextObject) {
-        Character newTarget = target;
-
-        foreach (ItemEffectBase effect in item.effects) {
-            EffectInfo effectInfo = effect.ApplyEffectToCharacter(user, newTarget);
-            damageTextObject.SetActive(true);
-            damageTextObject.GetComponent<DamageText>().text.text = $"{effectInfo.TextInformation}";
-            damageTextObject.GetComponent<DamageText>().text.color = effectInfo.TextColor;
-
-            yield return new WaitForSeconds(1f);
-
-            damageTextObject.SetActive(false);
-        }
-
-        damageTextObject.GetComponent<DamageText>().text.color = Color.white;
-
-        playerInventory.RemoveItem(item);
 
         yield return new WaitForEndOfFrame();
     }
 
     IEnumerator OnCharacterDeath(ActionSlot actionSlot) {
-        // get XP;
-        // death animation
-        // remove model from instanceList or mark as dead and skip over;
         BattleUnit dyingUnit = actionSlot.BattleAction.Target;
         if (dyingUnit.Character.CharacterData.CharacerType == CharacerType.Enemy || dyingUnit.Character.CharacterData.CharacerType == CharacerType.Boss) {
-            // dyingUnit.CurrentModelInstance.GetComponent<MeshRenderer>().materials[0].color = Color.red;
-
             dyingUnit.BattlePosition.Occupied = false;
             Destroy(dyingUnit.CurrentModelInstance);
 
@@ -651,10 +646,8 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
                 }
             }
         } else {
-            // dyingUnit.CurrentModelInstance.transform.GetChild(2).GetComponent<SkinnedMeshRenderer>().materials[0].color = Color.red;
             foreach(var playerUnit in playerUnits) {
                 if(playerUnit == dyingUnit) {
-                    // playerUnits.Remove(playerUnit);
                     playerUnit.Character.IsAlive = false;
                     Animator animator = playerUnit.CurrentModelInstance.GetComponent<Animator>();
                     animator.SetTrigger("Death");
@@ -691,6 +684,9 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
     }
 
     void CleanUp() {
+        foreach(var playerUnit in playerUnits){
+            playerUnit.Character.EndOfRound(playerUnit.Character);
+        }
         foreach (var slot in actionBarManager.ActionSLots) {
             if (!slot.IsOccupied) {
                 continue;
@@ -742,11 +738,9 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
             } else if (swapped) {
                 actionPoints -= 2;
                 actionPointText.text = $"{actionPoints}";
-                StateManager.ChangeState(new ActionSelectionState(this));
             }
         } 
     }
-
 
     void HandleAbilitySelection(AbilityBase selectedAbility){
         if (currentAction.User.Character.MP < selectedAbility.ActionCost) {
@@ -759,7 +753,6 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
     }
 
     void HandleItemSelection(ItemSlot selectedSlot) {
-        Debug.Log("handle them items");
         currentAction.ItemSlot = selectedSlot;
         EventSystem.current.SetSelectedGameObject(null);
         itemPanel.SetActive(false);
@@ -774,6 +767,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         if (StateManager.CurrentState.State == BattleState.ActionSelection) {
             if (actionPoints <= 0) {
                 Debug.Log("No action points available!");
+                MusicManager.Instance.PlaySound("Wrong");
                 return;
             }
 
@@ -792,6 +786,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         if (StateManager.CurrentState.State != BattleState.ActionSelection) return;
         if (actionPoints <= 0) {
             Debug.Log("No action points available!");
+            MusicManager.Instance.PlaySound("Wrong");
             return;
         }
 
@@ -818,6 +813,7 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         if (StateManager.CurrentState.State != BattleState.ActionSelection) return;
         if (actionPoints <= 0) {
             Debug.Log("No action points available!");
+            MusicManager.Instance.PlaySound("Wrong");
             return;
         }
 
@@ -892,9 +888,19 @@ public class BattleSystem : MonoBehaviour, IBattleActions {
         return false;
     }
 
-    public void HandleAnimationEnd()
-    {
+    public void HandleAnimationEnd() {
         IsAnimating = true;
     }
 
+    public void HandleSFXTriggered() {
+        PlaySFX = true;
+    }
+
+    public void HandleRemoveItem(ItemBase item) {
+        playerInventory.RemoveItem(item);
+    }
+
+    public void CreateDamageTextAtTarget(Transform target, string text, Color color) {
+        battleTextManager.CreateBattleText(target, text, color);
+    }
 }

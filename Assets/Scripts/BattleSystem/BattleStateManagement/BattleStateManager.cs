@@ -18,8 +18,6 @@ public class BattleStateManager : MonoBehaviour {
         CurrentState.OnEnter();
 
         states.Push(CurrentState);
-
-        Debug.Log(CurrentState.State);
     }
 
     public void Back() {

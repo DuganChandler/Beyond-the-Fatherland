@@ -86,7 +86,6 @@ GameObject:
   - component: {fileID: 3616679670523758076}
   - component: {fileID: 8978389497653320154}
   - component: {fileID: 866299765772226197}
-  - component: {fileID: 4494300019265179542}
   m_Layer: 5
   m_Name: UICanvas
   m_TagString: Untagged
@@ -103,7 +102,7 @@ RectTransform:
   m_GameObject: {fileID: 5439499255105901692}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 594782130344258832}
@@ -115,7 +114,7 @@ RectTransform:
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &8421864303201318690
 Canvas:
   m_ObjectHideFlags: 0
@@ -211,22 +210,6 @@ MonoBehaviour:
   rawImage: {fileID: 4432730182813888946}
   circleFadeMaterial: {fileID: 2100000, guid: adbea063deb9d834d846f598f00785e0, type: 2}
   transitionDuration: 1
---- !u!114 &4494300019265179542
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5439499255105901692}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eba7edbaab78f074585a1a15c4408005, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  pointerPrefab: {fileID: 2030205495559777134, guid: a028ca9b747fbe5439f431927094d5e4,
-    type: 3}
-  canvas: {fileID: 8421864303201318690}
-  pointerOffset: {x: 0, y: 0}
 --- !u!1001 &1790528689250802988
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -20,11 +20,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private GameObject bagMenuUI;
 
     private Vector3 lastPosition;
-    [SerializeField]  private float distanceAccumulated = 0f;
-    [SerializeField] public bool IsInGracePeriod = false;
-    [SerializeField] public float graceTimer = 0f;
-    [SerializeField] public float gracePeriod = 4f;
-
+    private float distanceAccumulated = 0f;
 
     private Animator animator;
 
@@ -54,17 +50,6 @@ public class PlayerController : MonoBehaviour {
 
     void Update() {
         CalculateDistanceTraveled();
-        if (IsInGracePeriod)
-        {
-            graceTimer -= Time.deltaTime;
-            if (graceTimer < 0f)
-            {
-                IsInGracePeriod = false;
-                Debug.Log("Grace Period is over");
-            }
-            return;
-        }
-
         CheckRandomEncounter();
     }
 
@@ -100,14 +85,8 @@ public class PlayerController : MonoBehaviour {
         }
 
         var encounterLayer = IsEncounterLayer();
-        Debug.Log(encounterLayer);
         if (!encounterLayer.Item1) {
             distanceAccumulated = 0f;
-            return;
-        }
-        if (IsInGracePeriod)
-        {
-            Debug.Log("Delaying encounters");
             return;
         }
 
@@ -121,20 +100,10 @@ public class PlayerController : MonoBehaviour {
                 BattleManager.Instance.BattleType = BattleType.Random;
 
                 StartCoroutine(BattleManager.Instance.StartBattle());
-                
             }
             distanceAccumulated = 0f;
-           
-
         }
     }
-    public void StartGracePeriod()
-    {
-        IsInGracePeriod = true;
-        graceTimer = gracePeriod;
-        Debug.Log("grace period starts");
-    }
-
 
     void Run() {
         if (GameManager.Instance.inDialog || GameManager.Instance.GameState == GameState.Battle) {
